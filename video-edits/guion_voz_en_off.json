@@ -1,0 +1,9 @@
+[
+ {"id": "A",   "type": "foot", "src": [0.0, 3.2],   "vo": "Un pequeño punto de *óxido* puede convertirse en un *gran* *problema*."},
+ {"id": "MG1", "type": "mg",   "scene": "corrosion",  "vo": "Cuando la pintura se daña, el *agua* y el *oxígeno* llegan al acero, y la *corrosión* avanza por debajo."},
+ {"id": "B",   "type": "foot", "src": [3.2, 10.2],  "vo": "Por eso usamos el *martillo* *de* *agujas*: una herramienta neumática que golpea *miles* de veces por minuto."},
+ {"id": "MG2", "type": "mg",   "scene": "scaler",     "vo": "Sus agujas rompen el *óxido* y la pintura suelta, *sin* *químicos*."},
+ {"id": "C",   "type": "foot", "src": [10.2, 17.6], "vo": "Trabajamos hasta dejar el *metal* *limpio*. Así, el nuevo recubrimiento se *adhiere* correctamente."},
+ {"id": "MG3", "type": "mg",   "scene": "process",    "vo": "Luego se *limpia* la superficie, se aplica *primer* anticorrosivo y la *pintura* final."},
+ {"id": "D",   "type": "foot", "src": [17.6, 22.63], "vo": "Mantenimiento a tiempo: *prevenir* es *ahorrar*."}
+]
