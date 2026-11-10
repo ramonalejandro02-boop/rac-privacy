@@ -3,18 +3,19 @@ sys.path.insert(0, "/tmp/claude-0/-home-user-rac-privacy/75c0bf54-1720-5939-92f1
 from tts import Kokoro
 from faster_whisper import WhisperModel
 S = "/tmp/claude-0/-home-user-rac-privacy/75c0bf54-1720-5939-92f1-61063ac8fdf1/scratchpad"
-SCRIPT = json.load(open(f"{S}/script.json"))
+SCRIPT = json.load(open(sys.argv[1] if len(sys.argv) > 1 else f"{S}/script.json"))
+VO = sys.argv[2] if len(sys.argv) > 2 else f"{S}/vo"
 k = Kokoro()
 wm = WhisperModel(f"{S}/whisper-small", device="cpu", compute_type="int8")
 norm = lambda w: re.sub(r"[^a-záéíóúñü0-9]", "", w.lower())
 out = {}
 for seg in SCRIPT:
     key, text = seg["id"], seg["vo"]
-    plain = text.replace("*", "")
+    plain = seg.get("tts", text.replace("*", ""))
     a, sr, ph = k(plain, sid=29, speed=seg.get("speed", 1.05))
     a = a / (np.abs(a).max() + 1e-9) * 0.9
-    raw = f"{S}/vo/{key}_raw.wav"; sf.write(raw, a, sr)
-    wav = f"{S}/vo/{key}.wav"
+    raw = f"{VO}/{key}_raw.wav"; sf.write(raw, a, sr)
+    wav = f"{VO}/{key}.wav"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", raw, "-af",
         "highpass=f=80,equalizer=f=200:t=q:w=1:g=1.5,equalizer=f=3200:t=q:w=1.2:g=2.5,"
         "acompressor=threshold=-20dB:ratio=3:attack=5:release=90:makeup=2,"
@@ -47,4 +48,4 @@ for seg in SCRIPT:
     out[key] = {"dur": dur, "words": [{"w": w, "s": round(t[0], 3), "e": round(t[1], 3)} for w, t in zip(script_words, times)],
                 "matched": len(known), "total": len(sw), "heard": " ".join(x.word for x in ww)}
     print(key, round(dur, 2), f"{len(known)}/{len(sw)}", "|", out[key]["heard"], flush=True)
-json.dump(out, open(f"{S}/vo/timing.json", "w"), ensure_ascii=False, indent=1)
+json.dump(out, open(f"{VO}/timing.json", "w"), ensure_ascii=False, indent=1)

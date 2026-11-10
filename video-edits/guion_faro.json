@@ -1,0 +1,66 @@
+[
+ {
+  "id": "F1",
+  "type": "foot",
+  "src": [
+   0.0,
+   4.5
+  ],
+  "vo": "¿Se rompió la *pestaña* del faro? No compres el faro completo… *todavía*."
+ },
+ {
+  "id": "MG1",
+  "type": "mg",
+  "scene": "why",
+  "vo": "Un faro mal sujeto *vibra*, se *desalinea* y termina *deslumbrando* a otros conductores. Esta pestaña sí importa."
+ },
+ {
+  "id": "F2",
+  "type": "foot",
+  "src": [
+   4.5,
+   20.0
+  ],
+  "vo": "El truco es la *espátula*: sirve de base plana y el plástico fundido no se pega al metal. Y se rellena con varilla del *mismo* *plástico* del faro."
+ },
+ {
+  "id": "MG2",
+  "type": "mg",
+  "scene": "plastic",
+  "vo": "Busca el código grabado en la pieza: *PP*, *ABS* o *PC*. Si mezclas plásticos distintos, no se *fusionan* y se vuelve a romper.",
+  "tts": "Busca el código grabado en la pieza: pe pe, a be ese, o pe ce. Si mezclas plásticos distintos, no se fusionan y se vuelve a romper."
+ },
+ {
+  "id": "F3",
+  "type": "foot",
+  "src": [
+   20.0,
+   27.5
+  ],
+  "vo": "Funde en *capas* *delgadas*: el material penetra mejor y no quedan *burbujas* que debiliten la pieza."
+ },
+ {
+  "id": "F4",
+  "type": "foot",
+  "src": [
+   27.5,
+   52.5
+  ],
+  "vo": "Después se rebaja con disco, cuidando el *grosor*. Trabaja a ratos y sin presionar: si el plástico se *calienta*, se deforma."
+ },
+ {
+  "id": "MG3",
+  "type": "mg",
+  "scene": "thickness",
+  "vo": "Muy *delgada*, se quiebra. Muy *gruesa*, el faro no asienta. Tiene que quedar *igual* que la original."
+ },
+ {
+  "id": "F5",
+  "type": "foot",
+  "src": [
+   52.5,
+   62.2
+  ],
+  "vo": "Al montar, no aprietes de más: es plástico. Revisa la *alineación* de las luces. Y listo: cuesta una *fracción* de un faro nuevo."
+ }
+]
