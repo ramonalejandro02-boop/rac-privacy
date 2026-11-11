@@ -1,0 +1,8 @@
+[
+ {"id": "F1",  "type": "foot", "src": [0.0, 3.4],   "vo": "¿Ramas y troncos sin *valor*? Mira en qué se convierten."},
+ {"id": "MG1", "type": "mg", "scene": "rotor",      "vo": "La trituradora empuja el material hacia un *rotor* con martillos. La *criba* decide el tamaño: *astilla*, *mulch* o *biomasa*."},
+ {"id": "F2",  "type": "foot", "src": [14.6, 19.6], "vo": "Pero la productividad no depende de la máquina, sino de cómo se *alimenta*."},
+ {"id": "MG2", "type": "mg", "scene": "feed",       "vo": "Carga pareja y constante. Si la *saturas*, el rotor pierde revoluciones y produces *menos*, no más."},
+ {"id": "MG3", "type": "mg", "scene": "contam",     "vo": "Piedras, tierra y metal desgastan los *dientes* y pueden dañar el rotor. Sacude la tierra de las *raíces* antes de cargar."},
+ {"id": "MG4", "type": "mg", "scene": "uses",       "vo": "El material sirve como *mulch*, *compost*, cama para *ganado* o *biomasa* para energía. Lo que era un costo, ahora es *ingreso*."}
+]
