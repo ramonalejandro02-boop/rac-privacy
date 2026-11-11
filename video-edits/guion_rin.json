@@ -1,0 +1,9 @@
+[
+ {"id": "F1",  "type": "foot", "src": [0.0, 3.5],   "vo": "¿Rin doblado? Antes de tirarlo, mira cómo se repara *bien*."},
+ {"id": "MG1", "type": "mg", "scene": "heat",       "vo": "A diferencia del acero, el aluminio no cambia de *color* al calentarse. Por eso la temperatura se *mide*: si se pasa, la aleación pierde *resistencia*."},
+ {"id": "F2",  "type": "foot", "src": [3.5, 17.0],  "vo": "El calor solo ayuda a que el metal no se *agriete*. El trabajo real lo hace la *prensa*, empujando en el punto exacto mientras el rin gira."},
+ {"id": "MG2", "type": "mg", "scene": "passes",     "vo": "Se corrige en *pasadas* cortas, midiendo la desviación cada vez. Forzarlo de un solo *golpe* puede agrietar el aluminio."},
+ {"id": "F3",  "type": "foot", "src": [17.0, 44.0], "vo": "¿Cómo saber si tu rin está doblado? El volante *vibra* en carretera, o la llanta pierde *aire* sin estar ponchada."},
+ {"id": "MG3", "type": "mg", "scene": "cracks",     "vo": "Pero ojo: si tiene *grietas* en los rayos o en la cara del rin, no se repara. Se *cambia*. Con la seguridad no se juega."},
+ {"id": "F4",  "type": "foot", "src": [44.0, 57.0], "vo": "Al terminar, siempre se *balancea* y se revisa que no tenga *fugas*. Guarda este video para tu próximo bache."}
+]
