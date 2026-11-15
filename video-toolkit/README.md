@@ -17,6 +17,7 @@ source ~/video-env/bin/activate
 | **Filtro de película** | `scripts/film_look.sh in.mp4 out.mp4 teal-orange` (estilos: `teal-orange`, `kodak`, `noir`, `bleach`, `vintage`, `matrix`, `lut=archivo.cube`) |
 | **Mejorar sonido** | `scripts/clean_audio.sh in.mp4 out.mp4 voz` (presets: `voz`, `podcast`, `ligero`, `musica`) |
 | **Subtítulos automáticos** | `python scripts/subtitles.py in.mp4 --lang es --burn` → `.srt`, `.ass` animado, `.captions.json` |
+| **Tomas de apoyo (B-roll)** | `python scripts/broll.py principal.mp4 out.mp4 --clips apoyo1.mp4 apoyo2.mp4 foto.jpg` (automático) · `--at 4.5 12 --dur 3 2.5` (manual) · `--pip` (persona en recuadro) |
 | **Cortar silencios** (jump cuts) | `scripts/auto_cut.sh in.mp4 out.mp4 normal` · exportar a Premiere/DaVinci: `EXPORT=premiere scripts/auto_cut.sh in.mp4 proyecto.xml` |
 | **Vertical automático** (sigue la cara) | `python scripts/reframe.py horizontal.mp4 vertical.mp4 --aspect 9:16` |
 | **Montaje al ritmo de la música** | `python scripts/beat_sync.py cancion.mp3 --clips carpeta/ -o montaje.mp4 --every 2 --vertical --flash` |
@@ -32,12 +33,17 @@ source ~/video-env/bin/activate
 - `clean_audio.sh`: preset `ia` usa la red neuronal RNNoise (ruido difícil: tráfico, ventiladores, gente). `TARGET=-14` (redes), `-16` (podcast), `-23` (TV); `DENOISE=12` (fuerza de la reducción de ruido).
 - Remotion `WordCaptions`: copia tu video a `remotion/public/video.mp4` y el `.captions.json` de `subtitles.py` a `remotion/public/captions.json`, y renderiza con `--props='{"videoSrc":"video.mp4","captionsFile":"captions.json","highlight":"#ffd60a"}'`.
 
+### Cómo envía el material el usuario
+
+Siempre: **1) el video principal** (la persona hablando) y **2) después las tomas de apoyo** (B-roll: clips o fotos que ilustran lo que se dice).
+
 ### Flujo típico para un Reel
 
 ```bash
 scripts/clean_audio.sh crudo.mp4 1_audio.mp4 voz
 scripts/film_look.sh 1_audio.mp4 2_color.mp4 kodak
-python scripts/text_behind.py 2_color.mp4 3_texto.mp4 --text "NUNCA PARES" --start 0.5 --end 3
+python scripts/broll.py 2_color.mp4 2b_broll.mp4 --clips apoyo1.mp4 apoyo2.mp4
+python scripts/text_behind.py 2b_broll.mp4 3_texto.mp4 --text "NUNCA PARES" --start 0.5 --end 3
 python scripts/subtitles.py 3_texto.mp4 --lang es --burn
 ```
 

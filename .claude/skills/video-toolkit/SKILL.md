@@ -7,6 +7,9 @@ description: Edición de video con el kit del repositorio (video-toolkit/). Úsa
 
 Todo vive en `video-toolkit/`. Lee `video-toolkit/README.md` para la referencia completa de opciones.
 
+## Cómo llega el material
+El usuario siempre envía **primero el video principal** (la persona hablando; su audio manda) y **después las tomas de apoyo** (B-roll). No mezcles su orden: el primer archivo es el principal y los siguientes son de apoyo. Si no está claro cuál es cuál, pregunta antes de editar.
+
 ## Antes de empezar
 1. Si no existe `~/video-env/bin/python`, ejecuta `bash video-toolkit/setup.sh` (tarda unos minutos).
 2. Usa siempre `~/video-env/bin/python` para los scripts de Python.
@@ -17,6 +20,7 @@ Todo vive en `video-toolkit/`. Lee `video-toolkit/README.md` para la referencia 
 - Look de cine → `scripts/film_look.sh` (elige estilo según el ánimo: `teal-orange` acción/moderno, `kodak` cálido, `noir` dramático, `bleach` crudo, `vintage` nostálgico).
 - Audio → `scripts/clean_audio.sh` (`voz` por defecto; `podcast` para ruido fuerte).
 - Subtítulos → `scripts/subtitles.py` (necesita huggingface.co; si falla, díselo al usuario y no inventes la transcripción).
+- Insertar tomas de apoyo sobre el principal (conserva su audio) → `scripts/broll.py`. Colócalas donde ilustren lo que se dice; si hay transcripción, usa los tiempos de las palabras clave con `--at`. No tapes los primeros 2 s (el gancho con la cara). `--pip` deja a la persona en un recuadro.
 - Quitar pausas y silencios → `scripts/auto_cut.sh` (o exportar XML a Premiere/DaVinci con `EXPORT=`).
 - Horizontal a vertical siguiendo a la persona → `scripts/reframe.py`.
 - Montaje al ritmo de una canción → `scripts/beat_sync.py` (también genera `beats.json` para sincronizar animaciones en Remotion).
@@ -28,4 +32,4 @@ Todo vive en `video-toolkit/`. Lee `video-toolkit/README.md` para la referencia 
 ## Verificar
 Extrae un fotograma con `ffmpeg -i out.mp4 -vf "select=eq(n\,60)" -frames:v 1 check.png` y míralo antes de entregar. Para audio, mide con `ffmpeg -i out.mp4 -af ebur128 -f null -`.
 
-Orden recomendado para un video completo: audio → color → texto detrás → subtítulos (los subtítulos siempre al final para que no reciban el filtro de color).
+Orden recomendado para un video completo: cortar silencios del principal → audio → color (principal y tomas de apoyo con el mismo estilo) → insertar tomas de apoyo → texto detrás → motion graphics → subtítulos (los subtítulos siempre al final para que no reciban el filtro de color).
