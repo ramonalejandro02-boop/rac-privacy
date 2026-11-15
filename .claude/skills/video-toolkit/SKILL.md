@@ -1,0 +1,25 @@
+---
+name: video-toolkit
+description: Edición de video con el kit del repositorio (video-toolkit/). Úsala cuando el usuario quiera editar un video o foto, poner texto detrás de una persona, subtítulos automáticos o animados, mejorar/limpiar el audio o la voz, aplicar un filtro o look de película (color grading, grano, LUT, franjas de cine), o crear motion graphics / títulos animados con Remotion.
+---
+
+# Kit de video
+
+Todo vive en `video-toolkit/`. Lee `video-toolkit/README.md` para la referencia completa de opciones.
+
+## Antes de empezar
+1. Si no existe `~/video-env/bin/python`, ejecuta `bash video-toolkit/setup.sh` (tarda unos minutos).
+2. Usa siempre `~/video-env/bin/python` para los scripts de Python.
+3. Trabaja sobre copias: nunca sobrescribas el archivo original del usuario.
+
+## Elegir herramienta
+- Texto detrás de la persona → `scripts/text_behind.py` (mediapipe para video; `--engine rembg` para fotos o bordes con pelo).
+- Look de cine → `scripts/film_look.sh` (elige estilo según el ánimo: `teal-orange` acción/moderno, `kodak` cálido, `noir` dramático, `bleach` crudo, `vintage` nostálgico).
+- Audio → `scripts/clean_audio.sh` (`voz` por defecto; `podcast` para ruido fuerte).
+- Subtítulos → `scripts/subtitles.py` (necesita huggingface.co; si falla, díselo al usuario y no inventes la transcripción).
+- Títulos animados / motion graphics → proyecto Remotion en `video-toolkit/remotion` (componentes en `src/`; añade composiciones en `src/Root.tsx`). Las fuentes deben ser locales en `public/fonts` porque el Chrome del render puede no tener internet.
+
+## Verificar
+Extrae un fotograma con `ffmpeg -i out.mp4 -vf "select=eq(n\,60)" -frames:v 1 check.png` y míralo antes de entregar. Para audio, mide con `ffmpeg -i out.mp4 -af ebur128 -f null -`.
+
+Orden recomendado para un video completo: audio → color → texto detrás → subtítulos (los subtítulos siempre al final para que no reciban el filtro de color).

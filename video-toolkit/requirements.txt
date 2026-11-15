@@ -1,0 +1,6 @@
+numpy
+pillow
+opencv-python-headless
+mediapipe
+rembg[cpu]
+faster-whisper

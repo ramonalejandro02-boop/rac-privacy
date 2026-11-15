@@ -1,0 +1,8 @@
+models/
+remotion/node_modules/
+remotion/out/
+out/
+*.mp4
+*.mov
+*.wav
+!remotion/public/*.mp4
