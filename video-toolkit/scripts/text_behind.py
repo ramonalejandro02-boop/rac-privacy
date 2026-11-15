@@ -12,6 +12,7 @@ Ejemplos:
 Motores:
   mediapipe (por defecto) rápido, ideal para video.
   rembg     más preciso en bordes (pelo), más lento: mejor para fotos o clips cortos.
+            Usa BiRefNet-portrait (calidad máxima). Otro modelo: REMBG_MODEL=u2net_human_seg
 """
 import argparse
 import os
@@ -49,7 +50,7 @@ class Segmenter:
         else:
             from rembg import new_session, remove
             self.remove = remove
-            self.session = new_session("u2net_human_seg")
+            self.session = new_session(os.environ.get("REMBG_MODEL", "birefnet-portrait"))
 
     def close(self):
         if self.engine == "mediapipe":

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Mejora de sonido para voz: quita ruido, zumbido, clics, ecualiza, comprime y normaliza.
 # Uso: ./clean_audio.sh entrada.(mp4|wav|mp3) salida.(mp4|wav|mp3) [preset]
-# Presets: voz (por defecto) | podcast | ligero | musica
+# Presets: voz (por defecto) | ia (red neuronal RNNoise, ruido difícil) | podcast | ligero | musica
 # Variables: TARGET=-14 (LUFS: -14 redes, -16 podcast, -23 TV)  DENOISE=12 (dB de reducción)
 set -euo pipefail
 IN="${1:?entrada}"; OUT="${2:?salida}"; PRESET="${3:-voz}"
@@ -9,6 +9,8 @@ TARGET="${TARGET:-}"; DENOISE="${DENOISE:-12}"
 
 case "$PRESET" in
   voz)     TARGET="${TARGET:--14}"; CHAIN="highpass=f=80,lowpass=f=16000,bandreject=f=50:width_type=h:w=4,bandreject=f=60:width_type=h:w=4,adeclick,afftdn=nr=${DENOISE}:nf=-30:tn=1,equalizer=f=200:t=q:w=1.2:g=-2,equalizer=f=3200:t=q:w=1.5:g=3,equalizer=f=10000:t=h:g=2,deesser=i=0.4,acompressor=threshold=-20dB:ratio=3:attack=10:release=150:makeup=3,alimiter=limit=0.95" ;;
+  ia)      TARGET="${TARGET:--14}"; M="$(cd "$(dirname "$0")/.." && pwd)/models/rnnoise/${RNN:-sh}.rnnn"; [ -f "$M" ] || { echo "Falta $M (ejecuta setup.sh)"; exit 1; }
+           CHAIN="highpass=f=70,aresample=48000,arnndn=m='$M':mix=${MIX:-0.9},adeclick,equalizer=f=200:t=q:w=1.2:g=-2,equalizer=f=3200:t=q:w=1.5:g=3,deesser=i=0.4,acompressor=threshold=-20dB:ratio=3:attack=10:release=150:makeup=3,alimiter=limit=0.95" ;;
   podcast) TARGET="${TARGET:--16}"; CHAIN="highpass=f=90,adeclick,afftdn=nr=$((DENOISE+4)):nf=-28:tn=1,anlmdn=s=4,equalizer=f=150:t=q:w=1:g=2,equalizer=f=400:t=q:w=1.5:g=-3,equalizer=f=4000:t=q:w=1.2:g=3,deesser=i=0.5,acompressor=threshold=-22dB:ratio=4:attack=5:release=120:makeup=4,alimiter=limit=0.95" ;;
   ligero)  TARGET="${TARGET:--14}"; CHAIN="highpass=f=70,afftdn=nr=6:nf=-35,acompressor=threshold=-18dB:ratio=2:makeup=2" ;;
   musica)  TARGET="${TARGET:--14}"; CHAIN="highpass=f=25,acompressor=threshold=-14dB:ratio=1.8:attack=20:release=250,alimiter=limit=0.97" ;;

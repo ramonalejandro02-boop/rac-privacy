@@ -4,3 +4,9 @@ opencv-python-headless
 mediapipe
 rembg[cpu]
 faster-whisper
+auto-editor
+scenedetect
+pedalboard
+noisereduce
+librosa
+soundfile

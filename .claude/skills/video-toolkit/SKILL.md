@@ -1,6 +1,6 @@
 ---
 name: video-toolkit
-description: Edición de video con el kit del repositorio (video-toolkit/). Úsala cuando el usuario quiera editar un video o foto, poner texto detrás de una persona, subtítulos automáticos o animados, mejorar/limpiar el audio o la voz, aplicar un filtro o look de película (color grading, grano, LUT, franjas de cine), o crear motion graphics / títulos animados con Remotion.
+description: Edición de video con el kit del repositorio (video-toolkit/). Úsala cuando el usuario quiera editar un video o foto, poner texto detrás de una persona, subtítulos automáticos o animados, mejorar/limpiar el audio o la voz, efectos de voz, aplicar un filtro o look de película (color grading, grano, LUT, franjas de cine), cortar silencios, pasar a vertical, montar al ritmo de la música, efectos (cámara lenta, estabilizar, glitch, zoom), o crear motion graphics / títulos 3D / rótulos / transiciones con Remotion.
 ---
 
 # Kit de video
@@ -17,7 +17,13 @@ Todo vive en `video-toolkit/`. Lee `video-toolkit/README.md` para la referencia 
 - Look de cine → `scripts/film_look.sh` (elige estilo según el ánimo: `teal-orange` acción/moderno, `kodak` cálido, `noir` dramático, `bleach` crudo, `vintage` nostálgico).
 - Audio → `scripts/clean_audio.sh` (`voz` por defecto; `podcast` para ruido fuerte).
 - Subtítulos → `scripts/subtitles.py` (necesita huggingface.co; si falla, díselo al usuario y no inventes la transcripción).
-- Títulos animados / motion graphics → proyecto Remotion en `video-toolkit/remotion` (componentes en `src/`; añade composiciones en `src/Root.tsx`). Las fuentes deben ser locales en `public/fonts` porque el Chrome del render puede no tener internet.
+- Quitar pausas y silencios → `scripts/auto_cut.sh` (o exportar XML a Premiere/DaVinci con `EXPORT=`).
+- Horizontal a vertical siguiendo a la persona → `scripts/reframe.py`.
+- Montaje al ritmo de una canción → `scripts/beat_sync.py` (también genera `beats.json` para sincronizar animaciones en Remotion).
+- Separar un video largo en escenas → `scripts/scenes.sh`.
+- Cámara lenta, estabilizar, zoom de impacto, glitch, fondo desenfocado vertical, 4K, etc. → `scripts/effects.sh` (sin argumentos lista los efectos).
+- Voz de locutor, tráiler, radio, teléfono, robot, cambio de tono → `scripts/voice_fx.py`. Ruido muy difícil → `clean_audio.sh ... ia`.
+- Títulos animados / motion graphics → proyecto Remotion en `video-toolkit/remotion` (componentes en `src/`; añade composiciones en `src/Root.tsx`). Plantillas: KineticTitle, Title3D, LowerThird, Counter, TransitionsReel, AudioVisualizer, WordCaptions. Las fuentes deben ser locales en `public/fonts` (woff2 para CSS, ttf para textos 3D de drei) porque el Chrome del render puede no tener internet. El 3D y los light leaks necesitan `swangle` (ya en `remotion.config.ts`). Si un render 3D falla una vez sin error claro, reinténtalo.
 
 ## Verificar
 Extrae un fotograma con `ffmpeg -i out.mp4 -vf "select=eq(n\,60)" -frames:v 1 check.png` y míralo antes de entregar. Para audio, mide con `ffmpeg -i out.mp4 -af ebur128 -f null -`.

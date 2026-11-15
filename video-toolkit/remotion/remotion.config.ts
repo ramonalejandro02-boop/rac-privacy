@@ -6,3 +6,5 @@ const CLOUD_CHROME = "/opt/pw-browsers/chromium_headless_shell-1243/chrome-headl
 if (fs.existsSync(CLOUD_CHROME)) Config.setBrowserExecutable(CLOUD_CHROME);
 Config.setVideoImageFormat("jpeg");
 Config.setConcurrency(4);
+// Gráficos por software: necesario para 3D (three.js) y light leaks en servidores sin GPU
+Config.setChromiumOpenGlRenderer("swangle");
