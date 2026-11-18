@@ -23,12 +23,12 @@ BRAND = "@Alejandro Curiosidades"
 
 GUIONES = {
     "noe": [
-        dict(texto="Este hombre construyó un barco *GIGANTE*… sin que hubiera una sola nube en el cielo."),
-        dict(texto="Seguramente le dijeron *LOCO*. Se reían de él."),
-        dict(texto="Pero Noé no construía por lo que veía… sino por lo que *DIOS* le había dicho."),
-        dict(texto="Y un día… el cielo se oscureció. Y comenzó a *LLOVER*.", sfx="trueno"),
-        dict(texto="Hebreos 11:7: Por la fe Noé, cuando fue advertido por Dios acerca de cosas que *AÚN* *NO* *SE* *VEÍAN*… preparó el arca."),
-        dict(texto="Lo que Dios te prometió, aunque hoy no lo veas… va a *LLEGAR*. Escribe *LO* *CREO* si estás construyendo tu arca."),
+        dict(dur=5, texto="Este hombre construyó un barco *GIGANTE*… sin que hubiera una sola nube en el cielo."),
+        dict(dur=5, texto="Seguramente le dijeron *LOCO*. Se reían de él."),
+        dict(dur=6, texto="Pero Noé no construía por lo que veía… sino por lo que *DIOS* le había dicho."),
+        dict(dur=5, texto="Y un día… el cielo se oscureció. Y comenzó a *LLOVER*.", sfx="trueno"),
+        dict(dur=9, texto="Hebreos 11:7: Por la fe Noé, cuando fue advertido por Dios acerca de cosas que *AÚN* *NO* *SE* *VEÍAN*… preparó el arca."),
+        dict(dur=8, texto="Lo que Dios te prometió, aunque hoy no lo veas… va a *LLEGAR*. Escribe *LO* *CREO* si estás construyendo tu arca."),
     ],
 }
 
@@ -169,11 +169,22 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
             add(bandnoise(0.35, 300, 4000) * np.sin(np.pi * t_ / 0.35) ** 2, a - 0.18, 0.18)
         if guion[i].get("sfx") == "trueno":
             t_ = np.arange(int(2.5 * SR)) / SR
-            add(bandnoise(2.5, 30, 400) * np.exp(-t_ * 1.5), a + 0.2, 0.45)
+            add(bandnoise(2.5, 30, 400) * np.exp(-t_ * 1.5), a + 2.3, 0.5); add(bandnoise(0.2, 2000, 12000) * np.exp(-t_[:int(0.2 * SR)] * 25), a + 2.3, 0.3)
     for kt in kw_times:
         t_ = np.arange(int(0.9 * SR)) / SR
         add(np.sin(2 * np.pi * np.cumsum(40 + 100 * np.exp(-t_ * 9)) / SR) * np.exp(-t_ * 4), kt, 0.22)
-    if music_path:
+    if music_path == "PAD":
+        # música suave generada: acordes cálidos tipo piano/pad (I–V–vi–IV en Do)
+        prog = [[130.81, 164.81, 196.0, 261.63], [98.0, 146.83, 196.0, 246.94], [110.0, 164.81, 220.0, 261.63], [87.31, 130.81, 174.61, 220.0]]
+        bar = 2.4; k = 0; t0 = 0.0
+        while t0 < total:
+            m = int((bar + 1.5) * SR); t_ = np.arange(m) / SR
+            env = np.minimum(1, t_ / 0.04) * np.exp(-t_ * 0.9)
+            sig = sum(np.sin(2 * np.pi * f * t_) + 0.3 * np.sin(4 * np.pi * f * t_) * np.exp(-t_ * 3) for f in prog[k % 4])
+            pad = sum(np.sin(2 * np.pi * f * 1.003 * t_) for f in prog[k % 4]) * np.minimum(1, t_ / 0.8) * np.minimum(1, np.maximum(0, (bar + 1.5 - t_) / 1.0))
+            add(sig * env * 0.05 + pad * 0.025, t0, 1.0); t0 += bar; k += 1
+        fade = np.ones(n); fade[-2 * SR:] = np.linspace(1, 0, 2 * SR); out *= fade
+    elif music_path:
         mus = load_voice(music_path)
         if len(mus) < n: mus = np.tile(mus, n // len(mus) + 1)
         mus = mus[:n]
@@ -191,20 +202,29 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
 def main(name):
     folder = os.path.join(HERE, name); guion = GUIONES[name]
     vpath = find(folder, "voz", ["m4a", "mp3", "wav", "ogg", "opus", "aac", "mp4"])
-    if not vpath: sys.exit(f"Falta la voz en {folder}/voz.m4a")
     srcs = [find(folder, f"escena{i+1}", ["mp4", "mov", "jpg", "jpeg", "png", "webp"]) for i in range(len(guion))]
     missing = [i + 1 for i, s in enumerate(srcs) if not s]
     if missing: sys.exit(f"Faltan escenas: {missing}")
     music = find(folder, "musica", ["mp3", "m4a", "wav"])
-    print("Analizando tu voz…")
-    segs, total = split_voice(vpath, [g["texto"] for g in guion])
+    if vpath:
+        print("Analizando tu voz…")
+        segs, total = split_voice(vpath, [g["texto"] for g in guion])
+        voice = load_voice(vpath)
+    else:
+        print("Sin voz: uso duraciones por escena, texto en pantalla y música de fondo.")
+        segs, a = [], 0.0
+        for g in guion:
+            d = g.get("dur") or max(3.5, len(g["texto"]) * 0.062)
+            segs.append((a, a + d, a + 0.35, a + d - 0.5)); a += d
+        total = a; voice = np.zeros(int(total * SR))
+        if not music: music = "PAD"
     for i, s in enumerate(segs): print(f"  escena {i+1}: {s[0]:.2f}–{s[1]:.2f} s  (habla {s[2]:.2f}–{s[3]:.2f})")
     allwords = []
     for g, (a, b, s0, s1) in zip(guion, segs):
         ws = words_with_times(g["texto"], s0, s1); g["chunks"] = chunks(ws); allwords += ws
     kw_times = [w["t0"] for w in allwords if w["kw"]]
-    apath = build_audio(load_voice(vpath), total, segs, guion, music, kw_times)
-    out = os.path.join(folder, "reel_final.mp4")
+    apath = build_audio(voice, total, segs, guion, music, kw_times)
+    out = os.path.join(folder, "reel_final.mp4" if vpath else "reel_sin_voz.mp4")
     proc = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
                              "-i", apath, "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "medium", "-crf", "21",
                              "-maxrate", "8M", "-bufsize", "16M", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
