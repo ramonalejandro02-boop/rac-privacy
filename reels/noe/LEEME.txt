@@ -1,0 +1,5 @@
+Pon aquí los archivos del reel de Noé:
+  voz.m4a          (tu voz en off, con 1 segundo de pausa entre escenas)
+  escena1 ... escena6   (.mp4 animados o .jpg/.png si solo tienes imágenes)
+  musica.mp3       (opcional)
+Luego:  python3 armar_reel.py noe   ->  noe/reel_final.mp4
