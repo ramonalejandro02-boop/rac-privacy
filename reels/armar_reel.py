@@ -20,6 +20,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 F_BLACK = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
 YELLOW, WHITE = (255, 212, 0), (255, 255, 255)
 BRAND = "@Alejandro Curiosidades"
+GOLD = (242, 193, 78)
+ESTILO = os.environ.get("ESTILO", "cine")  # "cine" (elegante, adultos) o "viral" (recuadros amarillos)
 
 GUIONES = {
     "noe": [
@@ -131,7 +133,7 @@ def chunks(words, maxw=3, maxchars=18):
 
 def draw_caption(img, chunk, t):
     size = 92; f = font(size); sp = 26
-    ws = [f.getlength(w["w"]) + (40 if w["kw"] else 0) for w in chunk]
+    ws = [f.getlength(w["w"]) + (40 if w["kw"] and ESTILO == "viral" else 0) for w in chunk]
     total = sum(ws) + sp * (len(chunk) - 1)
     scale = min(1, 980 / total); f2 = font(int(size * scale)) if scale < 1 else f
     ws = [x * scale for x in ws]; total = min(total, 980)
@@ -143,11 +145,13 @@ def draw_caption(img, chunk, t):
         active = w["t0"] <= t < w["t1"]
         pop = min(1, (t - w["t0"]) / 0.12)
         dy = int((1 - pop) * 18)
-        if w["kw"]:
+        if w["kw"] and ESTILO == "cine":
+            d.text((x, 66 + dy), w["w"], font=f2, fill=GOLD + (255,), stroke_width=5, stroke_fill=(20, 10, 0, 255))
+        elif w["kw"]:
             d.rounded_rectangle([x, 60 + dy, x + ww, 60 + dy + f2.size * 1.22], radius=18, fill=YELLOW + (255,))
             d.text((x + 20 * scale, 66 + dy), w["w"], font=f2, fill=(0, 0, 0, 255))
         else:
-            d.text((x, 66 + dy), w["w"], font=f2, fill=(YELLOW if active else WHITE) + (255,),
+            d.text((x, 66 + dy), w["w"], font=f2, fill=((255, 232, 190) if ESTILO == "cine" and active else YELLOW if active else WHITE) + (255,),
                    stroke_width=6, stroke_fill=(0, 0, 0, 255))
         x += ww + sp
     sh = lay.getchannel("A").filter(ImageFilter.GaussianBlur(12)).point(lambda v: int(v * 0.6))
@@ -175,14 +179,14 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
         add(np.sin(2 * np.pi * np.cumsum(40 + 100 * np.exp(-t_ * 9)) / SR) * np.exp(-t_ * 4), kt, 0.22)
     if music_path == "PAD":
         # música suave generada: acordes cálidos tipo piano/pad (I–V–vi–IV en Do)
-        prog = [[130.81, 164.81, 196.0, 261.63], [98.0, 146.83, 196.0, 246.94], [110.0, 164.81, 220.0, 261.63], [87.31, 130.81, 174.61, 220.0]]
-        bar = 2.4; k = 0; t0 = 0.0
+        prog = [[110.0, 130.81, 164.81, 220.0], [87.31, 130.81, 174.61, 220.0], [130.81, 164.81, 196.0, 261.63], [98.0, 146.83, 196.0, 246.94]]  # Am–F–C–G, más cinematográfico
+        bar = 3.2; k = 0; t0 = 0.0
         while t0 < total:
             m = int((bar + 1.5) * SR); t_ = np.arange(m) / SR
             env = np.minimum(1, t_ / 0.04) * np.exp(-t_ * 0.9)
             sig = sum(np.sin(2 * np.pi * f * t_) + 0.3 * np.sin(4 * np.pi * f * t_) * np.exp(-t_ * 3) for f in prog[k % 4])
             pad = sum(np.sin(2 * np.pi * f * 1.003 * t_) for f in prog[k % 4]) * np.minimum(1, t_ / 0.8) * np.minimum(1, np.maximum(0, (bar + 1.5 - t_) / 1.0))
-            add(sig * env * 0.05 + pad * 0.025, t0, 1.0); t0 += bar; k += 1
+            add(sig * env * 0.035 + pad * 0.035, t0, 1.0); t0 += bar; k += 1
         fade = np.ones(n); fade[-2 * SR:] = np.linspace(1, 0, 2 * SR); out *= fade
     elif music_path:
         mus = load_voice(music_path)
@@ -232,19 +236,22 @@ def main(name):
     yy, xx = np.mgrid[0:H, 0:W]
     vign = (1 - 0.55 * np.clip(np.sqrt(((xx - W / 2) / (W * 0.8)) ** 2 + ((yy - H / 2) / (H * 0.8)) ** 2), 0, 1) ** 2.4)[:, :, None].astype(np.float32)
     fn = 0
+    grain = [np.random.default_rng(i).normal(0, 7, (H // 2, W // 2, 1)).astype(np.float32).repeat(2, 0).repeat(2, 1) for i in range(4)]
     for i, (g, src, (a, b, s0, s1)) in enumerate(zip(guion, srcs, segs)):
         print(f"Renderizando escena {i+1}…")
         dur = b - a
         for k, fr in enumerate(scene_frames(src, dur, i)):
             t = a + k / FPS
             arr = fr.astype(np.float32) * vign
+            if ESTILO == "cine":
+                arr = (arr - 128) * 1.08 + 128 + grain[k % len(grain)]
             lt = k / FPS
             if i > 0 and lt < 0.1: arr += (1 - lt / 0.1) * 200
             img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8)).convert("RGBA")
             cur = next((c for c in g["chunks"] if c[0]["t0"] - 0.02 <= t < c[-1]["t1"] + 0.25), None)
             if cur: draw_caption(img, cur, t)
             d = ImageDraw.Draw(img)
-            d.rectangle([0, 0, W, 14], fill=(0, 0, 0, 120)); d.rectangle([0, 0, int(W * t / total), 14], fill=YELLOW + (255,))
+            d.rectangle([0, 0, W, 14], fill=(0, 0, 0, 120)); d.rectangle([0, 0, int(W * t / total), 14], fill=(GOLD if ESTILO == "cine" else YELLOW) + (255,))
             d.text((W / 2, 150), BRAND, font=font(40), fill=(255, 255, 255, 190), anchor="mm", stroke_width=2, stroke_fill=(0, 0, 0, 140))
             out_img = img.convert("RGB")
             # pequeño golpe de zoom en palabras clave
