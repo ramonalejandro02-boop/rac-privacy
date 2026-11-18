@@ -47,8 +47,9 @@ def duration(path):
     return float(run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path]).stdout.strip())
 
 # ------------------------------------------------------------ voz ----------
-def load_voice(path):
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-ac", "1", "-ar", str(SR), "-f", "s16le", "-"], capture_output=True, check=True).stdout
+def load_voice(path, clean=False):
+    af = ["-af", "highpass=f=80,acompressor=threshold=-20dB:ratio=3:attack=5:release=120,loudnorm=I=-15:TP=-1.5"] if clean else []
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, *af, "-ac", "1", "-ar", str(SR), "-f", "s16le", "-"], capture_output=True, check=True).stdout
     return np.frombuffer(raw, np.int16).astype(np.float64) / 32768
 
 def detect_silences(path, noise_db):
@@ -75,7 +76,14 @@ def split_voice(path, texts):
         print("  Aviso: no encontré suficientes pausas; reparto por longitud del texto.")
         lens = np.array([len(t) for t in texts], float); acc = np.cumsum(lens) / lens.sum()
         span = tail - lead
-        cuts = [(lead + span * a, lead + span * a) for a in acc[:-1]]
+        # ajusta cada corte a la respiración (punto de menor energía) más cercana
+        x = load_voice(path); hop = int(0.02 * SR)
+        env = np.sqrt(np.convolve(x ** 2, np.ones(hop * 15) / (hop * 15), "same")[::hop])
+        cuts = []
+        for a_ in acc[:-1]:
+            c = lead + span * a_; i0, i1 = int((c - 1.6) / 0.02), int((c + 1.6) / 0.02)
+            i0, i1 = max(i0, 1), min(i1, len(env) - 1); k = i0 + int(np.argmin(env[i0:i1])); tc = k * 0.02
+            cuts.append((tc - 0.05, tc + 0.05))
     segs = []; prev_end = 0.0; speech_start = lead
     for i in range(n):
         if i < n - 1:
@@ -99,6 +107,8 @@ def scene_frames(src, dur, idx):
     else:
         vf = (f"fps={FPS},scale={int(W*1.06)}:{int(H*1.06)}:force_original_aspect_ratio=increase,"
               f"crop={int(W*1.06)}:{int(H*1.06)},scale={W}:{H}")
+        cd = duration(src)
+        if dur > cd: vf = f"setpts={dur / cd:.4f}*PTS," + vf  # estira el clip en vez de repetirlo
         cmd = ["ffmpeg", "-v", "error", "-stream_loop", "-1", "-i", src, "-an", "-vf", vf, "-frames:v", str(n), "-f", "rawvideo", "-pix_fmt", "rgb24", "-"]
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
     size = W * H * 3; last = None
@@ -205,7 +215,7 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
 # ------------------------------------------------------------ principal ----
 def main(name):
     folder = os.path.join(HERE, name); guion = GUIONES[name]
-    vpath = find(folder, "voz", ["m4a", "mp3", "wav", "ogg", "opus", "aac", "mp4"])
+    vpath = find(folder, "voz", ["m4a", "mp3", "wav", "ogg", "opus", "aac", "mp4", "mov"])
     srcs = [find(folder, f"escena{i+1}", ["mp4", "mov", "jpg", "jpeg", "png", "webp"]) for i in range(len(guion))]
     missing = [i + 1 for i, s in enumerate(srcs) if not s]
     if missing: sys.exit(f"Faltan escenas: {missing}")
@@ -213,7 +223,8 @@ def main(name):
     if vpath:
         print("Analizando tu voz…")
         segs, total = split_voice(vpath, [g["texto"] for g in guion])
-        voice = load_voice(vpath)
+        voice = load_voice(vpath, clean=True)
+        if not music: music = "PAD"
     else:
         print("Sin voz: uso duraciones por escena, texto en pantalla y música de fondo.")
         segs, a = [], 0.0
