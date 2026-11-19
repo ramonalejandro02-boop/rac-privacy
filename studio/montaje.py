@@ -48,16 +48,32 @@ VENV_VOZ = os.environ.get("STUDIO_VENV_VOZ", "/home/user/venv-voz/bin/python")
 _clon = {}   # texto -> wav pre-generado con la voz clonada
 
 
-def preparar_clon(textos, ref, tmp):
-    """Genera de una vez todas las frases con la voz clonada (carga el modelo una sola vez)."""
-    tj = os.path.join(tmp, "textos.json")
-    json.dump(textos, open(tj, "w"), ensure_ascii=False)
-    carpeta = os.path.join(tmp, "clon")
-    log(f"clonando voz para {len(textos)} frases (≈30 s cada una)...")
-    subprocess.run([VENV_VOZ, os.path.join(AQUI, "clonar_voz.py"), "--ref", ref, "--textos", tj,
-                    "--salida", carpeta], check=True)
-    for i, t in enumerate(textos):
-        _clon[t] = os.path.join(carpeta, f"vo_{i:03d}.wav")
+CACHE_VOZ = os.environ.get("STUDIO_CACHE_VOZ", os.path.join(MODELOS, "cache_voz"))
+
+
+def _clave_voz(ref_original, texto):
+    import hashlib
+    h = hashlib.sha1(open(ref_original, "rb").read()).hexdigest()[:12]
+    return os.path.join(CACHE_VOZ, h, hashlib.sha1(texto.encode()).hexdigest()[:16] + ".wav")
+
+
+def preparar_clon(textos, ref, tmp, ref_original):
+    """Genera de una vez las frases con la voz clonada (carga el modelo una sola vez). Usa caché."""
+    import shutil
+    faltan = [t for t in textos if not os.path.exists(_clave_voz(ref_original, t))]
+    if faltan:
+        tj = os.path.join(tmp, "textos.json")
+        json.dump(faltan, open(tj, "w"), ensure_ascii=False)
+        carpeta = os.path.join(tmp, "clon")
+        log(f"clonando voz para {len(faltan)} frases (≈30 s cada una)...")
+        subprocess.run([VENV_VOZ, os.path.join(AQUI, "clonar_voz.py"), "--ref", ref, "--textos", tj,
+                        "--salida", carpeta], check=True)
+        for i, t in enumerate(faltan):
+            dst = _clave_voz(ref_original, t)
+            os.makedirs(os.path.dirname(dst), exist_ok=True)
+            shutil.copy(os.path.join(carpeta, f"vo_{i:03d}.wav"), dst)
+    for t in textos:
+        _clon[t] = _clave_voz(ref_original, t)
 
 
 def voz_en_off(texto, salida, velocidad=0.9):
@@ -81,6 +97,14 @@ def voz_en_off(texto, salida, velocidad=0.9):
                     "-af", "highpass=f=80,acompressor=threshold=-18dB:ratio=3,volume=1.6", salida], check=True)
     with wave.open(salida) as w:
         x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32) / 32768
+    # recortar silencios al inicio y al final
+    # (ignora ruiditos sueltos: solo cuentan tramos de voz de 0.25 s o más)
+    env = np.convolve(np.abs(x), np.ones(int(0.05 * SR)) / int(0.05 * SR), "same")
+    activo = env > env.max() * 0.06
+    bordes = np.flatnonzero(np.diff(np.concatenate([[0], activo.astype(np.int8), [0]])))
+    tramos = [(a, b) for a, b in zip(bordes[::2], bordes[1::2]) if b - a >= 0.25 * SR]
+    if tramos:
+        x = x[max(0, tramos[0][0] - int(0.05 * SR)):min(len(x), tramos[-1][1] + int(0.2 * SR))]
     return x
 
 
@@ -303,7 +327,7 @@ def main():
         ref = os.path.join(tmp, "ref.wav")
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.mi_voz, "-t", "30", "-ac", "1", "-ar", "24000",
                         "-af", "highpass=f=70,afftdn=nf=-25,loudnorm=I=-18", ref], check=True)
-        preparar_clon([s["voz"] for s in plan["secuencia"] if "voz" in s], ref, tmp)
+        preparar_clon([s["voz"] for s in plan["secuencia"] if "voz" in s], ref, tmp, args.mi_voz)
 
     base = args.base
     if not base:
