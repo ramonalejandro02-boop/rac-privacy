@@ -156,6 +156,15 @@ def recorte_sticker(src, t, caja, alto_obj=1000, ancho_max=980):
     if n > 1:
         k = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
         m = (lab == k).astype(np.uint8)
+    # rellenar huecos internos (ropa oscura confundida con el fondo)
+    inv = (1 - m).astype(np.uint8)
+    n2, lab2, st2, _ = cv2.connectedComponentsWithStats(inv)
+    hh, ww = m.shape
+    for k in range(1, n2):
+        x, y, w2, h2, a = st2[k]
+        if x > 0 and x + w2 < ww and y > 0:          # no toca bordes laterales/arriba = hueco
+            m[lab2 == k] = 1
+    m = cv2.morphologyEx(m, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15)))
     m = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 1.5)
     pad = 40
     ch, cw = crop.shape[:2]

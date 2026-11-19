@@ -480,6 +480,12 @@ def main():
     fps = cap.get(cv2.CAP_PROP_FPS) or 30
     n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     sw, sh = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    paso = max(1, round(fps / 30))          # 60 fps -> procesar a 30
+    fps, n = fps / paso, n // paso
+    rf = plan.get("recorte_fuente")        # [x0,y0,x1,y1] relativo: quita textos/bordes del original
+    if rf:
+        rx0, ry0, rx1, ry1 = int(rf[0] * sw), int(rf[1] * sh), int(rf[2] * sw), int(rf[3] * sh)
+        sw, sh = rx1 - rx0, ry1 - ry0
     dur = n / fps
 
     audio = tiene_audio(src)
@@ -534,8 +540,12 @@ def main():
     i = 0
     while True:
         ok, fr = cap.read()
+        for _ in range(paso - 1):
+            cap.grab()
         if not ok:
             break
+        if rf:
+            fr = fr[ry0:ry1, rx0:rx1]
         t = i / fps
         e = float(min(energia[min(i, len(energia) - 1)], 1.0))
         cv = fondo.frame(t, e).astype(np.float32)

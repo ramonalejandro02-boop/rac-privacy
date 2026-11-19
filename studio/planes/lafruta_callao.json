@@ -1,0 +1,497 @@
+{
+ "base": {
+  "estilo": "farandula",
+  "recorte_fuente": [
+   0,
+   0.205,
+   1,
+   0.893
+  ],
+  "titulo": "LA FRUTA NO SABE\nCOMER CALLAO 🤫😂",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "subs_y": 0.875,
+  "claves": [
+   "callao",
+   "repite",
+   "famosa",
+   "bacana",
+   "heavy",
+   "insuperable",
+   "desahogo",
+   "morir",
+   "saber"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 4.1,
+    "x": 0.37,
+    "y": 0.38,
+    "s": 1.35
+   },
+   {
+    "t": 2.78,
+    "tipo": "emoji",
+    "emoji": "🤫",
+    "x": 0.82,
+    "y": 0.4,
+    "size": 230,
+    "dur": 1.3,
+    "sfx": "pop"
+   },
+   {
+    "t": 5.8,
+    "tipo": "zoom",
+    "dur": 4.5,
+    "x": 0.37,
+    "y": 0.38,
+    "s": 1.5
+   },
+   {
+    "t": 8.46,
+    "tipo": "emoji",
+    "emoji": "💃",
+    "x": 0.82,
+    "y": 0.42,
+    "size": 230,
+    "dur": 1.8,
+    "sfx": "ding",
+    "vol": 0.6
+   },
+   {
+    "t": 9.44,
+    "tipo": "emoji",
+    "emoji": "🔥",
+    "x": 0.18,
+    "y": 0.45,
+    "size": 200,
+    "dur": 0.85,
+    "sfx": "pop"
+   },
+   {
+    "t": 10.3,
+    "tipo": "zoom",
+    "dur": 3.2,
+    "x": 0.37,
+    "y": 0.38,
+    "s": 1.6
+   },
+   {
+    "t": 11.34,
+    "tipo": "emoji",
+    "emoji": "🗣️",
+    "x": 0.82,
+    "y": 0.4,
+    "size": 220,
+    "dur": 1.1,
+    "sfx": "whoosh"
+   },
+   {
+    "t": 12.5,
+    "tipo": "sticker",
+    "texto": "¡LO SOLTÓ! 😳",
+    "fondo": "#FFE600",
+    "dur": 1.0,
+    "y": 0.235,
+    "rot": -5,
+    "size": 96,
+    "sfx": "boom",
+    "vol": 0.6,
+    "temblor": true,
+    "flash": true
+   },
+   {
+    "t": 14.7,
+    "tipo": "zoom",
+    "dur": 1.45,
+    "x": 0.37,
+    "y": 0.38,
+    "s": 1.5
+   },
+   {
+    "t": 15.0,
+    "tipo": "emoji",
+    "emoji": "😮‍💨",
+    "x": 0.82,
+    "y": 0.42,
+    "size": 210,
+    "dur": 1.0
+   },
+   {
+    "t": 15.55,
+    "tipo": "zoom",
+    "dur": 0.6,
+    "x": 0.37,
+    "y": 0.38,
+    "s": 1.5
+   },
+   {
+    "t": 16.1,
+    "tipo": "zoom",
+    "dur": 1.3,
+    "x": 0.37,
+    "y": 0.36,
+    "s": 2.0,
+    "rampa": 0.08
+   },
+   {
+    "t": 16.16,
+    "tipo": "emoji",
+    "emoji": "💀",
+    "x": 0.18,
+    "y": 0.45,
+    "size": 240,
+    "dur": 1.2,
+    "sfx": "boing",
+    "temblor": true
+   },
+   {
+    "t": 16.5,
+    "tipo": "sticker",
+    "texto": "¿¿Y NADIE VA A SABER?? 🤐",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 0.9,
+    "y": 0.235,
+    "rot": 4
+   },
+   {
+    "t": 19.9,
+    "tipo": "zoom",
+    "dur": 1.7,
+    "x": 0.22,
+    "y": 0.32,
+    "s": 1.4
+   },
+   {
+    "t": 20.3,
+    "tipo": "rafaga",
+    "emoji": "🤣😂",
+    "x": 0.5,
+    "y": 0.45,
+    "dur": 1.3,
+    "n": 10,
+    "sfx": "pop"
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    15.55,
+    17.4
+   ]
+  },
+  {
+   "congelar": 16.3,
+   "caja": [
+    0.23,
+    0.37,
+    0.5,
+    0.555
+   ],
+   "estilo": "noticiero",
+   "texto": "⏪ ESPÉRATE...\nDESDE EL PRINCIPIO",
+   "fondo": "#FFFFFF",
+   "voz": "Espérate, espérate... ¿Cómo que nadie va a saber? Vamos desde el principio.",
+   "claves": [
+    "espérate",
+    "principio"
+   ],
+   "props": [
+    {
+     "emoji": "⏪",
+     "anim": "crece",
+     "x": 0.2,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 220,
+     "sfx": "scratch"
+    },
+    {
+     "emoji": "🤔",
+     "anim": "pulso",
+     "x": 0.82,
+     "y": 0.42,
+     "t": 1.2,
+     "size": 210
+    }
+   ]
+  },
+  {
+   "orig": [
+    0.0,
+    1.3
+   ]
+  },
+  {
+   "orig": [
+    2.7,
+    4.1
+   ]
+  },
+  {
+   "congelar": 3.2,
+   "caja": [
+    0.23,
+    0.37,
+    0.5,
+    0.555
+   ],
+   "estilo": "neon",
+   "texto": "COME CALLAO...\nCON BOCINA 📢",
+   "fondo": "#00E5FF",
+   "voz": "El que come callao repite, dice... y este tíguere come con bocina y altoparlante.",
+   "claves": [
+    "callao",
+    "bocina",
+    "altoparlante"
+   ],
+   "props": [
+    {
+     "emoji": "🤫",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.4,
+     "size": 210,
+     "sfx": "pop"
+    },
+    {
+     "emoji": "📢",
+     "anim": "desliza",
+     "desde": "der",
+     "x": 0.82,
+     "y": 0.7,
+     "t": 1.6,
+     "size": 240,
+     "sfx": "boing"
+    },
+    {
+     "emoji": "🍽️",
+     "anim": "rebote",
+     "x": 0.2,
+     "y": 0.72,
+     "t": 2.4,
+     "size": 220,
+     "sfx": "pop"
+    }
+   ]
+  },
+  {
+   "orig": [
+    5.8,
+    10.3
+   ]
+  },
+  {
+   "congelar": 9.0,
+   "caja": [
+    0.23,
+    0.37,
+    0.5,
+    0.555
+   ],
+   "estilo": "farandula",
+   "texto": "SOÑAR NO\nCUESTA NA' 💭",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Una mujer famosa, bacana, heavy... Tranquilo, mi loco, que soñar no cuesta na'.",
+   "claves": [
+    "famosa",
+    "soñar"
+   ],
+   "props": [
+    {
+     "emoji": "💭",
+     "anim": "crece",
+     "x": 0.2,
+     "y": 0.4,
+     "t": 0.5,
+     "size": 240,
+     "sfx": "silbido"
+    },
+    {
+     "emoji": "⭐",
+     "anim": "orbita",
+     "x": 0.5,
+     "y": 0.52,
+     "radio": 420,
+     "fase": 0,
+     "size": 150
+    },
+    {
+     "emoji": "⭐",
+     "anim": "orbita",
+     "x": 0.5,
+     "y": 0.52,
+     "radio": 420,
+     "fase": 3.14,
+     "size": 150
+    },
+    {
+     "emoji": "😴",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.72,
+     "t": 2.6,
+     "size": 220,
+     "sfx": "boing"
+    }
+   ]
+  },
+  {
+   "orig": [
+    10.3,
+    13.5
+   ]
+  },
+  {
+   "congelar": 12.6,
+   "caja": [
+    0.23,
+    0.37,
+    0.5,
+    0.555
+   ],
+   "estilo": "drama",
+   "temblor": true,
+   "texto": "SECRETO\nEXPRESS ⏱️",
+   "fondo": "#FF4A1C",
+   "color": "#FFFFFF",
+   "voz": "Ahí mismito se le cayó el secreto. Duró menos que un pica pollo en un colmado.",
+   "claves": [
+    "secreto",
+    "colmado"
+   ],
+   "props": [
+    {
+     "emoji": "⏱️",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.4,
+     "size": 210,
+     "sfx": "ding"
+    },
+    {
+     "emoji": "🏃",
+     "anim": "cruza",
+     "y": 0.8,
+     "t": 1.2,
+     "size": 200,
+     "sfx": "whoosh",
+     "dur_cruce": 1.8
+    },
+    {
+     "emoji": "🍗",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.72,
+     "t": 2.4,
+     "size": 220,
+     "sfx": "pop"
+    }
+   ]
+  },
+  {
+   "orig": [
+    14.7,
+    17.4
+   ]
+  },
+  {
+   "congelar": 16.4,
+   "caja": [
+    0.23,
+    0.37,
+    0.5,
+    0.555
+   ],
+   "estilo": "neon",
+   "texto": "BOCA SUELTA\nNIVEL DIOS 🗣️",
+   "fondo": "#FFE600",
+   "voz": "Diache, el hombre prefiere morirse que guardar un secreto. Ese no aguanta ni un chisme de WhatsApp.",
+   "claves": [
+    "diache",
+    "secreto",
+    "chisme"
+   ],
+   "props": [
+    {
+     "emoji": "🗣️",
+     "anim": "crece",
+     "x": 0.2,
+     "y": 0.42,
+     "t": 0.4,
+     "size": 230,
+     "sfx": "boom"
+    },
+    {
+     "emoji": "💀",
+     "anim": "pulso",
+     "x": 0.82,
+     "y": 0.4,
+     "t": 1.3,
+     "size": 200,
+     "sfx": "boing"
+    },
+    {
+     "emoji": "📱",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.72,
+     "t": 2.4,
+     "size": 210,
+     "sfx": "pop"
+    }
+   ]
+  },
+  {
+   "orig": [
+    19.9,
+    21.6
+   ]
+  },
+  {
+   "congelar": 20.6,
+   "caja": [
+    0.0,
+    0.3,
+    0.36,
+    0.75
+   ],
+   "estilo": "farandula",
+   "texto": "¿TÚ COMES CALLAO\nO ERES COMO ÉL? 🤫👇",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Y tú, ¿comes callao o eres como él? Déjalo en los comentarios.",
+   "claves": [
+    "callao",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🤫",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.7,
+     "t": 0.6,
+     "size": 210,
+     "sfx": "pop"
+    },
+    {
+     "emoji": "🗣️",
+     "anim": "pulso",
+     "x": 0.82,
+     "y": 0.7,
+     "t": 1.3,
+     "size": 210,
+     "sfx": "boing"
+    }
+   ]
+  }
+ ]
+}
