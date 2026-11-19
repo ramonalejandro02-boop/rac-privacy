@@ -261,6 +261,13 @@ def sintetizar(nombre):
             parts.append((np.sin(ph) + 0.35 * np.sin(3 * ph) + 0.15 * np.sin(5 * ph))
                          * np.minimum(1, t * 40) * np.minimum(1, (t[-1] - t) * 10))
         y = np.concatenate(parts)
+    elif nombre == "scratch":   # disco rayado (congelado de imagen)
+        t = tt(0.45)
+        f = 300 + 1700 * np.abs(np.sin(2 * np.pi * 2.6 * t)) * np.exp(-t * 1.5)
+        ph = _fase(f)
+        saw = 2 * ((ph / (2 * np.pi)) % 1) - 1
+        n = np.random.default_rng(3).standard_normal(len(t)) * 0.25
+        y = (saw * 0.7 + n) * np.exp(-t * 3) * np.minimum(1, t * 200)
     elif nombre == "boom":
         t = tt(1.3)
         y = np.tanh(3 * np.sin(_fase(65 * np.exp(-t * 1.8) + 32))) * np.exp(-t * 3.2)
@@ -461,6 +468,7 @@ def main():
     ap.add_argument("--estilo", default=None)
     ap.add_argument("--whisper", default="large-v3-turbo")
     ap.add_argument("--vol-sfx", type=float, default=0.5)
+    ap.add_argument("--sin-barra", action="store_true")
     args = ap.parse_args()
 
     plan = json.load(open(args.plan)) if args.plan else {}
@@ -548,7 +556,8 @@ def main():
         evs.dibujar(cv, t)
         if subs:
             subs.dibujar(cv, t)
-        cv2.rectangle(cv, (0, H - 14), (int(W * t / dur), H), barra_col, -1)
+        if not args.sin_barra:
+            cv2.rectangle(cv, (0, H - 14), (int(W * t / dur), H), barra_col, -1)
         dx, dy = evs.temblor(t)
         if dx or dy:
             cv = cv2.warpAffine(cv, np.float32([[1, 0, dx], [0, 1, dy]]), (W, H), borderMode=cv2.BORDER_REFLECT)

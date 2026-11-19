@@ -45,3 +45,13 @@ python3 studio/efectos.py entrada.mp4 salida.mp4 --plan studio/planes/ejemplo_pi
 
 Tipos de evento en el plan: `emoji`, `sticker`, `lluvia`, `rafaga`, `zoom`, `temblor`, `flash`, `sfx`.
 Cualquier evento acepta `"sfx"`, `"temblor": true` y `"flash": true`. Ver `planes/ejemplo_picaro.json`.
+
+## Montaje con escenas animadas y voz en off (`montaje.py`)
+
+Intercala el original (unos 5 s con efectos) con **escenas propias** de unos 4 s: la imagen se congela con sonido de disco rayado, la persona aparece recortada como sticker sobre un fondo animado, los emojis actúan el chiste y una **voz en off** (Piper, voz es_MX) lo narra con subtítulos. Después vuelve el original. También sirve para cortar los silencios.
+
+```bash
+python3 studio/montaje.py entrada.mp4 salida.mp4 --plan studio/planes/montaje_picaro.json
+```
+
+En cada escena se define: `congelar` (segundo), `caja` (recorte de la persona [x0,y0,x1,y1] de 0 a 1), `texto`, `voz`, `estilo`, `props` (emoji con animación `rebote`, `desliza`, `orbita`, `crece`, `cruza` o `pulso`) y `eventos`.
