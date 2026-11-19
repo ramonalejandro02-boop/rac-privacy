@@ -27,3 +27,9 @@ np.savez('voices.npz', **{v: np.fromfile(v + '.bin', dtype=np.float32).reshape(-
 mv voices.npz voices-es.bin
 cd - >/dev/null
 echo "Listo: estudio instalado."
+# Clonación de voz (entorno aparte para no chocar dependencias)
+if [ ! -x /home/user/venv-voz/bin/python ]; then
+  python3 -m venv /home/user/venv-voz
+  /home/user/venv-voz/bin/pip install -q --extra-index-url https://download.pytorch.org/whl/cpu chatterbox-tts "setuptools<81"
+fi
+echo "Clonación de voz lista."

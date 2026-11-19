@@ -55,3 +55,10 @@ python3 studio/montaje.py entrada.mp4 salida.mp4 --plan studio/planes/montaje_pi
 ```
 
 En cada escena se define: `congelar` (segundo), `caja` (recorte de la persona [x0,y0,x1,y1] de 0 a 1), `texto`, `voz`, `estilo`, `props` (emoji con animación `rebote`, `desliza`, `orbita`, `crece`, `cruza` o `pulso`) y `eventos`.
+
+## Tu voz clonada en las voces en off
+
+```bash
+python3 studio/montaje.py entrada.mp4 salida.mp4 --plan plan.json --mi-voz mi_voz.m4a
+```
+`mi_voz` = 15 a 30 s de tu voz hablando natural (una nota de voz de WhatsApp sirve). Usa Chatterbox Multilingual (MIT, local, mantiene tu acento y le agrega una marca de agua inaudible de audio generado por IA).

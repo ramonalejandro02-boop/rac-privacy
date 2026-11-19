@@ -44,10 +44,28 @@ VOZ_KOKORO = os.environ.get("STUDIO_VOZ_KOKORO", "ef_dora")  # ef_dora = mujer, 
 _kokoro = None
 
 
+VENV_VOZ = os.environ.get("STUDIO_VENV_VOZ", "/home/user/venv-voz/bin/python")
+_clon = {}   # texto -> wav pre-generado con la voz clonada
+
+
+def preparar_clon(textos, ref, tmp):
+    """Genera de una vez todas las frases con la voz clonada (carga el modelo una sola vez)."""
+    tj = os.path.join(tmp, "textos.json")
+    json.dump(textos, open(tj, "w"), ensure_ascii=False)
+    carpeta = os.path.join(tmp, "clon")
+    log(f"clonando voz para {len(textos)} frases (≈30 s cada una)...")
+    subprocess.run([VENV_VOZ, os.path.join(AQUI, "clonar_voz.py"), "--ref", ref, "--textos", tj,
+                    "--salida", carpeta], check=True)
+    for i, t in enumerate(textos):
+        _clon[t] = os.path.join(carpeta, f"vo_{i:03d}.wav")
+
+
 def voz_en_off(texto, salida, velocidad=0.9):
     global _kokoro
     crudo = salida + ".raw.wav"
-    if MOTOR_TTS == "kokoro":
+    if texto in _clon:
+        crudo = _clon[texto]
+    elif MOTOR_TTS == "kokoro":
         from kokoro_onnx import Kokoro
         import soundfile as sf
         if _kokoro is None:
@@ -274,9 +292,15 @@ def main():
     ap.add_argument("--plan", required=True)
     ap.add_argument("--palabras")
     ap.add_argument("--base", help="video base ya renderizado con efectos.py (para no repetir)")
+    ap.add_argument("--mi-voz", help="audio con TU voz (15-30 s): las voces en off salen con tu voz clonada")
     args = ap.parse_args()
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
+    if args.mi_voz:
+        ref = os.path.join(tmp, "ref.wav")
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.mi_voz, "-t", "30", "-ac", "1", "-ar", "24000",
+                        "-af", "highpass=f=70,afftdn=nf=-25,loudnorm=I=-18", ref], check=True)
+        preparar_clon([s["voz"] for s in plan["secuencia"] if "voz" in s], ref, tmp)
 
     base = args.base
     if not base:
