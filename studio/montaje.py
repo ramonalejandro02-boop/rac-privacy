@@ -210,7 +210,7 @@ def dibujar_prop(cv, p, u, d, cache):
 # --------------------------------------------------------------------------
 # Render de una escena
 # --------------------------------------------------------------------------
-def render_escena(src, esc, salida, tmp, idx, claves):
+def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.92):
     vo_wav = os.path.join(tmp, f"vo{idx}.wav")
     vo = voz_en_off(esc["voz"], vo_wav, esc.get("velocidad", 0.82))
     t_vo = 0.3
@@ -221,7 +221,8 @@ def render_escena(src, esc, salida, tmp, idx, claves):
     corte = recorte_sticker(src, esc["congelar"], esc["caja"], esc.get("alto", 1000))
     texto = a_bgra(sticker_pil(esc["texto"], esc.get("tam_texto", 86), esc.get("fondo", "#FFE600"),
                                esc.get("color", "#111111"), rot=esc.get("rot", -3), max_w=1000))
-    subs = Subs(palabras_vo(esc["voz"], vo, t_vo), claves + esc.get("claves", []), est["palabra"], px=88, y=0.885)
+    subs = Subs(palabras_vo(esc["voz"], vo, t_vo), claves + esc.get("claves", []), est["palabra"], px=88,
+                y=esc.get("subs_y", 0.885), x=esc.get("subs_x", subs_x), ancho=esc.get("subs_ancho", subs_ancho))
     evs = Eventos(esc.get("eventos", []), None)
     cache = {}
     # energía de la voz para animar el fondo
@@ -248,7 +249,7 @@ def render_escena(src, esc, salida, tmp, idx, claves):
         for p in esc.get("props", []):
             dibujar_prop(cv, p, u, d, cache)
         evs.dibujar(cv, u)
-        superponer(cv, texto, W / 2, 0.15 * H, ease_back((u - 0.1) / 0.3) * (1 + 0.02 * math.sin(u * 5)))
+        superponer(cv, texto, W / 2, esc.get("texto_y", 0.15) * H, ease_back((u - 0.1) / 0.3) * (1 + 0.02 * math.sin(u * 5)))
         subs.dibujar(cv, u)
         fa = max(0.9 * (1 - u / 0.18), 0.8 * (1 - (d - u) / 0.12), 0)
         if fa > 0:
@@ -293,6 +294,8 @@ def main():
     ap.add_argument("--palabras")
     ap.add_argument("--base", help="video base ya renderizado con efectos.py (para no repetir)")
     ap.add_argument("--mi-voz", help="audio con TU voz (15-30 s): las voces en off salen con tu voz clonada")
+    ap.add_argument("--presentador", help="video tuyo (fondo negro o normal) para salir en pantalla")
+    ap.add_argument("--presentador-espejo", action="store_true", help="voltear el video del presentador")
     args = ap.parse_args()
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
@@ -314,7 +317,9 @@ def main():
         subprocess.run(cmd, check=True)
 
     claves = plan["base"].get("claves", [])
-    partes, total = [], 0.0
+    sx = plan["base"].get("subs_x", 0.5) if args.presentador else 0.5
+    sa = plan["base"].get("subs_ancho", 0.92) if args.presentador else 0.92
+    partes, total, tramos = [], 0.0, []
     for k, seg in enumerate(plan["secuencia"]):
         out = os.path.join(tmp, f"parte{k:02d}.mp4")
         if "orig" in seg:
@@ -322,10 +327,17 @@ def main():
             subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", str(a), "-i", base, "-t", str(b - a),
                             "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-r", str(FPS),
                             "-c:a", "aac", "-b:a", "192k", "-ar", str(SR), "-ac", "2", out], check=True)
+            tramos.append(dict(a=total, b=total + (b - a), modo="esquina", habla=False))
             total += b - a
         else:
-            total += render_escena(args.entrada, seg, out, tmp, k, claves)
+            d = render_escena(args.entrada, seg, out, tmp, k, claves, sx, sa)
+            modo = seg.get("presentador", "esquina")
+            tramos.append(dict(a=total, b=total + 0.3, modo=modo, habla=False))
+            tramos.append(dict(a=total + 0.3, b=total + d, modo=modo, habla=True))
+            total += d
         partes.append(out)
+    for j, tr in enumerate(tramos):
+        tr["anima"] = j == 0 or tramos[j - 1]["modo"] != tr["modo"]
 
     # unir todo + barra de progreso global + volumen final
     ins = []
@@ -333,6 +345,21 @@ def main():
         ins += ["-i", p]
     cadena = "".join(f"[{i}:v][{i}:a]" for i in range(len(partes)))
     col = "0x{:02X}{:02X}{:02X}".format(*ESTILOS[plan["base"].get("estilo", "farandula")]["palabra"][::-1])
+    if args.presentador:
+        unido = os.path.join(tmp, "unido.mp4")
+        subprocess.run(["ffmpeg", "-y", "-v", "error"] + ins + ["-filter_complex",
+                        f"{cadena}concat=n={len(partes)}:v=1:a=1[v][a]", "-map", "[v]", "-map", "[a]",
+                        "-c:v", "libx264", "-preset", "veryfast", "-crf", "14", "-c:a", "aac", "-b:a", "256k", unido],
+                       check=True)
+        from presentador import Presentador, aplicar
+        log("poniendo al presentador en pantalla...")
+        pres = Presentador(args.presentador, espejo=args.presentador_espejo)
+        con_pres = os.path.join(tmp, "con_presentador.mp4")
+        aplicar(unido, con_pres, pres, tramos, FPS)
+        subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", con_pres, "-i", unido, "-map", "0:v", "-map", "1:a",
+                        "-c", "copy", os.path.join(tmp, "unido2.mp4")], check=True)
+        ins, cadena = ["-i", os.path.join(tmp, "unido2.mp4")], "[0:v][0:a]"
+        partes = [None]
     fc = (f"{cadena}concat=n={len(partes)}:v=1:a=1[v][a];"
           f"color=c={col}:s={W}x14:r={FPS}[bar];"
           f"[v][bar]overlay=x='-W+W*t/{total:.3f}':y=H-14:shortest=1[vo];"

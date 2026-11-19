@@ -384,12 +384,12 @@ class Eventos:
 # Subtítulos con palabras clave resaltadas
 # --------------------------------------------------------------------------
 class Subs:
-    def __init__(self, palabras, claves, color_activo, color_clave="#FF3FA4", px=104, y=0.875):
+    def __init__(self, palabras, claves, color_activo, color_clave="#FF3FA4", px=104, y=0.875, x=0.5, ancho=0.92):
         self.grupos = agrupar(palabras)
         self.claves = [c.lower() for c in claves]
         self.act = tuple(int(c) for c in color_activo[::-1])
         self.cla = hex2rgb(color_clave)
-        self.px, self.y = px, y
+        self.px, self.y, self.x, self.ancho = px, y, x, ancho
         self.cache = {}
         self.i = 0
 
@@ -418,8 +418,8 @@ class Subs:
         for i in imgs:
             out.paste(i, (x, h - i.height), i)
             x += i.width + esp
-        if out.width > W * 0.92:
-            out = out.resize((int(W * 0.92), int(out.height * W * 0.92 / out.width)), Image.LANCZOS)
+        if out.width > W * self.ancho:
+            out = out.resize((int(W * self.ancho), int(out.height * W * self.ancho / out.width)), Image.LANCZOS)
         self.cache[(gi, wi)] = a_bgra(out)
         return self.cache[(gi, wi)]
 
@@ -434,7 +434,7 @@ class Subs:
         wi = max([k for k, w in enumerate(g) if t >= w["a"]] or [0])
         dt = t - g[0]["a"]
         sc = 0.8 + 0.2 * ease_back(dt / 0.15)
-        superponer(cv, self.render(self.i, wi), W / 2, self.y * H, sc)
+        superponer(cv, self.render(self.i, wi), W * self.x, self.y * H, sc)
 
 
 # --------------------------------------------------------------------------
@@ -518,7 +518,8 @@ def main():
     fondo = FondoAnimado(W, H, est)
     grad = Grading(pw, ph, est)
     evs = Eventos(eventos, (px0, py0, pw, ph))
-    subs = Subs(palabras, plan.get("claves", []), est["palabra"], y=plan.get("subs_y", 0.875)) if palabras else None
+    subs = Subs(palabras, plan.get("claves", []), est["palabra"], y=plan.get("subs_y", 0.875),
+                x=plan.get("subs_x", 0.5), ancho=plan.get("subs_ancho", 0.92)) if palabras else None
     titulo = plan.get("titulo")
     titulo_img = None
     if titulo:

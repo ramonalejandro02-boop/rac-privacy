@@ -62,3 +62,11 @@ En cada escena se define: `congelar` (segundo), `caja` (recorte de la persona [x
 python3 studio/montaje.py entrada.mp4 salida.mp4 --plan plan.json --mi-voz mi_voz.m4a
 ```
 `mi_voz` = 15 a 30 s de tu voz hablando natural (una nota de voz de WhatsApp sirve). Usa Chatterbox Multilingual (MIT, local, mantiene tu acento y le agrega una marca de agua inaudible de audio generado por IA).
+
+## Presentador en pantalla (`--presentador`)
+
+```bash
+python3 studio/montaje.py entrada.mp4 salida.mp4 --plan studio/planes/montaje_presentador.json \
+    --presentador mi_video.mov --presentador-espejo --mi-voz mi_voz.m4a
+```
+Te recorta de tu video (fondo negro o normal) y te pone en grande en la intro (`"presentador": "grande"` en la escena) y en la esquina durante el resto. Detecta cuándo movés la boca: con voz en off usa tus cuadros "hablando" y mientras hablan otros, tus cuadros "escuchando". Descarta solo los cuadros con objetos encima de tu cabeza.
