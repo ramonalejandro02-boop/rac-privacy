@@ -1,101 +1,568 @@
 {
-  "base": {
-    "estilo": "farandula",
-    "titulo": "SE LE DECLARÓ EN\nPLENO REALITY 😳🔥",
-    "claves": ["pamela", "love", "enamorar", "madera", "fijado", "digas", "fuyín", "cuenta", "diablo"],
-    "eventos": [
-      {"t": 0.0, "tipo": "flash", "dur": 0.3, "sfx": "boom", "vol": 0.8},
-      {"t": 0.3, "tipo": "zoom", "dur": 2.6, "x": 0.40, "y": 0.26, "s": 1.6},
-      {"t": 0.37, "tipo": "emoji", "emoji": "😈", "x": 0.80, "y": 0.36, "size": 250, "dur": 2.0, "sfx": "boing"},
-      {"t": 3.0, "tipo": "zoom", "dur": 2.75, "x": 0.40, "y": 0.30, "s": 1.35},
-      {"t": 4.95, "tipo": "lluvia", "emoji": "💘❤️😍💕", "dur": 0.8, "n": 22, "sfx": "ding"},
-
-      {"t": 6.5, "tipo": "zoom", "dur": 4.45, "x": 0.42, "y": 0.58, "s": 1.55},
-      {"t": 7.0, "tipo": "emoji", "emoji": "👁️", "x": 0.20, "y": 0.42, "size": 200, "dur": 1.6, "sfx": "whoosh"},
-      {"t": 7.15, "tipo": "emoji", "emoji": "👁️", "x": 0.80, "y": 0.42, "size": 200, "dur": 1.45},
-      {"t": 8.4, "tipo": "sticker", "texto": "ELLA HACIÉNDOSE\nLA QUE NO OYÓ 🙄", "fondo": "#FFE600", "dur": 2.5, "y": 0.235, "rot": 4, "sfx": "pop"},
-
-      {"t": 11.1, "tipo": "zoom", "dur": 3.35, "x": 0.40, "y": 0.27, "s": 1.45},
-      {"t": 14.45, "tipo": "zoom", "dur": 0.5, "x": 0.40, "y": 0.25, "s": 2.0, "rampa": 0.08},
-      {"t": 14.5, "tipo": "temblor", "dur": 0.45, "amp": 20, "flash": true},
-
-      {"t": 15.0, "tipo": "zoom", "dur": 1.6, "x": 0.40, "y": 0.27, "s": 1.4},
-      {"t": 16.75, "tipo": "rafaga", "emoji": "💘💋😘", "x": 0.42, "y": 0.42, "dur": 1.6, "n": 10, "sfx": "ding", "vol": 0.6},
-      {"t": 19.6, "tipo": "zoom", "dur": 3.15, "x": 0.60, "y": 0.24, "s": 1.5},
-      {"t": 21.9, "tipo": "emoji", "emoji": "👀", "x": 0.13, "y": 0.60, "size": 190, "dur": 0.85, "sfx": "whoosh"},
-
-      {"t": 23.0, "tipo": "zoom", "dur": 2.7, "x": 0.45, "y": 0.60, "s": 1.55},
-      {"t": 23.6, "tipo": "emoji", "emoji": "💅", "x": 0.80, "y": 0.47, "size": 230, "dur": 1.9, "sfx": "pop"},
-      {"t": 24.0, "tipo": "sticker", "texto": "SE HACE LA DIFÍCIL 💅", "fondo": "#FFFFFF", "dur": 1.7, "y": 0.235, "rot": 4},
-      {"t": 25.8, "tipo": "zoom", "dur": 1.95, "x": 0.58, "y": 0.26, "s": 1.6},
-      {"t": 26.8, "tipo": "rafaga", "emoji": "🔥🥵🌶️", "x": 0.55, "y": 0.45, "dur": 1.0, "n": 12, "sfx": "boom", "vol": 0.7, "temblor": true},
-
-      {"t": 35.2, "tipo": "zoom", "dur": 4.2, "x": 0.60, "y": 0.26, "s": 1.5},
-      {"t": 36.4, "tipo": "emoji", "emoji": "🤥", "x": 0.20, "y": 0.40, "size": 250, "dur": 1.6, "sfx": "boing"},
-      {"t": 36.5, "tipo": "sticker", "texto": "SÍ, CLARO 🤥", "fondo": "#FFE600", "dur": 1.5, "y": 0.235, "rot": -5, "size": 96}
-    ]
-  },
-  "secuencia": [
-    {"orig": [0, 5.75]},
-    {"congelar": 5.5, "caja": [0.27, 0.08, 0.62, 0.45], "estilo": "neon",
-     "texto": "SE TIRÓ AL AGUA\nSIN SALVAVIDAS 🛟", "fondo": "#00E5FF",
-     "voz": "Y así, sin anestesia, el mae se tiró al agua... sin saber nadar.",
-     "claves": ["agua", "nadar"],
-     "props": [
-       {"emoji": "💘", "anim": "orbita", "x": 0.5, "y": 0.52, "radio": 420, "fase": 0, "size": 170},
-       {"emoji": "💘", "anim": "orbita", "x": 0.5, "y": 0.52, "radio": 420, "fase": 3.14, "size": 170},
-       {"emoji": "🛟", "anim": "rebote", "x": 0.80, "y": 0.72, "t": 0.6, "size": 240, "sfx": "boing"},
-       {"emoji": "🌊", "anim": "desliza", "desde": "izq", "x": 0.20, "y": 0.76, "t": 1.4, "size": 240, "sfx": "whoosh"}
-     ]},
-    {"orig": [5.75, 10.95]},
-    {"congelar": 22.4, "caja": [0.49, 0.47, 0.86, 1.0], "estilo": "noticiero",
-     "texto": "MODO AVIÓN\nACTIVADO ✈️", "fondo": "#FFFFFF",
-     "voz": "Ella activando el modo avión en tiempo récord.",
-     "claves": ["avión", "récord"],
-     "props": [
-       {"emoji": "✈️", "anim": "cruza", "y": 0.33, "t": 0.3, "size": 200, "sfx": "whoosh", "dur_cruce": 2.0},
-       {"emoji": "🔇", "anim": "pulso", "x": 0.18, "y": 0.50, "t": 0.9, "size": 200, "sfx": "pop"},
-       {"emoji": "🙉", "anim": "rebote", "x": 0.82, "y": 0.70, "t": 1.4, "size": 230, "sfx": "boing"}
-     ]},
-    {"orig": [10.95, 14.95]},
-    {"congelar": 14.85, "caja": [0.25, 0.08, 0.65, 0.45], "estilo": "farandula",
-     "texto": "¿¿DE MADERA?? 🪵😏", "fondo": "#FF3FA4", "color": "#FFFFFF",
-     "voz": "¿De madera, mae? Ahora entiendo por qué le gusta tanto el tronco.",
-     "claves": ["madera", "tronco"],
-     "props": [
-       {"emoji": "🪵", "anim": "crece", "x": 0.20, "y": 0.74, "t": 0.3, "size": 300, "sfx": "silbido"},
-       {"emoji": "😏", "anim": "pulso", "x": 0.83, "y": 0.42, "t": 0.9, "size": 210},
-       {"emoji": "🐿️", "anim": "rebote", "x": 0.82, "y": 0.74, "t": 2.0, "size": 220, "sfx": "pop"}
-     ]},
-    {"orig": [14.95, 22.75]},
-    {"congelar": 22.0, "caja": [0.47, 0.18, 0.86, 0.5], "estilo": "neon",
-     "texto": "¿EN LOS OJOS,\nVERDAD? 👀🍑", "fondo": "#FFE600",
-     "voz": "Se ha fijado en ti, dice. Sí, claro... en los ojos. Ajá.",
-     "claves": ["ojos", "fijado"],
-     "props": [
-       {"emoji": "👀", "anim": "pulso", "x": 0.18, "y": 0.42, "t": 0.4, "size": 210, "sfx": "whoosh"},
-       {"emoji": "🍑", "anim": "rebote", "x": 0.80, "y": 0.72, "t": 1.6, "size": 250, "sfx": "silbido"},
-       {"emoji": "🤨", "anim": "desliza", "desde": "izq", "x": 0.20, "y": 0.74, "t": 2.4, "size": 220, "sfx": "boing"}
-     ]},
-    {"orig": [22.75, 27.8]},
-    {"congelar": 27.4, "caja": [0.47, 0.18, 0.86, 0.5], "estilo": "drama", "temblor": true,
-     "texto": "🚒 LLAMEN A LOS\nBOMBEROS 🔥", "fondo": "#FF4A1C", "color": "#FFFFFF",
-     "voz": "Llamen a los bomberos, que aquí se está quemando algo... y no es la comida.",
-     "claves": ["bomberos", "quemando", "comida"],
-     "props": [
-       {"emoji": "🧯", "anim": "desliza", "desde": "der", "x": 0.82, "y": 0.70, "t": 0.8, "size": 230, "sfx": "whoosh"},
-       {"emoji": "🚒", "anim": "cruza", "y": 0.78, "t": 1.8, "size": 230, "dur_cruce": 2.0, "sfx": "boing"}
-     ],
-     "eventos": [{"t": 0.3, "tipo": "lluvia", "emoji": "🔥🥵🔥", "dur": 3.6, "n": 14}]},
-    {"orig": [35.2, 39.4]},
-    {"congelar": 38.5, "caja": [0.45, 0.18, 0.86, 0.5], "estilo": "farandula",
-     "texto": "¿TIENE CHANCE\nO NO? 👇", "fondo": "#FF3FA4", "color": "#FFFFFF",
-     "voz": "Y vos, ¿qué decís? ¿El mae tiene chance, o lo dejaron en visto?",
-     "claves": ["chance", "visto"],
-     "props": [
-       {"emoji": "✅", "anim": "pulso", "x": 0.18, "y": 0.70, "t": 0.8, "size": 210, "sfx": "ding"},
-       {"emoji": "❌", "anim": "pulso", "x": 0.82, "y": 0.70, "t": 1.5, "size": 210, "sfx": "boing"},
-       {"emoji": "📱", "anim": "rebote", "x": 0.82, "y": 0.40, "t": 2.6, "size": 190, "sfx": "pop"}
-     ]}
+ "base": {
+  "estilo": "farandula",
+  "titulo": "LE ESTÁ DANDO COTORRA\nEN PLENO REALITY 😳🔥",
+  "claves": [
+   "pamela",
+   "love",
+   "enamorar",
+   "madera",
+   "fijado",
+   "digas",
+   "fuyín",
+   "cuenta",
+   "diablo"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "flash",
+    "dur": 0.3,
+    "sfx": "boom",
+    "vol": 0.8
+   },
+   {
+    "t": 0.3,
+    "tipo": "zoom",
+    "dur": 2.6,
+    "x": 0.4,
+    "y": 0.26,
+    "s": 1.6
+   },
+   {
+    "t": 0.37,
+    "tipo": "emoji",
+    "emoji": "😈",
+    "x": 0.8,
+    "y": 0.36,
+    "size": 250,
+    "dur": 2.0,
+    "sfx": "boing"
+   },
+   {
+    "t": 3.0,
+    "tipo": "zoom",
+    "dur": 2.75,
+    "x": 0.4,
+    "y": 0.3,
+    "s": 1.35
+   },
+   {
+    "t": 4.95,
+    "tipo": "lluvia",
+    "emoji": "💘❤️😍💕",
+    "dur": 0.8,
+    "n": 22,
+    "sfx": "ding"
+   },
+   {
+    "t": 6.5,
+    "tipo": "zoom",
+    "dur": 4.45,
+    "x": 0.42,
+    "y": 0.58,
+    "s": 1.55
+   },
+   {
+    "t": 7.0,
+    "tipo": "emoji",
+    "emoji": "👁️",
+    "x": 0.2,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.6,
+    "sfx": "whoosh"
+   },
+   {
+    "t": 7.15,
+    "tipo": "emoji",
+    "emoji": "👁️",
+    "x": 0.8,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.45
+   },
+   {
+    "t": 8.4,
+    "tipo": "sticker",
+    "texto": "ELLA DIQUE\nQUE NO OYÓ 🙄",
+    "fondo": "#FFE600",
+    "dur": 2.5,
+    "y": 0.235,
+    "rot": 4,
+    "sfx": "pop"
+   },
+   {
+    "t": 11.1,
+    "tipo": "zoom",
+    "dur": 3.35,
+    "x": 0.4,
+    "y": 0.27,
+    "s": 1.45
+   },
+   {
+    "t": 14.45,
+    "tipo": "zoom",
+    "dur": 0.5,
+    "x": 0.4,
+    "y": 0.25,
+    "s": 2.0,
+    "rampa": 0.08
+   },
+   {
+    "t": 14.5,
+    "tipo": "temblor",
+    "dur": 0.45,
+    "amp": 20,
+    "flash": true
+   },
+   {
+    "t": 15.0,
+    "tipo": "zoom",
+    "dur": 1.6,
+    "x": 0.4,
+    "y": 0.27,
+    "s": 1.4
+   },
+   {
+    "t": 16.75,
+    "tipo": "rafaga",
+    "emoji": "💘💋😘",
+    "x": 0.42,
+    "y": 0.42,
+    "dur": 1.6,
+    "n": 10,
+    "sfx": "ding",
+    "vol": 0.6
+   },
+   {
+    "t": 19.6,
+    "tipo": "zoom",
+    "dur": 3.15,
+    "x": 0.6,
+    "y": 0.24,
+    "s": 1.5
+   },
+   {
+    "t": 21.9,
+    "tipo": "emoji",
+    "emoji": "👀",
+    "x": 0.13,
+    "y": 0.6,
+    "size": 190,
+    "dur": 0.85,
+    "sfx": "whoosh"
+   },
+   {
+    "t": 23.0,
+    "tipo": "zoom",
+    "dur": 2.7,
+    "x": 0.45,
+    "y": 0.6,
+    "s": 1.55
+   },
+   {
+    "t": 23.6,
+    "tipo": "emoji",
+    "emoji": "💅",
+    "x": 0.8,
+    "y": 0.47,
+    "size": 230,
+    "dur": 1.9,
+    "sfx": "pop"
+   },
+   {
+    "t": 24.0,
+    "tipo": "sticker",
+    "texto": "SE ESTÁ HACIENDO\nLA DURA 💅",
+    "fondo": "#FFFFFF",
+    "dur": 1.7,
+    "y": 0.235,
+    "rot": 4
+   },
+   {
+    "t": 25.8,
+    "tipo": "zoom",
+    "dur": 1.95,
+    "x": 0.58,
+    "y": 0.26,
+    "s": 1.6
+   },
+   {
+    "t": 26.8,
+    "tipo": "rafaga",
+    "emoji": "🔥🥵🌶️",
+    "x": 0.55,
+    "y": 0.45,
+    "dur": 1.0,
+    "n": 12,
+    "sfx": "boom",
+    "vol": 0.7,
+    "temblor": true
+   },
+   {
+    "t": 35.2,
+    "tipo": "zoom",
+    "dur": 4.2,
+    "x": 0.6,
+    "y": 0.26,
+    "s": 1.5
+   },
+   {
+    "t": 36.4,
+    "tipo": "emoji",
+    "emoji": "🤥",
+    "x": 0.2,
+    "y": 0.4,
+    "size": 250,
+    "dur": 1.6,
+    "sfx": "boing"
+   },
+   {
+    "t": 36.5,
+    "tipo": "sticker",
+    "texto": "¡QUÉ EMBUSTE! 🤥",
+    "fondo": "#FFE600",
+    "dur": 1.5,
+    "y": 0.235,
+    "rot": -5,
+    "size": 96
+   }
   ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0,
+    5.75
+   ]
+  },
+  {
+   "congelar": 5.5,
+   "caja": [
+    0.27,
+    0.08,
+    0.62,
+    0.45
+   ],
+   "estilo": "neon",
+   "texto": "SE TIRÓ SIN\nSALVAVIDAS 🛟",
+   "fondo": "#00E5FF",
+   "voz": "Y así, sin anestesia, este tíguere se tiró al agua... sin saber nadar, mi loco.",
+   "claves": [
+    "tíguere",
+    "agua",
+    "nadar"
+   ],
+   "props": [
+    {
+     "emoji": "💘",
+     "anim": "orbita",
+     "x": 0.5,
+     "y": 0.52,
+     "radio": 420,
+     "fase": 0,
+     "size": 170
+    },
+    {
+     "emoji": "💘",
+     "anim": "orbita",
+     "x": 0.5,
+     "y": 0.52,
+     "radio": 420,
+     "fase": 3.14,
+     "size": 170
+    },
+    {
+     "emoji": "🛟",
+     "anim": "rebote",
+     "x": 0.8,
+     "y": 0.72,
+     "t": 0.6,
+     "size": 240,
+     "sfx": "boing"
+    },
+    {
+     "emoji": "🌊",
+     "anim": "desliza",
+     "desde": "izq",
+     "x": 0.2,
+     "y": 0.76,
+     "t": 1.4,
+     "size": 240,
+     "sfx": "whoosh"
+    }
+   ]
+  },
+  {
+   "orig": [
+    5.75,
+    10.95
+   ]
+  },
+  {
+   "congelar": 22.4,
+   "caja": [
+    0.49,
+    0.47,
+    0.86,
+    1.0
+   ],
+   "estilo": "noticiero",
+   "texto": "MODO AVIÓN\nACTIVADO ✈️",
+   "fondo": "#FFFFFF",
+   "voz": "Ella dique no oyó nada. Modo avión activado en un chin.",
+   "claves": [
+    "dique",
+    "avión",
+    "chin"
+   ],
+   "props": [
+    {
+     "emoji": "✈️",
+     "anim": "cruza",
+     "y": 0.33,
+     "t": 0.3,
+     "size": 200,
+     "sfx": "whoosh",
+     "dur_cruce": 2.0
+    },
+    {
+     "emoji": "🔇",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.5,
+     "t": 0.9,
+     "size": 200,
+     "sfx": "pop"
+    },
+    {
+     "emoji": "🙉",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.7,
+     "t": 1.4,
+     "size": 230,
+     "sfx": "boing"
+    }
+   ]
+  },
+  {
+   "orig": [
+    10.95,
+    14.95
+   ]
+  },
+  {
+   "congelar": 14.85,
+   "caja": [
+    0.25,
+    0.08,
+    0.65,
+    0.45
+   ],
+   "estilo": "farandula",
+   "texto": "¿¿DE MADERA?? 🪵😏",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "¿De madera, loco? Con razón la jeva no le quita los ojos al tronco.",
+   "claves": [
+    "madera",
+    "jeva",
+    "tronco"
+   ],
+   "props": [
+    {
+     "emoji": "🪵",
+     "anim": "crece",
+     "x": 0.2,
+     "y": 0.74,
+     "t": 0.3,
+     "size": 300,
+     "sfx": "silbido"
+    },
+    {
+     "emoji": "😏",
+     "anim": "pulso",
+     "x": 0.83,
+     "y": 0.42,
+     "t": 0.9,
+     "size": 210
+    },
+    {
+     "emoji": "🐿️",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.74,
+     "t": 2.0,
+     "size": 220,
+     "sfx": "pop"
+    }
+   ]
+  },
+  {
+   "orig": [
+    14.95,
+    22.75
+   ]
+  },
+  {
+   "congelar": 22.0,
+   "caja": [
+    0.47,
+    0.18,
+    0.86,
+    0.5
+   ],
+   "estilo": "neon",
+   "texto": "¿EN LOS OJOS,\nDIQUE? 👀🍑",
+   "fondo": "#FFE600",
+   "voz": "Se ha fijado en ti, dice... ¡Qué embuste! Ese tíguere no está mirando los ojos.",
+   "claves": [
+    "embuste",
+    "tíguere",
+    "ojos"
+   ],
+   "props": [
+    {
+     "emoji": "👀",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.4,
+     "size": 210,
+     "sfx": "whoosh"
+    },
+    {
+     "emoji": "🍑",
+     "anim": "rebote",
+     "x": 0.8,
+     "y": 0.72,
+     "t": 1.6,
+     "size": 250,
+     "sfx": "silbido"
+    },
+    {
+     "emoji": "🤨",
+     "anim": "desliza",
+     "desde": "izq",
+     "x": 0.2,
+     "y": 0.74,
+     "t": 2.4,
+     "size": 220,
+     "sfx": "boing"
+    }
+   ]
+  },
+  {
+   "orig": [
+    22.75,
+    27.8
+   ]
+  },
+  {
+   "congelar": 27.4,
+   "caja": [
+    0.47,
+    0.18,
+    0.86,
+    0.5
+   ],
+   "estilo": "drama",
+   "temblor": true,
+   "texto": "🚒 LLAMEN A LOS\nBOMBEROS 🔥",
+   "fondo": "#FF4A1C",
+   "color": "#FFFFFF",
+   "voz": "Diache, llamen a los bomberos, que aquí se está quemando algo... y no es la comida.",
+   "claves": [
+    "diache",
+    "bomberos",
+    "comida"
+   ],
+   "props": [
+    {
+     "emoji": "🧯",
+     "anim": "desliza",
+     "desde": "der",
+     "x": 0.82,
+     "y": 0.7,
+     "t": 0.8,
+     "size": 230,
+     "sfx": "whoosh"
+    },
+    {
+     "emoji": "🚒",
+     "anim": "cruza",
+     "y": 0.78,
+     "t": 1.8,
+     "size": 230,
+     "dur_cruce": 2.0,
+     "sfx": "boing"
+    }
+   ],
+   "eventos": [
+    {
+     "t": 0.3,
+     "tipo": "lluvia",
+     "emoji": "🔥🥵🔥",
+     "dur": 3.6,
+     "n": 14
+    }
+   ]
+  },
+  {
+   "orig": [
+    35.2,
+    39.4
+   ]
+  },
+  {
+   "congelar": 38.5,
+   "caja": [
+    0.45,
+    0.18,
+    0.86,
+    0.5
+   ],
+   "estilo": "farandula",
+   "texto": "¿TIENE CHANCE O\nES UN PARIGUAYO? 👇",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "¿Y tú qué dices? ¿El tíguere tiene chance, o es un pariguayo? Déjalo en los comentarios.",
+   "claves": [
+    "chance",
+    "pariguayo",
+    "tíguere"
+   ],
+   "props": [
+    {
+     "emoji": "✅",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.7,
+     "t": 0.8,
+     "size": 210,
+     "sfx": "ding"
+    },
+    {
+     "emoji": "❌",
+     "anim": "pulso",
+     "x": 0.82,
+     "y": 0.7,
+     "t": 1.5,
+     "size": 210,
+     "sfx": "boing"
+    },
+    {
+     "emoji": "📱",
+     "anim": "rebote",
+     "x": 0.82,
+     "y": 0.4,
+     "t": 2.6,
+     "size": 190,
+     "sfx": "pop"
+    }
+   ]
+  }
+ ]
 }

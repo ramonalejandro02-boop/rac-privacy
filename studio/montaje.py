@@ -39,11 +39,26 @@ FPS = 30
 # --------------------------------------------------------------------------
 # Voz en off
 # --------------------------------------------------------------------------
+MOTOR_TTS = os.environ.get("STUDIO_TTS", "kokoro")        # kokoro (natural) | piper
+VOZ_KOKORO = os.environ.get("STUDIO_VOZ_KOKORO", "ef_dora")  # ef_dora = mujer, em_alex = hombre
+_kokoro = None
+
+
 def voz_en_off(texto, salida, velocidad=0.9):
+    global _kokoro
     crudo = salida + ".raw.wav"
-    subprocess.run([sys.executable, "-m", "piper", "-m", VOZ, "-f", crudo,
-                    "--length-scale", str(velocidad)], input=texto.encode(), check=True,
-                   stderr=subprocess.DEVNULL)
+    if MOTOR_TTS == "kokoro":
+        from kokoro_onnx import Kokoro
+        import soundfile as sf
+        if _kokoro is None:
+            kd = os.path.join(MODELOS, "kokoro")
+            _kokoro = Kokoro(os.path.join(kd, "kokoro-v1.0.onnx"), os.path.join(kd, "voices-es.bin"))
+        audio, sr = _kokoro.create(texto, voice=VOZ_KOKORO, speed=1.0 / velocidad * 0.9, lang="es-419")
+        sf.write(crudo, audio, sr)
+    else:
+        subprocess.run([sys.executable, "-m", "piper", "-m", VOZ, "-f", crudo,
+                        "--length-scale", str(velocidad)], input=texto.encode(), check=True,
+                       stderr=subprocess.DEVNULL)
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", crudo, "-ar", str(SR), "-ac", "1",
                     "-af", "highpass=f=80,acompressor=threshold=-18dB:ratio=3,volume=1.6", salida], check=True)
     with wave.open(salida) as w:
