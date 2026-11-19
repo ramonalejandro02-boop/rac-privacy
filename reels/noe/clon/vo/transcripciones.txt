@@ -1,0 +1,9 @@
+Formato: frase | duracion_s | puntaje (0-1, parecido con el texto esperado) | transcripcion automatica (faster-whisper small)
+1 | 4.64 | 0.99 | Este hombre construyó un barco gigante sin que hubiera una sola nube en el cielo.
+2 | 5.68 | 0.96 | Seguramente le dijeron loco, se veían de él.
+3 | 4.96 | 0.98 | pero no él no construía por lo que veía, sino por lo que Dios le había dicho.
+4 | 4.76 | 0.99 | y un día el cielo se oscureció y comenzó a llover.
+5 | 8.92 | 0.94 | Hebreos, capítulo 11, versículo 7, por la fe no he, cuando fue advertido por Dios acerca de cosas que aún no se veían, preparó el arca.
+6 | 7.32 | 0.99 | Lo que Dios te prometió, aunque hoy no lo veas, va a llegar, escribe, lo creo, si estás construyendo tu barca.
+
+Notas: frase 2 se transcribio 'se veian' (esperado 'se reian'); frase 6 'tu barca' (esperado 'tu arca'); frase 3 y 5 'Noe' se transcribio 'no el'/'no he'. Puede ser error del transcriptor; conviene escucharlas. Los wav traen silencio al inicio/fin sin recortar (24 kHz mono).

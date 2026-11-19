@@ -222,7 +222,11 @@ def main(name):
     music = find(folder, "musica", ["mp3", "m4a", "wav"])
     if vpath:
         print("Analizando tu voz…")
-        segs, total = split_voice(vpath, [g["texto"] for g in guion])
+        sj = os.path.join(folder, "voz_segs.json")
+        if os.path.exists(sj):  # tiempos exactos por frase (voz clonada frase por frase)
+            segs = [tuple(x) for x in json.load(open(sj))]; total = segs[-1][1]
+        else:
+            segs, total = split_voice(vpath, [g["texto"] for g in guion])
         voice = load_voice(vpath, clean=True)
         if not music: music = "PAD"
     else:
