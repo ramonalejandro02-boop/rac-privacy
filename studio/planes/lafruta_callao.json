@@ -25,6 +25,18 @@
   "eventos": [
    {
     "t": 0.0,
+    "tipo": "sticker",
+    "texto": "⏪ DESDE EL PRINCIPIO",
+    "fondo": "#FFFFFF",
+    "dur": 1.2,
+    "y": 0.235,
+    "rot": -3,
+    "size": 80,
+    "sfx": "scratch",
+    "vol": 0.5
+   },
+   {
+    "t": 0.0,
     "tipo": "zoom",
     "dur": 4.1,
     "x": 0.37,
@@ -38,8 +50,7 @@
     "x": 0.82,
     "y": 0.4,
     "size": 230,
-    "dur": 1.3,
-    "sfx": "pop"
+    "dur": 1.3
    },
    {
     "t": 5.8,
@@ -56,9 +67,7 @@
     "x": 0.82,
     "y": 0.42,
     "size": 230,
-    "dur": 1.8,
-    "sfx": "ding",
-    "vol": 0.6
+    "dur": 1.8
    },
    {
     "t": 9.44,
@@ -67,8 +76,7 @@
     "x": 0.18,
     "y": 0.45,
     "size": 200,
-    "dur": 0.85,
-    "sfx": "pop"
+    "dur": 0.85
    },
    {
     "t": 10.3,
@@ -85,8 +93,7 @@
     "x": 0.82,
     "y": 0.4,
     "size": 220,
-    "dur": 1.1,
-    "sfx": "whoosh"
+    "dur": 1.1
    },
    {
     "t": 12.5,
@@ -97,10 +104,10 @@
     "y": 0.235,
     "rot": -5,
     "size": 96,
-    "sfx": "boom",
-    "vol": 0.6,
     "temblor": true,
-    "flash": true
+    "flash": true,
+    "sfx": "boom",
+    "vol": 0.45
    },
    {
     "t": 14.7,
@@ -144,7 +151,6 @@
     "y": 0.45,
     "size": 240,
     "dur": 1.2,
-    "sfx": "boing",
     "temblor": true
    },
    {
@@ -172,8 +178,7 @@
     "x": 0.5,
     "y": 0.45,
     "dur": 1.3,
-    "n": 10,
-    "sfx": "pop"
+    "n": 10
    }
   ]
  },
@@ -185,166 +190,8 @@
    ]
   },
   {
-   "congelar": 16.3,
-   "caja": [
-    0.23,
-    0.37,
-    0.5,
-    0.555
-   ],
-   "estilo": "noticiero",
-   "texto": "⏪ ESPÉRATE...\nDESDE EL PRINCIPIO",
-   "fondo": "#FFFFFF",
-   "voz": "Espérate, espérate... ¿Cómo que nadie va a saber? Vamos desde el principio.",
-   "claves": [
-    "espérate",
-    "principio"
-   ],
-   "props": [
-    {
-     "emoji": "⏪",
-     "anim": "crece",
-     "x": 0.2,
-     "y": 0.42,
-     "t": 0.3,
-     "size": 220,
-     "sfx": "scratch"
-    },
-    {
-     "emoji": "🤔",
-     "anim": "pulso",
-     "x": 0.82,
-     "y": 0.42,
-     "t": 1.2,
-     "size": 210
-    }
-   ]
-  },
-  {
    "orig": [
     0.0,
-    1.3
-   ]
-  },
-  {
-   "orig": [
-    2.7,
-    4.1
-   ]
-  },
-  {
-   "congelar": 3.2,
-   "caja": [
-    0.23,
-    0.37,
-    0.5,
-    0.555
-   ],
-   "estilo": "neon",
-   "texto": "COME CALLAO...\nCON BOCINA 📢",
-   "fondo": "#00E5FF",
-   "voz": "El que come callao repite, dice... y este tíguere come con bocina y altoparlante.",
-   "claves": [
-    "callao",
-    "bocina",
-    "altoparlante"
-   ],
-   "props": [
-    {
-     "emoji": "🤫",
-     "anim": "pulso",
-     "x": 0.18,
-     "y": 0.42,
-     "t": 0.4,
-     "size": 210,
-     "sfx": "pop"
-    },
-    {
-     "emoji": "📢",
-     "anim": "desliza",
-     "desde": "der",
-     "x": 0.82,
-     "y": 0.7,
-     "t": 1.6,
-     "size": 240,
-     "sfx": "boing"
-    },
-    {
-     "emoji": "🍽️",
-     "anim": "rebote",
-     "x": 0.2,
-     "y": 0.72,
-     "t": 2.4,
-     "size": 220,
-     "sfx": "pop"
-    }
-   ]
-  },
-  {
-   "orig": [
-    5.8,
-    10.3
-   ]
-  },
-  {
-   "congelar": 9.0,
-   "caja": [
-    0.23,
-    0.37,
-    0.5,
-    0.555
-   ],
-   "estilo": "farandula",
-   "texto": "SOÑAR NO\nCUESTA NA' 💭",
-   "fondo": "#FF3FA4",
-   "color": "#FFFFFF",
-   "voz": "Una mujer famosa, bacana, heavy... Tranquilo, mi loco, que soñar no cuesta na'.",
-   "claves": [
-    "famosa",
-    "soñar"
-   ],
-   "props": [
-    {
-     "emoji": "💭",
-     "anim": "crece",
-     "x": 0.2,
-     "y": 0.4,
-     "t": 0.5,
-     "size": 240,
-     "sfx": "silbido"
-    },
-    {
-     "emoji": "⭐",
-     "anim": "orbita",
-     "x": 0.5,
-     "y": 0.52,
-     "radio": 420,
-     "fase": 0,
-     "size": 150
-    },
-    {
-     "emoji": "⭐",
-     "anim": "orbita",
-     "x": 0.5,
-     "y": 0.52,
-     "radio": 420,
-     "fase": 3.14,
-     "size": 150
-    },
-    {
-     "emoji": "😴",
-     "anim": "rebote",
-     "x": 0.82,
-     "y": 0.72,
-     "t": 2.6,
-     "size": 220,
-     "sfx": "boing"
-    }
-   ]
-  },
-  {
-   "orig": [
-    10.3,
     13.5
    ]
   },
@@ -357,42 +204,49 @@
     0.555
    ],
    "estilo": "drama",
-   "temblor": true,
    "texto": "SECRETO\nEXPRESS ⏱️",
    "fondo": "#FF4A1C",
    "color": "#FFFFFF",
-   "voz": "Ahí mismito se le cayó el secreto. Duró menos que un pica pollo en un colmado.",
+   "voz": "El que come callao repite, dice, pero este tíguere come con bocina. Ese secreto duró menos que un pica pollo en un colmado.",
    "claves": [
+    "callao",
+    "bocina",
     "secreto",
     "colmado"
    ],
    "props": [
     {
-     "emoji": "⏱️",
+     "emoji": "🤫",
      "anim": "pulso",
      "x": 0.18,
      "y": 0.42,
-     "t": 0.4,
-     "size": 210,
-     "sfx": "ding"
+     "t": 0.3,
+     "size": 200
     },
     {
-     "emoji": "🏃",
-     "anim": "cruza",
-     "y": 0.8,
-     "t": 1.2,
-     "size": 200,
-     "sfx": "whoosh",
-     "dur_cruce": 1.8
+     "emoji": "📢",
+     "anim": "desliza",
+     "desde": "der",
+     "x": 0.82,
+     "y": 0.42,
+     "t": 1.6,
+     "size": 220
+    },
+    {
+     "emoji": "⏱️",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.72,
+     "t": 3.2,
+     "size": 190
     },
     {
      "emoji": "🍗",
      "anim": "rebote",
      "x": 0.82,
      "y": 0.72,
-     "t": 2.4,
-     "size": 220,
-     "sfx": "pop"
+     "t": 4.2,
+     "size": 210
     }
    ]
   },
@@ -400,6 +254,12 @@
    "orig": [
     14.7,
     17.4
+   ]
+  },
+  {
+   "orig": [
+    19.9,
+    21.6
    ]
   },
   {
@@ -413,11 +273,12 @@
    "estilo": "neon",
    "texto": "BOCA SUELTA\nNIVEL DIOS 🗣️",
    "fondo": "#FFE600",
-   "voz": "Diache, el hombre prefiere morirse que guardar un secreto. Ese no aguanta ni un chisme de WhatsApp.",
+   "voz": "Diache, el hombre prefiere morirse que guardar un secreto. Y tú, ¿comes callao o eres como él? Déjalo en los comentarios.",
    "claves": [
     "diache",
     "secreto",
-    "chisme"
+    "callao",
+    "comentarios"
    ],
    "props": [
     {
@@ -425,73 +286,38 @@
      "anim": "crece",
      "x": 0.2,
      "y": 0.42,
-     "t": 0.4,
-     "size": 230,
-     "sfx": "boom"
+     "t": 0.3,
+     "size": 220,
+     "sfx": "pop",
+     "vol": 0.6
     },
     {
      "emoji": "💀",
      "anim": "pulso",
      "x": 0.82,
-     "y": 0.4,
-     "t": 1.3,
-     "size": 200,
-     "sfx": "boing"
+     "y": 0.42,
+     "t": 1.4,
+     "size": 190
     },
-    {
-     "emoji": "📱",
-     "anim": "rebote",
-     "x": 0.82,
-     "y": 0.72,
-     "t": 2.4,
-     "size": 210,
-     "sfx": "pop"
-    }
-   ]
-  },
-  {
-   "orig": [
-    19.9,
-    21.6
-   ]
-  },
-  {
-   "congelar": 20.6,
-   "caja": [
-    0.0,
-    0.3,
-    0.36,
-    0.75
-   ],
-   "estilo": "farandula",
-   "texto": "¿TÚ COMES CALLAO\nO ERES COMO ÉL? 🤫👇",
-   "fondo": "#FF3FA4",
-   "color": "#FFFFFF",
-   "voz": "Y tú, ¿comes callao o eres como él? Déjalo en los comentarios.",
-   "claves": [
-    "callao",
-    "comentarios"
-   ],
-   "props": [
     {
      "emoji": "🤫",
      "anim": "pulso",
      "x": 0.18,
-     "y": 0.7,
-     "t": 0.6,
-     "size": 210,
-     "sfx": "pop"
+     "y": 0.72,
+     "t": 3.2,
+     "size": 200
     },
     {
-     "emoji": "🗣️",
-     "anim": "pulso",
+     "emoji": "👇",
+     "anim": "rebote",
      "x": 0.82,
-     "y": 0.7,
-     "t": 1.3,
-     "size": 210,
-     "sfx": "boing"
+     "y": 0.72,
+     "t": 4.5,
+     "size": 190
     }
    ]
   }
- ]
+ ],
+ "quitar_silencios": true,
+ "sfx_transiciones": false
 }

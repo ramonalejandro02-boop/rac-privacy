@@ -34,6 +34,57 @@ from efectos import (H, SR, W, Eventos, Subs, a_bgra, ease_back, ease_io,  # noq
 
 VOZ = os.environ.get("STUDIO_VOZ", os.path.join(MODELOS, "piper", "es_MX-claude-high.onnx"))
 FPS = 30
+SFX_TRANSICION = True
+
+
+def sin_silencios_audio(a, b, audio, sr=16000, hueco=0.32, margen=0.08):
+    """Quita pausas mirando la energía del audio (más preciso que los tiempos de palabras)."""
+    seg = audio[int(a * sr):int(b * sr)]
+    if len(seg) < sr * 0.5:
+        return [(a, b)]
+    hop = int(0.02 * sr)
+    rms = np.array([np.sqrt(np.mean(seg[i:i + hop] ** 2)) for i in range(0, len(seg) - hop, hop)])
+    rms = np.convolve(rms, np.ones(3) / 3, "same")
+    umbral = max(np.percentile(rms, 90) * 0.12, 1e-4)
+    callado = rms < umbral
+    tramos, ini, k = [], a, 0
+    n = len(callado)
+    while k < n:
+        if callado[k]:
+            j = k
+            while j < n and callado[j]:
+                j += 1
+            if (j - k) * 0.02 > hueco:
+                t0, t1 = a + k * 0.02, a + j * 0.02
+                if k == 0:
+                    ini = max(a, t1 - margen)
+                elif j == n:
+                    tramos.append((ini, min(b, t0 + margen)))
+                    ini = None
+                else:
+                    tramos.append((ini, t0 + margen))
+                    ini = t1 - margen
+            k = j
+        else:
+            k += 1
+    if ini is not None:
+        tramos.append((ini, b))
+    return [(x, y) for x, y in tramos if y - x > 0.15]
+
+
+def sin_silencios(a, b, palabras, hueco=0.35, margen=0.1):
+    """Parte un tramo del original quitando las pausas largas entre palabras."""
+    ws = [w for w in palabras if w["b"] > a and w["a"] < b]
+    if not ws:
+        return [(a, b)]
+    tramos, ini = [], max(a, ws[0]["a"] - margen) if ws[0]["a"] - a > hueco else a
+    for w0, w1 in zip(ws, ws[1:]):
+        if w1["a"] - w0["b"] > hueco:
+            tramos.append((ini, min(b, w0["b"] + margen)))
+            ini = max(a, w1["a"] - margen)
+    fin = b if b - ws[-1]["b"] <= hueco else min(b, ws[-1]["b"] + margen + 0.1)
+    tramos.append((ini, fin))
+    return [(x, y) for x, y in tramos if y - x > 0.15]
 
 
 # --------------------------------------------------------------------------
@@ -98,13 +149,29 @@ def voz_en_off(texto, salida, velocidad=0.9):
     with wave.open(salida) as w:
         x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32) / 32768
     # recortar silencios al inicio y al final
-    # (ignora ruiditos sueltos: solo cuentan tramos de voz de 0.25 s o más)
+    # recortar silencios del inicio/fin (ignorando ruiditos sueltos) y acortar pausas internas,
+    # sin quitar nunca voz: todos los tramos con sonido dentro de la frase se conservan.
     env = np.convolve(np.abs(x), np.ones(int(0.05 * SR)) / int(0.05 * SR), "same")
     activo = env > env.max() * 0.06
     bordes = np.flatnonzero(np.diff(np.concatenate([[0], activo.astype(np.int8), [0]])))
-    tramos = [(a, b) for a, b in zip(bordes[::2], bordes[1::2]) if b - a >= 0.25 * SR]
-    if tramos:
-        x = x[max(0, tramos[0][0] - int(0.05 * SR)):min(len(x), tramos[-1][1] + int(0.2 * SR))]
+    todos = list(zip(bordes[::2], bordes[1::2]))
+    largos = [k for k, (a, b) in enumerate(todos) if b - a >= 0.25 * SR]
+    if largos:
+        i0, i1 = largos[0], largos[-1]
+        # incluir palabras cortas pegadas a la frase (separadas por menos de 0.5 s)
+        while i0 > 0 and todos[i0][0] - todos[i0 - 1][1] < 0.5 * SR:
+            i0 -= 1
+        while i1 < len(todos) - 1 and todos[i1 + 1][0] - todos[i1][1] < 0.5 * SR:
+            i1 += 1
+        dentro = todos[i0:i1 + 1]
+        partes = [x[max(0, dentro[0][0] - int(0.06 * SR)):dentro[0][0]]]
+        for k, (ta, tb) in enumerate(dentro):
+            partes.append(x[ta:tb])
+            if k < len(dentro) - 1:
+                gap = dentro[k + 1][0] - tb
+                partes.append(x[tb:tb + min(gap, int(0.18 * SR))])   # pausas de máx 0.18 s
+        partes.append(x[dentro[-1][1]:min(len(x), dentro[-1][1] + int(0.2 * SR))])
+        x = np.concatenate(partes)
     return x
 
 
@@ -298,12 +365,14 @@ def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.9
         a = int(t * SR)
         b = min(len(pista), a + len(y))
         pista[a:b] += y[:b - a] * vol
-    mezclar(sintetizar("scratch"), 0, 0.55)
+    if SFX_TRANSICION:
+        mezclar(sintetizar("scratch"), 0, 0.55)
     mezclar(vo, t_vo, 1.0)
     for p in esc.get("props", []) + esc.get("eventos", []):
         if p.get("sfx"):
             mezclar(sintetizar(p["sfx"]), p.get("t", 0), 0.4 * p.get("vol", 1.0))
-    mezclar(sintetizar("whoosh"), d - 0.4, 0.35)
+    if SFX_TRANSICION:
+        mezclar(sintetizar("whoosh"), d - 0.4, 0.35)
     pista = np.clip(pista[:int(d * SR)], -1, 1)
     aw = os.path.join(tmp, f"esc{idx}.wav")
     with wave.open(aw, "w") as w:
@@ -349,6 +418,20 @@ def main():
         log("renderizando partes originales con efectos...")
         subprocess.run(cmd, check=True)
 
+    global SFX_TRANSICION
+    SFX_TRANSICION = plan.get("sfx_transiciones", True)
+    if plan.get("quitar_silencios"):
+        crudo = subprocess.run(["ffmpeg", "-v", "error", "-i", args.entrada, "-ac", "1", "-ar", "16000",
+                                "-f", "s16le", "-"], capture_output=True).stdout
+        audio_orig = np.frombuffer(crudo, np.int16).astype(np.float32) / 32768
+        nueva = []
+        for seg in plan["secuencia"]:
+            if "orig" in seg:
+                nueva += [{"orig": [x, y]} for x, y in sin_silencios_audio(seg["orig"][0], seg["orig"][1], audio_orig)]
+            else:
+                nueva.append(seg)
+        log(f"silencios quitados: {sum('orig' in x for x in plan['secuencia'])} tramos -> {sum('orig' in x for x in nueva)}")
+        plan["secuencia"] = nueva
     claves = plan["base"].get("claves", [])
     sx = plan["base"].get("subs_x", 0.5) if args.presentador else 0.5
     sa = plan["base"].get("subs_ancho", 0.92) if args.presentador else 0.92
