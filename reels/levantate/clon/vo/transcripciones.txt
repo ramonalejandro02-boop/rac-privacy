@@ -1,0 +1,11 @@
+Formato: frase | toma elegida | duracion (ya recortada) | puntaje ASR 0-1 | pausa interna mas larga antes de comprimir | transcripcion (faster-whisper small)
+Silencio de inicio/fin recortado; pausas internas > 0.40 s comprimidas a 0.30 s. 24 kHz mono. Parametros: exaggeration=0.45 cfg_weight=0.5
+
+1 | toma 0 | 3.19 s | puntaje 1.00 | pausa interna max original 0.31 s | Si hoy sientes que ya no puedes más, escucha esto.
+2 | toma 0 | 3.24 s | puntaje 1.00 | pausa interna max original 0.34 s | Hay batallas que nadie ve y lágrimas que nadie conoce.
+3 | toma 0 | 3.09 s | puntaje 1.00 | pausa interna max original 0.21 s | pero Dios sí las ve y ninguna de ellas fue en vano.
+4 | toma 0 | 4.24 s | puntaje 1.00 | pausa interna max original 0.33 s | El nunca te prometió un camino fácil, te prometió que no caminarías solo.
+5 | toma 1 | 7.64 s | puntaje 0.99 | pausa interna max original 0.42 s | y saías cuarenta y uno diez dice no temas porque yo estoy contigo no desmayes porque yo soy tu Dios que te esfuerzo
+6 | toma 0 | 5.81 s | puntaje 0.98 | pausa interna max original 0.22 s | así que levantate. Lo mejor de tu historia todavía no se ha escrito. Si esto era para  ti, escríbame.
+
+Nota: en la frase 6 el transcriptor oyo 'escribame' donde el guion dice 'escribe amen'; conviene escucharla.
