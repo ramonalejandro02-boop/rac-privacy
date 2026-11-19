@@ -106,7 +106,9 @@ def transcribir(wav, idioma, modelo):
     log(f"transcribiendo (whisper {modelo})...")
     m = WhisperModel(modelo, device="cpu", compute_type="int8",
                      download_root=os.path.join(MODELOS, "whisper"))
-    segs, info = m.transcribe(wav, language=idioma, word_timestamps=True, vad_filter=True)
+    with wave.open(wav) as w:
+        x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(np.float32) / 32768
+    segs, info = m.transcribe(x, language=idioma, word_timestamps=True, vad_filter=True)
     palabras = []
     for s in segs:
         for w in (s.words or []):
@@ -405,7 +407,7 @@ def main():
     ap.add_argument("--sin-subs", action="store_true")
     ap.add_argument("--subs-json", help="usar subtítulos de un JSON [{t,a,b}] en vez de transcribir")
     ap.add_argument("--idioma", default="es")
-    ap.add_argument("--whisper", default="small")
+    ap.add_argument("--whisper", default="large-v3-turbo")
     ap.add_argument("--sin-glow", action="store_true")
     ap.add_argument("--zoom", type=float, default=1.0, help="zoom base (1.0 = sin zoom extra)")
     ap.add_argument("--inicio", type=float, default=0)

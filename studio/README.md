@@ -31,3 +31,17 @@ python3 studio/transformar.py entrada.mp4 salida.mp4 --estilo farandula
 | `--subs-json` | usar subtítulos propios `[{"t":"palabra","a":0.5,"b":0.9}]` |
 
 Velocidad aproximada en CPU: unos 3 cuadros por segundo a 1080x1920.
+
+## Efectos por palabra clave (`efectos.py`)
+
+Cuando se dice una palabra clave aparece un efecto sincronizado: emoji animado, sticker de texto, lluvia o ráfaga de emojis, zoom al que habla, temblor, flash y efecto de sonido (pop, boing, whoosh, ding, silbido, bajada, boom; todos sintetizados, sin licencias).
+
+```bash
+# automático: diccionario de palabras clave -> emojis y sonidos
+python3 studio/efectos.py entrada.mp4 salida.mp4 --auto
+# con plan creativo (mejor resultado)
+python3 studio/efectos.py entrada.mp4 salida.mp4 --plan studio/planes/ejemplo_picaro.json
+```
+
+Tipos de evento en el plan: `emoji`, `sticker`, `lluvia`, `rafaga`, `zoom`, `temblor`, `flash`, `sfx`.
+Cualquier evento acepta `"sfx"`, `"temblor": true` y `"flash": true`. Ver `planes/ejemplo_picaro.json`.
