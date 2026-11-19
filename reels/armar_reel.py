@@ -32,6 +32,14 @@ GUIONES = {
         dict(dur=9, texto="Hebreos 11:7: Por la fe Noé, cuando fue advertido por Dios acerca de cosas que *AÚN* *NO* *SE* *VEÍAN*… preparó el arca."),
         dict(dur=8, texto="Lo que Dios te prometió, aunque hoy no lo veas… va a *LLEGAR*. Escribe *LO* *CREO* si estás construyendo tu arca."),
     ],
+    "levantate": [
+        dict(texto="Si hoy sientes que ya no puedes más, escucha esto."),
+        dict(texto="Hay batallas que nadie ve, y lágrimas que nadie conoce."),
+        dict(texto="Pero *DIOS* sí las ve. Y ninguna de ellas fue en vano."),
+        dict(texto="Él nunca te prometió un camino fácil. Te prometió que *NO* *CAMINARÍAS* *SOLO*."),
+        dict(texto="Isaías 41:10 dice: No temas, porque yo estoy contigo. No desmayes, porque yo soy tu Dios que te *ESFUERZO*."),
+        dict(texto="Así que *LEVÁNTATE*. Lo mejor de tu historia todavía no se ha escrito. Si esto era para ti, escribe *AMÉN*."),
+    ],
 }
 
 def run(cmd, **kw):
@@ -178,13 +186,13 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
         m = int(d * SR); X = np.fft.rfft(rng.normal(0, 1, m)); fr = np.fft.rfftfreq(m, 1 / SR)
         X[(fr < lo) | (fr > hi)] = 0; y = np.fft.irfft(X, m); return y / (np.abs(y).max() + 1e-9)
     for i, (a, b, s0, s1) in enumerate(segs):
-        if i > 0:
+        if i > 0 and ESTILO != "cine":
             t_ = np.arange(int(0.35 * SR)) / SR
             add(bandnoise(0.35, 300, 4000) * np.sin(np.pi * t_ / 0.35) ** 2, a - 0.18, 0.18)
         if guion[i].get("sfx") == "trueno":
             t_ = np.arange(int(2.5 * SR)) / SR
             add(bandnoise(2.5, 30, 400) * np.exp(-t_ * 1.5), a + 2.3, 0.5); add(bandnoise(0.2, 2000, 12000) * np.exp(-t_[:int(0.2 * SR)] * 25), a + 2.3, 0.3)
-    for kt in kw_times:
+    for kt in (kw_times if ESTILO != "cine" else []):
         t_ = np.arange(int(0.9 * SR)) / SR
         add(np.sin(2 * np.pi * np.cumsum(40 + 100 * np.exp(-t_ * 9)) / SR) * np.exp(-t_ * 4), kt, 0.22)
     if music_path == "PAD":
@@ -261,7 +269,11 @@ def main(name):
             if ESTILO == "cine":
                 arr = (arr - 128) * 1.08 + 128 + grain[k % len(grain)]
             lt = k / FPS
-            if i > 0 and lt < 0.1: arr += (1 - lt / 0.1) * 200
+            if i > 0 and ESTILO != "cine" and lt < 0.1: arr += (1 - lt / 0.1) * 200
+            if ESTILO == "cine":
+                fin = b - t
+                if i > 0 and lt < 0.35: arr *= 0.25 + 0.75 * (lt / 0.35)
+                if i < len(segs) - 1 and fin < 0.35: arr *= 0.25 + 0.75 * (fin / 0.35)
             img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8)).convert("RGBA")
             cur = next((c for c in g["chunks"] if c[0]["t0"] - 0.02 <= t < c[-1]["t1"] + 0.25), None)
             if cur: draw_caption(img, cur, t)
@@ -270,7 +282,7 @@ def main(name):
             d.text((W / 2, 150), BRAND, font=font(40), fill=(255, 255, 255, 190), anchor="mm", stroke_width=2, stroke_fill=(0, 0, 0, 140))
             out_img = img.convert("RGB")
             # pequeño golpe de zoom en palabras clave
-            hit = max([0] + [1 - (t - kt) / 0.25 for kt in kw_times if 0 <= t - kt < 0.25])
+            hit = 0 if ESTILO == "cine" else max([0] + [1 - (t - kt) / 0.25 for kt in kw_times if 0 <= t - kt < 0.25])
             if hit > 0:
                 zz = 1 + 0.03 * hit; cw, ch = W / zz, H / zz
                 out_img = out_img.resize((W, H), Image.BILINEAR, box=((W - cw) / 2, (H - ch) / 2, (W + cw) / 2, (H + ch) / 2))

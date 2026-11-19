@@ -2,7 +2,7 @@
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');
 const http = require('http'), fs = require('fs'), path = require('path');
-const DUR = [5, 5, 6, 5, 9, 8], FPS = 30;
+const DUR = (process.env.DUR || '5,5,6,5,9,8').split(',').map(Number), FPS = 30, PAGE = process.env.PAGE || 'scene.html';
 const root = __dirname;
 const srv = http.createServer((q, r) => {
   const f = path.join(root, decodeURIComponent(q.url.split('?')[0]));
@@ -13,7 +13,7 @@ const srv = http.createServer((q, r) => {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
   p.on('console', m => console.log('page:', m.text())); p.on('pageerror', e => console.log('ERR', e.message));
-  await p.goto('http://localhost:8765/scene.html'); await p.waitForFunction('window.ready === true', null, { timeout: 60000 });
+  await p.goto('http://localhost:8765/' + PAGE); await p.waitForFunction('window.ready === true', null, { timeout: 60000 });
   const mode = process.argv[2] || 'stills';
   if (mode === 'stills') {
     for (let i = 0; i < DUR.length; i++) {
