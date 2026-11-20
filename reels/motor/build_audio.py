@@ -1,6 +1,7 @@
 """Motor de audio CONAFEPH: narración (Piper TTS local), música generada y efectos.
 
-Uso: python3 build_audio.py <guion.json> <carpeta_salida> <modelo_voz.onnx>
+Uso: python3 build_audio.py <guion.json> <carpeta_salida> <modelo_voz.onnx | ref.wav> [python_chatterbox]
+Si el 3er argumento es un .wav se usa Chatterbox (voz humana) con esa voz de referencia.
 Salida: audio.wav (mezcla final), timeline.json (tiempos por segmento y envolvente para animar bocas).
 """
 import json, subprocess, sys, wave, os
@@ -103,14 +104,28 @@ def pop(d=0.12):
     return np.sin(2 * np.pi * (900 - 2500 * t) * t) * np.exp(-t * 40) * 0.35
 
 
-def main(script_path, out_dir, model):
+def clean(x):
+    idx = np.where(np.abs(x) > 0.012)[0]
+    x = x[max(0, idx[0] - 600): idx[-1] + 1800] if len(idx) else x
+    return x / (np.max(np.abs(x)) + 1e-9) * 0.89
+
+
+def main(script_path, out_dir, model, py=None):
     os.makedirs(out_dir, exist_ok=True)
     sc = json.load(open(script_path))
     speed = sc.get("speed", 1.0)
     t = sc.get("lead", 0.5)
     segs = []; voice_parts = []
+    human = model.endswith(".wav")
+    if human:
+        jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "seed": s.get("seed", 1234)}
+                for i, s in enumerate(sc["segments"])]
+        todo = [j for j in jobs if not os.path.exists(j["out"])]
+        if todo:
+            json.dump(todo, open(f"{out_dir}/jobs.json", "w"), ensure_ascii=False)
+            subprocess.run([py, os.path.join(os.path.dirname(__file__), "tts_chatterbox.py"), f"{out_dir}/jobs.json", model], check=True)
     for i, s in enumerate(sc["segments"]):
-        x = tts(s.get("say", s["text"]), model, f"{out_dir}/seg{i:02d}.wav", s.get("speed", speed))
+        x = clean(read_wav(f"{out_dir}/seg{i:02d}.wav")) if human else tts(s.get("say", s["text"]), model, f"{out_dir}/seg{i:02d}.wav", s.get("speed", speed))
         d = len(x) / SR
         segs.append({**s, "start": round(t, 3), "end": round(t + d, 3)})
         voice_parts.append((t, x))
@@ -150,4 +165,4 @@ def main(script_path, out_dir, model):
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    main(*sys.argv[1:5])
