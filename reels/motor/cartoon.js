@@ -202,7 +202,7 @@ export function house(x, y, w = 920, o = {}) {
   for (let i = 1; i < 10; i++) s += `<path d="M${gx - gw / 2 + i * gw / 10} ${y - wallH + 10} v${wallH - 10}" stroke="${trim}" stroke-width="7"/>`;
   s += `<rect x="${gx - gw / 2}" y="${y - 90}" width="${gw}" height="80" fill="${trim}"/>`;
   s += `</g>`;
-  if (o.number !== false) s += `<rect x="${L + 30}" y="${y - wallH + 40}" width="70" height="44" rx="6" fill="#fff" stroke="${K}" stroke-width="4"/><text x="${L + 65}" y="${y - wallH + 73}" font-size="28" font-weight="800" text-anchor="middle" font-family="Baloo" fill="${K}">${o.number ?? 12}</text>`;
+  if (o.number !== false) s += `<rect x="${L + 30}" y="${y - wallH + 40}" width="70" height="44" rx="6" fill="#fff" stroke="${K}" stroke-width="4"/><text x="${L + 65}" y="${y - wallH + 73}" font-size="28" font-weight="800" text-anchor="middle" font-family="Brand" fill="${K}">${o.number ?? 12}</text>`;
   s += `</g>`;
   return s;
 }
@@ -235,33 +235,33 @@ export function anger(x, y, t, s = 1) {
   const k = .85 + .15 * Math.sin(t * 14);
   return `<g transform="translate(${x},${y}) scale(${s * k})" stroke="${C.red}" stroke-width="7" fill="none" stroke-linecap="round">${[1, 2, 3].map(i => `<path d="M${-60 - i * 26} ${-i * 34} a${80 + i * 30} ${80 + i * 30} 0 0 0 0 ${i * 68}" opacity="${1 - i * .2}"/><path d="M${60 + i * 26} ${-i * 34} a${80 + i * 30} ${80 + i * 30} 0 0 1 0 ${i * 68}" opacity="${1 - i * .2}"/>`).join('')}</g>`;
 }
-export const qmark = (x, y, s = 1, c = C.navy) => `<text x="${x}" y="${y}" font-family="Baloo" font-weight="800" font-size="${120 * s}" text-anchor="middle" fill="${c}" stroke="${K}" stroke-width="3">?</text>`;
-export const excl = (x, y, s = 1) => `<text x="${x}" y="${y}" font-family="Baloo" font-weight="800" font-size="${130 * s}" text-anchor="middle" fill="${C.red}" stroke="${K}" stroke-width="3">!</text>`;
+export const qmark = (x, y, s = 1, c = C.navy) => `<text x="${x}" y="${y}" font-family="Brand" font-weight="800" font-size="${120 * s}" text-anchor="middle" fill="${c}" stroke="${K}" stroke-width="3">?</text>`;
+export const excl = (x, y, s = 1) => `<text x="${x}" y="${y}" font-family="Brand" font-weight="800" font-size="${130 * s}" text-anchor="middle" fill="${C.red}" stroke="${K}" stroke-width="3">!</text>`;
 export function sparkle(x, y, s = 1, c = '#F2C230') { return `<path transform="translate(${x},${y}) scale(${s})" d="M0 -30 Q4 -4 30 0 Q4 4 0 30 Q-4 4 -30 0 Q-4 -4 0 -30Z" fill="${c}" stroke="${K}" stroke-width="3"/>`; }
 export function sweat(x, y, s = 1) { return `<path transform="translate(${x},${y}) scale(${s})" d="M0 -30 Q22 0 14 16 Q0 30 -14 16 Q-22 0 0 -30Z" fill="#8FD0F5" stroke="${K}" stroke-width="4"/>`; }
 export function notes(x, y, t) { return [0, 1].map(i => { const p = (t * .8 + i * .5) % 1; return `<text x="${x + i * 40 + Math.sin(p * 6) * 10}" y="${y - p * 120}" font-size="64" opacity="${1 - p}" fill="${C.navy}">${i ? '♫' : '♪'}</text>`; }).join(''); }
 export function check(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><circle r="52" fill="${C.green}" stroke="${K}" stroke-width="5"/><path d="M-24 2 l16 16 l32 -36" stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>`; }
 export function cross(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><circle r="52" fill="${C.red}" stroke="${K}" stroke-width="5"/><path d="M-20 -20 l40 40 M20 -20 l-40 40" stroke="#fff" stroke-width="12" stroke-linecap="round"/></g>`; }
 export function label(x, y, text, o = {}) {
-  const fs = o.fs ?? 46, padX = o.padX ?? 30, w = o.w ?? text.length * fs * .56 + padX * 2, h = fs * 1.5;
+  const fs = Math.max(40, o.fs ?? 48), padX = o.padX ?? 34, w = o.w ?? text.replace(/<[^>]+>/g, '').length * fs * .62 + padX * 2, h = fs * 1.55;
   const bg = o.bg ?? '#fff', fg = o.fg ?? C.navy;
-  return `<g transform="translate(${f(x)},${f(y)}) scale(${o.s ?? 1}) rotate(${o.rot ?? 0})"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${o.rx ?? 16}" fill="${bg}" stroke="${o.stroke ?? K}" stroke-width="5"/><text x="0" y="${fs * .35}" font-family="Baloo" font-weight="800" font-size="${fs}" text-anchor="middle" fill="${fg}">${text}</text></g>`;
+  return `<g transform="translate(${f(x)},${f(y)}) scale(${o.s ?? 1}) rotate(${o.rot ?? 0})"><rect x="${-w / 2 + 6}" y="${-h / 2 + 8}" width="${w}" height="${h}" rx="${o.rx ?? 18}" fill="#0E2A47"/><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${o.rx ?? 16}" fill="${bg}" stroke="${o.stroke ?? K}" stroke-width="5"/><text x="0" y="${fs * .35}" font-family="Brand" font-weight="800" font-size="${fs}" text-anchor="middle" fill="${fg}">${text}</text></g>`;
 }
 export function bubble(x, y, lines, o = {}) {
-  const fs = o.fs ?? 52, w = o.w ?? 760, h = lines.length * fs * 1.15 + 70, tx = o.tail ?? 0;
+  const fs = o.fs ?? 54, w = o.w ?? 760, h = lines.length * fs * 1.2 + 84, tx = o.tail ?? 0;
   let s = `<g transform="translate(${f(x)},${f(y)}) scale(${o.s ?? 1})">`;
   s += `<path d="M${-w / 2 + 40} ${-h} H${w / 2 - 40} Q${w / 2} ${-h} ${w / 2} ${-h + 40} V-40 Q${w / 2} 0 ${w / 2 - 40} 0 H${tx + 40} L${tx + (o.tailDx ?? -20)} 70 L${tx - 20} 0 H${-w / 2 + 40} Q${-w / 2} 0 ${-w / 2} -40 V${-h + 40} Q${-w / 2} ${-h} ${-w / 2 + 40} ${-h}Z" fill="${o.bg ?? '#fff'}" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>`;
-  if (o.who) s += `<text x="${-w / 2 + 40}" y="${-h + 52}" font-family="Baloo" font-weight="800" font-size="30" fill="${C.green}" letter-spacing="2">${o.who}</text>`;
-  lines.forEach((l, i) => s += `<text x="0" y="${-h + 40 + (o.who ? 30 : 10) + (i + 1) * fs * 1.1}" font-family="Baloo" font-weight="800" font-size="${fs}" text-anchor="middle" fill="${o.fg ?? C.navy}">${l}</text>`);
+  if (o.who) s += `<text x="${-w / 2 + 40}" y="${-h + 52}" font-family="Brand" font-weight="800" font-size="34" fill="${o.bg && o.bg !== '#fff' ? '#8FE0B0' : C.green}" letter-spacing="2">${o.who}</text>`;
+  lines.forEach((l, i) => s += `<text x="0" y="${-h + 44 + (o.who ? 34 : 10) + (i + 1) * fs * 1.15}" font-family="Brand" font-weight="800" font-size="${fs}" text-anchor="middle" fill="${o.fg ?? C.navy}">${l}</text>`);
   return s + `</g>`;
 }
 export function stamp(x, y, text, color, p, rot = -8) {
   const k = p <= 0 ? 0 : lerp(2.2, 1, easeOut(p));
-  return p <= 0 ? '' : `<g transform="translate(${x},${y}) rotate(${rot}) scale(${k})" opacity="${clamp(p * 2)}"><rect x="${-text.length * 26 - 30}" y="-50" width="${text.length * 52 + 60}" height="100" rx="14" fill="#fff" stroke="${color}" stroke-width="10"/><text y="26" font-family="Baloo" font-weight="800" font-size="76" text-anchor="middle" fill="${color}" letter-spacing="6">${text}</text></g>`;
+  return p <= 0 ? '' : `<g transform="translate(${x},${y}) rotate(${rot}) scale(${k})" opacity="${clamp(p * 2)}"><rect x="${-text.length * 26 - 30}" y="-50" width="${text.length * 52 + 60}" height="100" rx="14" fill="#fff" stroke="${color}" stroke-width="10"/><text y="26" font-family="Brand" font-weight="900" font-size="70" text-anchor="middle" fill="${color}" letter-spacing="6">${text}</text></g>`;
 }
 export function icoMuni(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-90 -60 L0 -120 L90 -60Z" fill="${C.navy}" stroke="${K}" stroke-width="5"/><rect x="-80" y="-60" width="160" height="16" fill="#fff" stroke="${K}" stroke-width="4"/>${[-60, -20, 20, 60].map(c => `<rect x="${c - 9}" y="-44" width="18" height="84" fill="#fff" stroke="${K}" stroke-width="4"/>`).join('')}<rect x="-90" y="40" width="180" height="18" fill="#fff" stroke="${K}" stroke-width="4"/></g>`; }
 export function icoPolice(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><path d="M0 -100 L70 -76 V-10 Q70 60 0 96 Q-70 60 -70 -10 V-76Z" fill="${C.navy}" stroke="${K}" stroke-width="5"/><path d="M0 -50 l14 30 l32 4 l-24 22 l6 32 l-28 -16 l-28 16 l6 -32 l-24 -22 l32 -4z" fill="#F2C230" stroke="${K}" stroke-width="3"/></g>`; }
-export function noParking(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><circle r="70" fill="#fff" stroke="${C.red}" stroke-width="14"/><text y="34" font-family="Baloo" font-weight="800" font-size="100" text-anchor="middle" fill="${C.navy}">P</text><path d="M-48 -48 L48 48" stroke="${C.red}" stroke-width="14"/></g>`; }
+export function noParking(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><circle r="70" fill="#fff" stroke="${C.red}" stroke-width="14"/><text y="34" font-family="Brand" font-weight="800" font-size="100" text-anchor="middle" fill="${C.navy}">P</text><path d="M-48 -48 L48 48" stroke="${C.red}" stroke-width="14"/></g>`; }
 
 // transición de barrido ondulado (estilo pincel)
 export function wipe(p) {
