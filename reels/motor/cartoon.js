@@ -172,6 +172,7 @@ export const holdPhone = () => (hx, hy, sd) => `<rect x="${f(hx - 16)}" y="${f(h
 export const holdClip = () => (hx, hy) => `<rect x="${f(hx - 40)}" y="${f(hy - 90)}" width="80" height="104" rx="6" fill="#C79B66" stroke="${K}" stroke-width="5"/><rect x="${f(hx - 30)}" y="${f(hy - 78)}" width="60" height="80" fill="#fff" stroke="${K}" stroke-width="3"/><path d="M${f(hx - 20)} ${f(hy - 60)} h40 M${f(hx - 20)} ${f(hy - 44)} h40 M${f(hx - 20)} ${f(hy - 28)} h28" stroke="${K}" stroke-width="3"/>`;
 
 export function house(x, y, w = 920, o = {}) {
+  if (o.k && o.k !== 1) return `<g transform="translate(${x},${y}) scale(${o.k}) translate(${-x},${-y})">${house(x, y, w, { ...o, k: 1 })}</g>`;
   const wall = o.wall ?? '#F6F1E7', body = o.body ?? '#FFFFFF', trim = o.trim ?? C.navy;
   const L = x - w / 2, H = 560, wallH = 250;
   let s = `<g>`;
@@ -205,18 +206,20 @@ export function house(x, y, w = 920, o = {}) {
 export function sidewalk(y = 1380) {
   return `<rect x="-10" y="${y}" width="1100" height="40" fill="#E4E6EA" stroke="${K}" stroke-width="4"/><rect x="-10" y="${y + 40}" width="1100" height="400" fill="#9AA1AC"/><path d="M0 ${y + 180} h120 M240 ${y + 180} h120 M480 ${y + 180} h120 M720 ${y + 180} h120 M960 ${y + 180} h120" stroke="#fff" stroke-width="10"/>`;
 }
+// carro de perfil. Escala real: s=1 => ~1.45 m de alto con personas s=.55 (~1.6 m)
 export function car(x, y, color = '#5B8BC6', o = {}) {
-  const s = o.s ?? 1, flip = o.flip ? -1 : 1, rot = o.wheel ?? 0;
+  const s = o.s ?? 1, flip = o.flip ? -1 : 1, rot = o.wheel ?? 0, L = o.len ?? 1.4;
+  const X = v => f(v * L);
   let g = `<g transform="translate(${f(x)},${f(y)}) scale(${flip * s},${s})">`;
-  g += shadow(0, 4, 280);
-  g += `<path d="M-270 -60 Q-276 -130 -230 -140 L-150 -150 Q-110 -240 -40 -244 H90 Q140 -244 180 -160 L250 -146 Q284 -138 284 -96 V-60 Q284 -40 262 -40 H-250 Q-270 -40 -270 -60Z" fill="${color}" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>`;
-  g += `<path d="M-128 -152 Q-96 -224 -40 -226 H20 V-152Z" fill="#CFE8F6" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
-  g += `<path d="M40 -226 H88 Q128 -226 158 -152 H40Z" fill="#CFE8F6" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
-  g += `<path d="M30 -150 V-50 M-130 -100 h30 M60 -100 h30" stroke="${K}" stroke-width="4" fill="none"/>`;
-  g += `<path d="M262 -120 h18 v24 h-22z" fill="#FFE9A8" stroke="${K}" stroke-width="4"/><path d="M-268 -118 h14 v24 h-14z" fill="#E2554A" stroke="${K}" stroke-width="4"/>`;
-  for (const wx of [-160, 170]) {
-    g += `<circle cx="${wx}" cy="-40" r="52" fill="#262A30" stroke="${K}" stroke-width="5"/><circle cx="${wx}" cy="-40" r="24" fill="#C8CDD4" stroke="${K}" stroke-width="4"/>`;
-    g += `<g transform="rotate(${f(rot)} ${wx} -40)"><path d="M${wx - 24} -40 h48 M${wx} -64 v48" stroke="${K}" stroke-width="4"/></g>`;
+  g += shadow(0, 4, 280 * L);
+  g += `<path d="M${X(-270)} -60 Q${X(-276)} -130 ${X(-230)} -140 L${X(-150)} -150 Q${X(-110)} -240 ${X(-40)} -244 H${X(90)} Q${X(140)} -244 ${X(180)} -160 L${X(250)} -146 Q${X(284)} -138 ${X(284)} -96 V-60 Q${X(284)} -40 ${X(262)} -40 H${X(-250)} Q${X(-270)} -40 ${X(-270)} -60Z" fill="${color}" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>`;
+  g += `<path d="M${X(-128)} -152 Q${X(-96)} -224 ${X(-40)} -226 H${X(20)} V-152Z" fill="#CFE8F6" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
+  g += `<path d="M${X(40)} -226 H${X(88)} Q${X(128)} -226 ${X(158)} -152 H${X(40)}Z" fill="#CFE8F6" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
+  g += `<path d="M${X(30)} -150 V-50 M${X(-130)} -100 h30 M${X(60)} -100 h30" stroke="${K}" stroke-width="4" fill="none"/>`;
+  g += `<path d="M${X(262)} -120 h18 v24 h-22z" fill="#FFE9A8" stroke="${K}" stroke-width="4"/><path d="M${X(-268)} -118 h14 v24 h-14z" fill="#E2554A" stroke="${K}" stroke-width="4"/>`;
+  for (const wx of [-170 * L, 175 * L]) {
+    g += `<circle cx="${f(wx)}" cy="-40" r="54" fill="#262A30" stroke="${K}" stroke-width="5"/><circle cx="${f(wx)}" cy="-40" r="25" fill="#C8CDD4" stroke="${K}" stroke-width="4"/>`;
+    g += `<g transform="rotate(${f(rot)} ${f(wx)} -40)"><path d="M${f(wx - 25)} -40 h50 M${f(wx)} -65 v50" stroke="${K}" stroke-width="4"/></g>`;
   }
   g += `</g>`;
   return g;

@@ -42,7 +42,7 @@ const P = (base, t, o = 0, extra = {}) => person({ ...base, blink: blinkAt(t, o)
 const title = (lines, p, y = 300, fs = 96) => {
   if (p <= 0) return '';
   const k = easeBack(p);
-  return `<g transform="translate(540,${y}) scale(${lerp(.6, 1, k)})" opacity="${clamp(p * 2)}">` +
+  return `<g transform="translate(540,${y}) scale(${lerp(.6, 1, k)})" opacity="${clamp(p * 2)}"><rect x="-470" y="${-fs * 1.05}" width="940" height="${lines.length * fs + fs * .55}" rx="36" fill="#fff" stroke="${K}" stroke-width="6"/>` +
     lines.map((l, i) => `<text x="0" y="${i * fs * 1.0}" font-family="Baloo" font-weight="800" font-size="${fs}" text-anchor="middle" fill="${C.navy}" stroke="#fff" stroke-width="18" paint-order="stroke" stroke-linejoin="round">${l}</text>`).join('') + `</g>`;
 };
 const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})">${svg}</g>`;
@@ -64,7 +64,8 @@ function subs(t) {
   const txt = sb[2].replace(/&/g, '&amp;').replace(KEY, `<tspan fill="${C.green}">$1</tspan>`);
   return `<text x="540" y="1790" font-family="Baloo" font-weight="800" font-size="56" text-anchor="middle" fill="${C.navy}" stroke="#fff" stroke-width="16" paint-order="stroke" stroke-linejoin="round">${txt}</text>`;
 }
-const brand = `<g><rect x="50" y="70" width="250" height="64" rx="32" fill="#fff" stroke="${K}" stroke-width="4"/><text x="175" y="114" font-family="Baloo" font-weight="800" font-size="38" text-anchor="middle" fill="${C.navy}" letter-spacing="2">CONAFEP<tspan fill="${C.green}">H</tspan></text></g>`;
+const LOGO = '../motor/assets/conafeph-logo.png';
+const brand = `<g><rect x="50" y="62" width="300" height="80" rx="40" fill="#fff" stroke="${K}" stroke-width="4"/><image href="${LOGO}" x="56" y="64" width="76" height="76"/><text x="236" y="116" font-family="Baloo" font-weight="800" font-size="38" text-anchor="middle" fill="${C.navy}" letter-spacing="2">CONAFEPH</text></g>`;
 
 // ---- mapa (vista aérea) ----
 function topCar(x, y, color, rot = 0) {
@@ -104,36 +105,37 @@ function map(t, u, mode) {
 function scene(i, t) {
   const u = t - shotStart(i), id = SEG[i].scene;
   let s = '';
-  const bg = (gy = 1240) => house(540, gy, 960) + sidewalk(gy);
+  const bg = (gy = 1240) => house(540, gy, 960, { k: 1.84 }) + sidewalk(gy);
+  const PS = .63, CY = 1268, CAR = { s: 1.15, len: 1.4 }; // escala real: persona 1.6 m, carro 1.45 m, muro 1.8 m
   if (id === 'hook') {
     s += bg();
-    const k = easeOut(prog(u, .2, 2.4)), cx = lerp(-420, 330, k);
-    s += car(cx, 1450, '#5B8BC6', { s: .9, wheel: cx * 1.2 });
+    const k = easeOut(prog(u, .2, 2.4)), cx = lerp(-600, 90, k);
+    s += car(cx, 1500, '#5B8BC6', { ...CAR, wheel: cx * 1.1 });
     s += title(['¿Este espacio', `es <tspan fill="${C.green}">SUYO?</tspan>`], prog(u, .3, .8), 300, 110);
     const pq = prog(u, 2.5, 2.8);
-    if (pq > 0) s += `<rect x="40" y="1250" width="580" height="230" rx="20" fill="none" stroke="${C.red}" stroke-width="7" stroke-dasharray="24 16" opacity="${pq}"/>`;
-    s += pop(pq, qmark(330, 1150, 1.4, C.red), 330, 1110);
+    if (pq > 0) s += `<rect x="-20" y="1150" width="500" height="350" rx="20" fill="none" stroke="${C.red}" stroke-width="7" stroke-dasharray="24 16" opacity="${pq}"/>`;
+    s += pop(pq, qmark(200, 1080, 1.4, C.red), 200, 1040);
   }
   if (id === 'marta') {
     s += bg();
     const sw = Math.sin(t * 7) * 14;
-    s += P(MARTA, t, .2, { x: 640, y: 1300, s: .9, expr: 'content', arms: { r: [28, -60], l: [30 + sw * .4, -70] }, hold: { l: holdBroom(sw) } });
-    [[760, 1230, 0], [520, 1250, .4], [860, 1290, .8]].forEach(([x, y, o]) => { const p = (t * .9 + o) % 1; s += `<g opacity="${Math.sin(p * Math.PI)}">${sparkle(x, y - p * 40, .8 + p * .4)}</g>`; });
-    s += pop(prog(u, .4, .8), label(640, 560, 'Doña Marta', { fs: 54, bg: '#fff' }), 640, 560);
+    s += P(MARTA, t, .2, { x: 700, y: CY, s: PS, expr: 'content', arms: { r: [28, -60], l: [30 + sw * .4, -70] }, hold: { l: holdBroom(sw) } });
+    [[800, 1250, 0], [600, 1260, .4], [880, 1280, .8]].forEach(([x, y, o]) => { const p = (t * .9 + o) % 1; s += `<g opacity="${Math.sin(p * Math.PI)}">${sparkle(x, y - p * 40, .8 + p * .4)}</g>`; });
+    s += pop(prog(u, .4, .8), label(700, 800, 'Doña Marta', { fs: 54, bg: '#fff' }), 700, 800);
   }
   if (id === 'llega') {
     s += bg();
-    const k = easeOut(prog(u, .1, 2.2)), cx = lerp(-420, 300, k);
-    s += car(cx, 1450, '#5B8BC6', { s: .9, wheel: cx * 1.2 });
+    const k = easeOut(prog(u, .1, 2.2)), cx = lerp(-600, 90, k);
+    s += car(cx, 1500, '#5B8BC6', { ...CAR, wheel: cx * 1.1 });
     const out = prog(u, 2.3, 2.7);
-    if (out > 0) s += P(CARLOS, t, 1, { x: lerp(470, 600, out), y: 1300, s: .85, expr: 'happy', arms: POSE.idle }) + notes(660, 760, t);
+    if (out > 0) s += P(CARLOS, t, 1, { x: lerp(380, 520, out), y: CY, s: PS, expr: 'happy', arms: POSE.idle }) + notes(560, 900, t);
     const surp = u > 2.6;
-    s += P(MARTA, t, .2, { x: 850, y: 1300, s: .85, expr: surp ? 'shock' : 'content', arms: surp ? POSE.head : { r: [28, -60], l: [30, -70] }, hold: surp ? {} : { l: holdBroom(0) } });
-    if (surp) s += pop(prog(u, 2.6, 2.9), excl(950, 760), 950, 720);
-    s += pop(prog(u, 2.4, 2.8), label(600, 560, 'Don Carlos', { fs: 54 }), 600, 560);
+    s += P(MARTA, t, .2, { x: 820, y: CY, s: PS, expr: surp ? 'shock' : 'content', arms: surp ? POSE.head : { r: [28, -60], l: [30, -70] }, hold: surp ? {} : { l: holdBroom(0) } });
+    if (surp) s += pop(prog(u, 2.6, 2.9), excl(900, 900), 900, 860);
+    s += pop(prog(u, 2.4, 2.8), label(520, 800, 'Don Carlos', { fs: 54 }), 520, 800);
   }
   if (id === 'reclamo') {
-    s += house(540, 1180, 1000) + sidewalk(1180);
+    s += house(540, 1440, 960, { k: 3.6 }) + sidewalk(1440);
     const q = quoteT(i), talking = t > q && t < E(i);
     s += P(CARLOS, t, 1, { x: 820, y: 1560, s: 1.15, expr: 'worried', arms: POSE.idle, look: -1 });
     s += P(MARTA, t, .2, { x: 300, y: 1560, s: 1.3, expr: 'angry', talk: talking ? env(t) : 0, arms: POSE.point, look: 1, tilt: talking ? Math.sin(t * 9) * 2 : 0 });
@@ -141,7 +143,7 @@ function scene(i, t) {
     s += pop(prog(t, q - .3, q), bubble(540, 520, ['¡Ahí no se parquea,', 'ese es MI frente!'], { who: 'DOÑA MARTA', tail: -200, fs: 60, w: 860 }), 540, 520);
   }
   if (id === 'respuesta') {
-    s += house(540, 1180, 1000) + sidewalk(1180);
+    s += house(540, 1440, 960, { k: 3.6 }) + sidewalk(1440);
     const q = quoteT(i), talking = t > q && t < E(i);
     s += P(MARTA, t, .2, { x: 270, y: 1560, s: 1.15, expr: 'angry', arms: POSE.cross, look: 1 });
     s += P(CARLOS, t, 1, { x: 770, y: 1560, s: 1.3, expr: talking ? 'smug' : 'neutral', talk: talking ? env(t) : 0, arms: talking ? POSE.shrug : POSE.idle, look: -1, tilt: talking ? -4 : 0 });
@@ -173,9 +175,9 @@ function scene(i, t) {
     s += bg();
     const half = S(i) + (E(i) - S(i)) * .52;
     const late = t > half;
-    [[110, 1430, 'tire'], [260, 1440, 'stone'], [400, 1430, 'tire'], [530, 1445, 'stone']].forEach(([x, y, k], j) => s += pop(prog(u, .3 + j * .25, .6 + j * .25), k === 'tire' ? tire(x, y, 1) : stone(x, y, 1.1), x, y - 40));
-    s += P(MARTA, t, .2, { x: 820, y: 1300, s: .9, expr: late ? 'worried' : 'smug', arms: late ? POSE.head : POSE.hips });
-    if (late) s += sweat(930, 760 + ((t * 1.5) % 1) * 30, 1.2);
+    [[90, 1420, 'tire'], [250, 1428, 'stone'], [410, 1420, 'tire'], [560, 1430, 'stone']].forEach(([x, y, k], j) => s += pop(prog(u, .3 + j * .25, .6 + j * .25), k === 'tire' ? tire(x, y, 1) : stone(x, y, 1.1), x, y - 40));
+    s += P(MARTA, t, .2, { x: 800, y: CY, s: PS, expr: late ? 'worried' : 'smug', arms: late ? POSE.head : POSE.hips });
+    if (late) s += sweat(870, 900 + ((t * 1.5) % 1) * 30, 1.2);
     s += stamp(540, 330, 'MITO', C.red, prog(u, .2, .55));
     s += pop(prog(u, .5, .8), label(540, 470, '“El espacio ya es mío”', { fs: 50 }), 540, 470);
     if (late) {
@@ -205,9 +207,9 @@ function scene(i, t) {
   }
   if (id === 'paso3') {
     s += bg();
-    s += car(660, 1450, '#D9483B', { s: .9, flip: true });
-    s += pop(prog(u, .4, .7), cross(660, 1150, .9), 660, 1150);
-    s += P(MARTA, t, .2, { x: 200, y: 1300, s: .85, expr: 'neutral', talk: Math.max(0, Math.sin(t * 10)) * .5, arms: POSE.phone, hold: { r: holdPhone() } });
+    s += car(732, 1500, '#D9483B', { ...CAR, flip: true });
+    s += pop(prog(u, .4, .7), cross(732, 1080, .9), 732, 1080);
+    s += P(MARTA, t, .2, { x: 170, y: CY, s: PS, expr: 'neutral', talk: Math.max(0, Math.sin(t * 10)) * .5, arms: POSE.phone, hold: { r: holdPhone() } });
     s += pop(prog(t, S(i) + 1.6, S(i) + 2.0), `<g>${icoMuni(360, 560, 1.1)}${label(360, 680, 'Municipalidad', { fs: 44 })}</g>`, 360, 560);
     s += pop(prog(t, S(i) + 2.4, S(i) + 2.8), `<g>${icoPolice(740, 560, 1.0)}${label(740, 680, 'Policía', { fs: 44 })}</g>`, 740, 560);
     s += stepLabel(3, 'Avisar a la autoridad', prog(u, 0, .4));
@@ -222,9 +224,9 @@ function scene(i, t) {
   if (id === 'cierre') {
     s += `<defs><radialGradient id="lg" cx=".5" cy=".4" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E8EE"/></radialGradient></defs><rect width="1080" height="1920" fill="url(#lg)"/>`;
     const p = prog(u, .1, .9), k = easeBack(p);
-    s += `<g transform="translate(540,640) scale(${lerp(.2, 1, k)}) rotate(${lerp(-160, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="190" fill="#fff" stroke="${C.navy}" stroke-width="22"/><circle r="150" fill="none" stroke="${C.green}" stroke-width="16"/><text y="32" font-family="Baloo" font-weight="800" font-size="96" text-anchor="middle" fill="${C.navy}">CNF</text></g>`;
-    const sh = prog(u, .9, 1.6); if (sh > 0 && sh < 1) s += `<rect x="${lerp(300, 780, sh) - 30}" y="440" width="40" height="400" fill="#fff" opacity=".7" transform="rotate(20 540 640)"/>`;
-    s += `<g opacity="${prog(u, .7, 1.1)}" transform="translate(0,${(1 - easeOut(prog(u, .7, 1.1))) * 40})"><text x="540" y="960" font-family="Baloo" font-weight="800" font-size="110" text-anchor="middle" fill="${C.navy}" letter-spacing="8">CONAFEP<tspan fill="${C.green}">H</tspan></text></g>`;
+    s += `<g transform="translate(540,640) scale(${lerp(.2, 1, k)}) rotate(${lerp(-90, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="250" fill="#000" opacity=".06" cy="12"/><image href="${LOGO}" x="-250" y="-250" width="500" height="500"/></g>`;
+    const sh = prog(u, 1.0, 1.7); if (sh > 0 && sh < 1) s += `<defs><clipPath id="lc"><circle cx="540" cy="640" r="232"/></clipPath></defs><rect clip-path="url(#lc)" x="${lerp(250, 830, sh) - 30}" y="380" width="46" height="520" fill="#fff" opacity=".55" transform="rotate(20 540 640)"/>`;
+    s += `<g opacity="${prog(u, .7, 1.1)}" transform="translate(0,${(1 - easeOut(prog(u, .7, 1.1))) * 40})"><text x="540" y="960" font-family="Baloo" font-weight="800" font-size="110" text-anchor="middle" fill="${C.navy}" letter-spacing="8">CONAFEPH</text></g>`;
     s += `<g opacity="${prog(u, 1.2, 1.6)}"><text x="540" y="1130" font-family="Baloo" font-weight="800" font-size="64" text-anchor="middle" fill="${C.navy}">¿Problemas en su colonia?</text></g>`;
     s += pop(prog(u, 1.7, 2.1), `<rect x="130" y="1200" width="820" height="130" rx="65" fill="${C.green}" stroke="${K}" stroke-width="6"/><text x="540" y="1286" font-family="Baloo" font-weight="800" font-size="48" text-anchor="middle" fill="#fff">Busque orientación con CONAFEPH</text>`, 540, 1265);
     s += `<text x="540" y="1430" font-family="Baloo" font-weight="700" font-size="40" text-anchor="middle" fill="#1B3E66" opacity="${prog(u, 2.2, 2.6)}">WhatsApp · Oficinas · Facebook CONAFEPH</text>`;
