@@ -130,14 +130,17 @@ def main(script_path, out_dir, model, py=None):
     speed = sc.get("speed", 1.0)
     t = sc.get("lead", 0.5)
     segs = []; voice_parts = []
-    human = model.endswith(".wav") or model == "default"
+    human = model.endswith(".wav") or model == "default" or model.startswith("kokoro:")
     if human:
         jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "cfg": s.get("cfg", sc.get("cfg", 0.45)), "seed": s.get("seed", 1234)}
                 for i, s in enumerate(sc["segments"])]
         todo = [j for j in jobs if not os.path.exists(j["out"])]
         if todo:
             json.dump(todo, open(f"{out_dir}/jobs.json", "w"), ensure_ascii=False)
-            subprocess.run([py, os.path.join(os.path.dirname(__file__), "tts_chatterbox.py"), f"{out_dir}/jobs.json", model], check=True)
+            if model.startswith("kokoro:"):
+                subprocess.run([py, os.path.join(os.path.dirname(__file__), "tts_kokoro.py"), f"{out_dir}/jobs.json", model.split(":", 1)[1]], check=True)
+            else:
+                subprocess.run([py, os.path.join(os.path.dirname(__file__), "tts_chatterbox.py"), f"{out_dir}/jobs.json", model], check=True)
     for i, s in enumerate(sc["segments"]):
         if human:
             x = clean(read_wav(f"{out_dir}/seg{i:02d}.wav")); write_wav(f"{out_dir}/clean{i:02d}.wav", x)
