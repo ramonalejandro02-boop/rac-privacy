@@ -32,6 +32,14 @@ GUIONES = {
         dict(dur=9, texto="Hebreos 11:7: Por la fe Noé, cuando fue advertido por Dios acerca de cosas que *AÚN* *NO* *SE* *VEÍAN*… preparó el arca."),
         dict(dur=8, texto="Lo que Dios te prometió, aunque hoy no lo veas… va a *LLEGAR*. Escribe *LO* *CREO* si estás construyendo tu arca."),
     ],
+    "soyyo": [
+        dict(texto="Este video es para ti, que siempre estás para todos, pero *NADIE* te pregunta cómo estás."),
+        dict(texto="Para ti, que sonríes frente a todos, y *LLORAS* cuando nadie te ve."),
+        dict(texto="Que oras en la madrugada, porque es el único momento en que no tienes que *FINGIR*."),
+        dict(texto="Quiero que sepas algo. *DIOS* ha visto cada una de tus lágrimas."),
+        dict(texto="Salmo 56:8 dice: Toma en cuenta mis lamentos. Registra mi llanto en tu *LIBRO*."),
+        dict(texto="No estás *SOLO*. Si te identificaste, escribe: *SOY* *YO*. Y compártelo con alguien que lo necesite hoy."),
+    ],
     "levantate": [
         dict(texto="Si hoy sientes que ya no puedes más, escucha esto."),
         dict(texto="Hay batallas que nadie ve, y lágrimas que nadie conoce."),
