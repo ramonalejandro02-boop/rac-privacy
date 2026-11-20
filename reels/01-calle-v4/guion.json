@@ -1,0 +1,20 @@
+{
+  "titulo": "¿La calle frente a su casa es SUYA?",
+  "lead": 0.4,
+  "tail": 3.8,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "¿La calle frente a su casa es suya? Es el pleito más común en las colonias de Honduras.", "pause": 0.35},
+    {"scene": "conflicto", "text": "Pasa así: un vecino parquea frente a la casa de otro, y empieza la discusión.", "pause": 0.25},
+    {"scene": "conflicto", "text": "Uno dice: ese es mi frente. El otro responde: la calle es pública.", "pause": 0.35},
+    {"scene": "razon", "text": "¿Quién tiene la razón? Los dos, en parte.", "pause": 0.35},
+    {"scene": "norma1", "text": "Primero: la calle es de uso público. Nadie es dueño del espacio frente a su casa.", "pause": 0.3},
+    {"scene": "norma2", "text": "Pero bloquear una entrada, un portón o una salida de emergencia, sí es una falta.", "pause": 0.35},
+    {"scene": "mito", "text": "Y ojo con este mito: poner llantas o piedras no aparta el espacio. Obstaculiza la vía, y le puede traer problemas.", "pause": 0.35},
+    {"scene": "pasos", "text": "¿Qué hacer? Primero, hablar con calma.", "pause": 0.25},
+    {"scene": "pasos", "text": "Segundo, llevar el tema al patronato, y hacer un acuerdo de parqueo para la colonia.", "pause": 0.25},
+    {"scene": "pasos", "text": "Y tercero, si le bloquean la entrada, avisar a la municipalidad o a la policía.", "pause": 0.35},
+    {"scene": "cierre", "text": "¿Problemas de convivencia en su colonia? Busque orientación con CONAFEPH.", "say": "¿Problemas de convivencia en su colonia? Busque orientación con Conafép."}
+  ]
+}

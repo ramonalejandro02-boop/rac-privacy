@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 01 v4 · La calle frente a su casa</title>
+<style>
+@font-face{font-family:'Inter';src:url('../motor/fonts/Inter.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0B1220}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as Z from '../motor/cartoon.js';
+const { clamp, lerp, ease, easeOut, easeBack, prog, person, POSE, house, car, tire, stone } = Z;
+
+await Promise.all(['500', '700', '800', '900'].map(w => document.fonts.load(`${w} 60px Inter`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const env = t => ENV[Math.min(ENV.length - 1, Math.max(0, Math.floor(t * 30)))] || 0;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) {
+  const ws = SEG[i].words || [], n = norm(word);
+  const w = ws.find(x => norm(x.w).startsWith(n));
+  if (w) return end ? w.e : w.s;
+  const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length);
+  return S(i) + (E(i) - S(i)) * Math.max(0, k);
+}
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .25; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+
+// ---------- sistema visual ----------
+const T = { bg: '#0B1220', panel: '#121B2B', line: '#24324A', mute: '#7D8BA3', text: '#F4F7FB', acc: '#22B35E', acc2: '#F2C230', red: '#E5484D', navy: '#0E2A47' };
+const MX = 80;                     // margen lateral
+const FONT = `font-family="Inter"`;
+const LOGO = '../motor/assets/conafeph-logo.png';
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (txt, size, w = 800) => { cv.font = `${w} ${size}px Inter`; return cv.measureText(txt).width; };
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const fadeUp = (p, svg, dy = 40) => p <= 0 ? '' : `<g transform="translate(0,${(1 - easeOut(p)) * dy})" opacity="${clamp(p * 1.4)}">${svg}</g>`;
+const popS = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${lerp(.85, 1, easeBack(p))}) translate(${-x},${-y})" opacity="${clamp(p * 1.6)}">${svg}</g>`;
+// texto con palabras de acento: "La calle es *SUYA*?"
+function rich(txt, x, y, size, o = {}) {
+  const parts = txt.split('*').map((p, k) => `<tspan fill="${k % 2 ? (o.acc ?? T.acc) : (o.fill ?? T.text)}">${esc(p)}</tspan>`).join('');
+  return `<text x="${x}" y="${y}" ${FONT} font-weight="${o.w ?? 800}" font-size="${size}" letter-spacing="${o.ls ?? -1}" ${o.anchor ? `text-anchor="${o.anchor}"` : ''}>${parts}</text>`;
+}
+function wrapRich(txt, size, maxW, w = 800) {
+  const words = txt.split(' '), lines = []; let cur = '';
+  words.forEach(wd => { const c = cur ? cur + ' ' + wd : wd; if (tw(c.replace(/\*/g, ''), size, w) > maxW && cur) { lines.push(cur); cur = wd; } else cur = c; });
+  if (cur) lines.push(cur);
+  // re-balancear asteriscos abiertos entre líneas
+  let open = false;
+  return lines.map(l => { let s = (open ? '*' : '') + l; const n = (l.match(/\*/g) || []).length; if ((n % 2) ^ 0) open = !open; if (open) s += '*'; return s; });
+}
+function header(t) {
+  return `<image href="${LOGO}" x="${MX}" y="236" width="78" height="78"/>
+  ${rich('CONAFEPH', MX + 96, 270, 30, { w: 900, ls: 3 })}
+  <text x="${MX + 96}" y="302" ${FONT} font-weight="600" font-size="22" fill="${T.mute}" letter-spacing="3">PATRONATOS DE HONDURAS</text>
+  <text x="${1080 - MX}" y="270" ${FONT} font-weight="700" font-size="22" fill="${T.mute}" letter-spacing="4" text-anchor="end">ORIENTACIÓN</text>
+  <text x="${1080 - MX}" y="300" ${FONT} font-weight="700" font-size="22" fill="${T.mute}" letter-spacing="4" text-anchor="end">COMUNITARIA</text>`;
+}
+const progress = t => `<rect x="0" y="0" width="1080" height="8" fill="${T.line}"/><rect x="0" y="0" width="${1080 * clamp(t / TL.duration)}" height="8" fill="${T.acc}"/>`;
+function kickerTitle(kicker, title, p, y = 390) {
+  const lines = wrapRich(title, 72, 1080 - MX * 2);
+  let s = `<text x="${MX}" y="${y}" ${FONT} font-weight="800" font-size="28" fill="${T.acc}" letter-spacing="6">${esc(kicker)}</text>`;
+  lines.forEach((l, k) => s += rich(l, MX, y + 84 + k * 80, 72, { w: 900 }));
+  return fadeUp(p, s);
+}
+function section(n, title, p, y = 380) {
+  const lines = wrapRich(title, 62, 1080 - MX * 2 - 120);
+  let s = `<rect x="${MX}" y="${y}" width="92" height="92" rx="20" fill="${T.acc}"/><text x="${MX + 46}" y="${y + 66}" ${FONT} font-weight="900" font-size="58" fill="#fff" text-anchor="middle">${n}</text>`;
+  lines.forEach((l, k) => s += rich(l, MX + 120, y + 64 + k * 70, 62, { w: 900 }));
+  return fadeUp(p, s, 30);
+}
+function pill(x, y, text, o = {}) {
+  const size = o.size ?? 40, w = tw(text, size, 800) + 56, h = size * 1.7;
+  const x0 = o.anchor === 'middle' ? x - w / 2 : x;
+  return `<rect x="${x0}" y="${y - h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${o.bg ?? T.acc}"/><text x="${x0 + w / 2}" y="${y + size * .36}" ${FONT} font-weight="800" font-size="${size}" fill="${o.fg ?? '#fff'}" text-anchor="middle">${esc(text)}</text>`;
+}
+function note(x1, y1, x2, y2, text, o = {}) { // anotación técnica con línea guía
+  const c = o.c ?? T.acc2, size = o.size ?? 36;
+  const w = tw(text, size, 700) + 24, bx = o.left ? x2 - 10 - w + 12 : x2 + 10 - 12;
+  return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${c}" stroke-width="3"/><circle cx="${x1}" cy="${y1}" r="7" fill="${c}"/><rect x="${bx}" y="${y2 - size * .75}" width="${w}" height="${size * 1.5}" rx="10" fill="#0B1220" opacity=".88"/><text x="${x2 + (o.left ? -10 : 10)}" y="${y2 + size * .35}" ${FONT} font-weight="700" font-size="${size}" fill="${c}" ${o.left ? 'text-anchor="end"' : ''}>${esc(text)}</text>`;
+}
+const panel = (x, y, w, h, o = {}) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx ?? 28}" fill="${o.fill ?? T.panel}" stroke="${o.stroke ?? T.line}" stroke-width="${o.sw ?? 3}"/>`;
+// silueta clara alrededor de los personajes (estilo sticker)
+const FILTERS = `<defs><filter id="rim" x="-20%" y="-20%" width="140%" height="140%"><feMorphology in="SourceAlpha" operator="dilate" radius="5" result="d"/><feFlood flood-color="#E9EEF5"/><feComposite in2="d" operator="in" result="o"/><feMerge><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<radialGradient id="vig" cx=".5" cy=".42" r=".75"><stop offset="0" stop-color="#13213A"/><stop offset="1" stop-color="#070C16"/></radialGradient>
+<radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#22B35E" stop-opacity=".45"/><stop offset="1" stop-color="#22B35E" stop-opacity="0"/></radialGradient>
+<clipPath id="stage"><rect x="${MX}" y="640" width="${1080 - MX * 2}" height="560" rx="28"/></clipPath></defs>`;
+const MARTA = { skin: '#D9A27A', shirt: '#B5527A', skirt: '#2E4A7A', hair: '#2A1E18', style: 'bun', collar: '#fff' };
+const CARLOS = { skin: '#C68A60', shirt: '#1E8E4E', pants: '#3B5B85', hair: '#2A2321', style: 'short', mustache: true, cap: '#0E2A47', capLogo: true };
+const blink = (t, o) => ((t + o) % 3.3) < .13;
+const P = (b, t, o, x) => `<g filter="url(#rim)">${person({ ...b, blink: blink(t, o), bob: Math.sin(t * 2.4 + o) * 3, ...x })}</g>`;
+
+// escenario: calle de perfil dentro de un panel
+function street(t, inner) {
+  return panel(MX, 640, 1080 - MX * 2, 560) + `<g clip-path="url(#stage)">` +
+    `<rect x="${MX}" y="640" width="${1080 - MX * 2}" height="560" fill="#16233A"/>` +
+    house(540, 1060, 960, { k: .82, wall: '#E9E2D3', body: '#F4F1EA' }) +
+    `<rect x="${MX}" y="1060" width="${1080 - MX * 2}" height="30" fill="#C9CED6"/><rect x="${MX}" y="1090" width="${1080 - MX * 2}" height="120" fill="#3A4558"/>` +
+    [0, 1, 2, 3, 4].map(k => `<rect x="${MX + 30 + k * 200}" y="1150" width="110" height="10" rx="5" fill="#9AA6B8"/>`).join('') +
+    inner + `</g>`;
+}
+const CS = { s: .62, len: 1.4 };
+const ccar = (x, color = '#5B8BC6', o = {}) => car(x, 1176, color, { ...CS, wheel: x * 1.5, ...o });
+
+// mapa visto desde arriba
+function topCar(x, y, color) { return `<g transform="translate(${x},${y})"><rect x="-100" y="-46" width="200" height="92" rx="34" fill="${color}" stroke="#0B1220" stroke-width="5"/><rect x="-30" y="-36" width="80" height="72" rx="16" fill="#BFE0F2" opacity=".9"/><rect x="-18" y="-26" width="54" height="52" rx="10" fill="${color}"/></g>`; }
+function map(inner) {
+  let s = panel(MX, 640, 1080 - MX * 2, 560);
+  s += `<g clip-path="url(#stage)">`;
+  [[MX + 20, 260], [MX + 300, 320], [MX + 640, 260]].forEach(([x, w], k) => s += `<rect x="${x}" y="660" width="${w}" height="170" rx="10" fill="${k === 1 ? '#1D3050' : '#182438'}" stroke="${k === 1 ? T.acc : '#31425E'}" stroke-width="${k === 1 ? 4 : 3}"/>`);
+  s += `<text x="${MX + 460}" y="760" ${FONT} font-weight="800" font-size="38" fill="${T.text}" text-anchor="middle">Casa</text>`;
+  s += `<rect x="${MX}" y="840" width="${1080 - MX * 2}" height="40" fill="#2A3850"/>`;
+  s += `<rect x="${MX}" y="880" width="${1080 - MX * 2}" height="320" fill="#1E2838"/>`;
+  for (let x = MX + 20; x < 1000; x += 160) s += `<rect x="${x}" y="1036" width="90" height="8" rx="4" fill="#56637A"/>`;
+  s += `<rect x="${MX + 400}" y="836" width="120" height="10" fill="${T.acc2}"/>`;
+  return s + inner + `</g>`;
+}
+
+// ---------- subtítulos (palabra actual en recuadro verde) ----------
+const CH = [];
+SEG.forEach((s, i) => {
+  const sw = s.text.split(' '), aw = s.words || [];
+  // alineación guion ↔ Whisper: cada palabra del guion busca su palabra en Whisper (sin repetir)
+  const ws = []; let j = 0;
+  sw.forEach((w, k) => {
+    let hit = -1;
+    for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } }
+    if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null });
+  });
+  // rellenar huecos interpolando
+  ws.forEach((x, k) => { if (x.s === null) { const prev = ws.slice(0, k).reverse().find(y => y.s !== null), next = ws.slice(k + 1).find(y => y.s !== null); const a = prev ? prev.e : S(i), b = next ? next.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 24 || (/[.?!:,]$/.test(w.w) && len > 10) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .06, e: ws[k + 1] ? ws[k + 1].s - .06 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const size = 64, gap = 18, maxW = 1080 - MX * 2;
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, size, 800) }));
+  const lines = [[]]; let lw = 0;
+  items.forEach(it => { if (lw + it.wd > maxW && lines.at(-1).length) { lines.push([]); lw = 0; } lines.at(-1).push(it); lw += it.wd + gap; });
+  let s = ''; const y0 = 1362;
+  lines.forEach((ln, li) => {
+    const total = ln.reduce((a, b) => a + b.wd, 0) + gap * (ln.length - 1); let x = 540 - total / 2; const y = y0 + li * 84;
+    ln.forEach(it => {
+      const said = t >= it.s - .02, now = said && t <= it.e + .06;
+      if (now) s += `<rect x="${x - 10}" y="${y - 56}" width="${it.wd + 20}" height="76" rx="12" fill="${T.acc}"/>`;
+      s += `<text x="${x}" y="${y}" ${FONT} font-weight="800" font-size="${size}" fill="${now || said ? T.text : '#56637A'}">${esc(it.w)}</text>`;
+      x += it.wd + gap;
+    });
+  });
+  return s;
+}
+
+// ---------- escenas ----------
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene; let s = '';
+  if (id === 'hook') {
+    s += kickerTitle('CONVIVENCIA VECINAL', '¿La calle frente a su casa es *SUYA?*', prog(u, .05, .5));
+    const k = easeOut(prog(u, .6, 2.2)), cx = lerp(-300, 330, k);
+    s += fadeUp(prog(u, .3, .7), street(t, ccar(cx) +
+      (u > 2.3 ? `<rect x="${MX + 10}" y="960" width="460" height="230" rx="16" fill="none" stroke="${T.acc2}" stroke-width="4" stroke-dasharray="16 12" opacity="${prog(u, 2.3, 2.6)}"/>` : '')));
+    s += popS(prog(u, 2.5, 2.8), note(470, 975, 560, 880, '¿De quién es este espacio?', { size: 38 }), 560, 900);
+    const pc = wt(0, 'pleito');
+    s += popS(prog(t, pc - .2, pc + .1), pill(540, 1240, 'El pleito más común en las colonias', { anchor: 'middle', size: 38 }), 540, 1240);
+  }
+  if (id === 'conflicto') {
+    s += section(1, 'El *conflicto*', prog(u, 0, .4));
+    const i2 = sh.i1, k = easeOut(prog(u, .2, 1.8)), cx = lerp(-300, 330, k);
+    const mq = [wt(i2, 'ese'), wt(i2, 'frente', true)], cq = [wt(i2, 'la'), wt(i2, 'publica', true)];
+    const mT = t > mq[0] && t < mq[1] + .1, cT = t > cq[0] && t < cq[1] + .1;
+    const cOut = prog(u, 1.9, 2.6);
+    s += street(t, ccar(cx) +
+      (u > 1.9 ? P(CARLOS, t, 1, { x: lerp(520, 600, cOut), y: 1076, s: .42, expr: t > S(i2) ? 'smug' : 'happy', talk: cT ? clamp(.3 + env(t)) : 0, arms: t > cq[0] ? POSE.shrug : POSE.idle, walk: t * 9, walkAmt: cOut < 1 ? 1 : 0 }) : '') +
+      P(MARTA, t, .2, { x: 820, y: 1076, s: .42, expr: t > S(i2) - .3 || u > 2.2 ? 'angry' : 'content', talk: mT ? clamp(.3 + env(t)) : 0, arms: t > mq[0] - .1 ? POSE.pointR : POSE.idle, look: -1 }));
+    const bub = (x, y, txt, who, p, right) => popS(p, panel(x, y, 440, 150, { fill: '#0F1A2B', stroke: right ? T.acc : T.acc2, sw: 4, rx: 24 }) + `<path d="M${x + (right ? 330 : 90)} ${y + 150} l${right ? 20 : -20} 34 l${right ? 6 : -6} -34z" fill="#0F1A2B" stroke="${right ? T.acc : T.acc2}" stroke-width="4"/><rect x="${x + (right ? 316 : 76)}" y="${y + 144}" width="38" height="10" fill="#0F1A2B"/><text x="${x + 30}" y="${y + 50}" ${FONT} font-weight="800" font-size="26" fill="${right ? T.acc : T.acc2}" letter-spacing="3">${who}</text><text x="${x + 30}" y="${y + 112}" ${FONT} font-weight="800" font-size="38" fill="${T.text}">${esc(txt)}</text>`, x + 220, y + 75);
+    s += bub(560, 660, '¡Es MI frente!', 'ELLA', prog(t, mq[0] - .2, mq[0] + .1), true);
+    s += bub(MX + 20, 660, 'La calle es pública', 'ÉL', prog(t, cq[0] - .2, cq[0] + .1), false);
+  }
+  if (id === 'razon') {
+    s += section(2, '¿Quién tiene la *razón?*', prog(u, 0, .4));
+    const col = (x, who, c, items, base, fig) => fadeUp(prog(u, base, base + .4), panel(x, 640, 430, 560, { stroke: c, sw: 4 }) +
+      `<g clip-path="url(#c${who})">${fig}</g><text x="${x + 32}" y="700" ${FONT} font-weight="900" font-size="34" fill="${c}" letter-spacing="4">${who}</text>` +
+      items.map((it, k) => fadeUp(prog(u, base + .4 + k * .35, base + .7 + k * .35), `<circle cx="${x + 46}" cy="${1030 + k * 76}" r="10" fill="${c}"/><text x="${x + 70}" y="${1043 + k * 76}" ${FONT} font-weight="700" font-size="38" fill="${T.text}">${esc(it)}</text>`, 20)).join(''));
+    s += `<defs><clipPath id="cELLA"><rect x="${MX}" y="700" width="430" height="300"/></clipPath><clipPath id="cÉL"><rect x="570" y="700" width="430" height="300"/></clipPath></defs>`;
+    s += col(MX, 'ELLA', '#E58FB3', ['Cuida su frente', 'Necesita salir'], .1, P(MARTA, t, .2, { x: MX + 215, y: 1170, s: .62, expr: 'think', arms: POSE.chin }));
+    s += col(570, 'ÉL', T.acc, ['No hay parqueo', 'Calle de todos'], .3, P(CARLOS, t, 1, { x: 785, y: 1170, s: .62, expr: 'think', arms: POSE.chinL }));
+    const ld = wt(i, 'dos');
+    s += popS(prog(t, ld - .15, ld + .15), pill(540, 1250, 'Los dos tienen parte de razón', { anchor: 'middle', size: 40, bg: T.acc2, fg: '#111' }), 540, 1250);
+  }
+  if (id === 'norma1' || id === 'norma2') {
+    s += section(3, 'Lo que dice la *norma*', id === 'norma1' ? prog(u, 0, .4) : 1);
+    let inner = '';
+    if (id === 'norma1') {
+      const up = wt(i, 'uso'), na = wt(i, 'nadie');
+      const pa = prog(t, up - .2, up + .3);
+      if (pa > 0) inner += `<rect x="${MX + 6}" y="886" width="${1080 - MX * 2 - 12}" height="308" rx="8" fill="${T.acc}" fill-opacity="${.12 * pa}" stroke="${T.acc}" stroke-width="4" stroke-dasharray="18 12" opacity="${pa}"/>`;
+      inner += topCar(MX + 140, 960, '#5B8BC6') + topCar(MX + 760, 1120, '#C9A227');
+      const pn = prog(t, na - .2, na + .2);
+      if (pn > 0) inner += `<rect x="${MX + 300}" y="890" width="320" height="140" rx="12" fill="none" stroke="${T.acc2}" stroke-width="4" stroke-dasharray="14 10" opacity="${pn}"/>`;
+      s += map(inner);
+      s += popS(pa, pill(MX + 30, 1150, 'Vía de uso público', { size: 36 }), MX + 200, 1150);
+      s += popS(pn, note(MX + 460, 960, MX + 640, 960, 'Sin dueño'), MX + 600, 960);
+    } else {
+      const en = wt(i, 'entrada'), po = wt(i, 'porton'), em = wt(i, 'emergencia'), fa = wt(i, 'falta');
+      inner += `<rect x="${MX + 400}" y="846" width="120" height="180" fill="${T.acc}" opacity="${.45 * prog(t, en - .2, en + .2)}"/>`;
+      inner += topCar(MX + 140, 960, '#5B8BC6');
+      inner += topCar(lerp(1200, MX + 460, easeOut(prog(t, po - .2, fa - .5))), 960, T.red);
+      s += map(inner);
+      s += popS(prog(t, en - .1, en + .2), note(MX + 460, 850, MX + 640, 760, 'Entrada / portón'), MX + 600, 790);
+      s += popS(prog(t, em - .1, em + .2), note(MX + 400, 1030, MX + 340, 1120, 'Salida de emergencia', { size: 34, left: true }), MX + 700, 1110);
+      const pf = prog(t, fa - .4, fa - .1);
+      if (pf > 0) s += `<g transform="translate(${MX + 460},960) scale(${easeBack(pf)})"><circle r="46" fill="${T.red}"/><path d="M-18 -18 L18 18 M18 -18 L-18 18" stroke="#fff" stroke-width="10" stroke-linecap="round"/></g>`;
+      s += popS(prog(t, fa - .1, fa + .2), pill(540, 1250, 'Bloquear la entrada = falta', { anchor: 'middle', size: 40, bg: T.red }), 540, 1250);
+    }
+  }
+  if (id === 'mito') {
+    s += section(4, 'Mito vs. *realidad*', prog(u, 0, .4));
+    const ob = wt(i, 'obstaculiza');
+    const cardM = panel(MX, 640, 1080 - MX * 2, 250, { stroke: T.red, sw: 4 }) + pill(MX + 30, 690, 'MITO', { bg: T.red, size: 30 }) +
+      `<text x="${MX + 30}" y="800" ${FONT} font-weight="800" font-size="46" fill="${T.text}">Llantas y piedras</text><text x="${MX + 30}" y="856" ${FONT} font-weight="800" font-size="46" fill="${T.text}">“apartan” el espacio</text>` +
+      tire(860, 820, .9) + stone(760, 860, .9);
+    const cardR = panel(MX, 920, 1080 - MX * 2, 270, { stroke: T.acc, sw: 4 }) + pill(MX + 30, 970, 'REALIDAD', { bg: T.acc, size: 30 }) +
+      `<text x="${MX + 30}" y="1080" ${FONT} font-weight="800" font-size="46" fill="${T.text}">Obstaculizan la vía pública</text><text x="${MX + 30}" y="1140" ${FONT} font-weight="800" font-size="46" fill="${T.acc}">y le traen problemas a usted</text>`;
+    s += fadeUp(prog(u, .2, .6), cardM);
+    s += fadeUp(prog(t, ob - .3, ob + .1), cardR);
+    if (t > ob) s += `<path d="M${MX + 30} 828 L${MX + 470} 828" stroke="${T.red}" stroke-width="6" opacity="${prog(t, ob, ob + .3)}"/>`;
+  }
+  if (id === 'pasos') {
+    s += section(5, '¿Qué *hacer?*', prog(u, 0, .4));
+    const steps = [
+      [sh.i0, 'Hablar con calma', 'Primero, el diálogo', ico1],
+      [sh.i0 + 1, 'Ir al patronato', 'Acuerdo de parqueo en la colonia', ico2],
+      [sh.i0 + 2, 'Avisar a la autoridad', 'Municipalidad o Policía', ico3]];
+    steps.forEach(([si, title, sub, ic], k) => {
+      const y = 640 + k * 190, p = prog(t, S(si) - .25, S(si) + .15), active = t >= S(si) - .25 && (k === 2 || t < S(si + 1) - .25);
+      s += fadeUp(p, `<g opacity="${active ? 1 : .55}">${panel(MX, y, 1080 - MX * 2, 170, { stroke: active ? T.acc : T.line, sw: active ? 4 : 3 })}
+        <g transform="translate(${MX + 85},${y + 85})">${ic(t)}</g>
+        <text x="${MX + 180}" y="${y + 75}" ${FONT} font-weight="800" font-size="46" fill="${T.text}">${k + 1}. ${esc(title)}</text>
+        <text x="${MX + 180}" y="${y + 127}" ${FONT} font-weight="600" font-size="34" fill="${T.mute}">${esc(sub)}</text></g>`, 30);
+    });
+  }
+  if (id === 'cierre') {
+    const p = prog(u, .1, .8);
+    s += `<circle cx="540" cy="700" r="${lerp(150, 380, easeOut(p))}" fill="url(#glow)"/>`;
+    s += `<g transform="translate(540,700) scale(${lerp(.5, 1, easeBack(p))})" opacity="${clamp(p * 2)}"><image href="${LOGO}" x="-210" y="-210" width="420" height="420"/></g>`;
+    s += fadeUp(prog(u, .5, 1), `<text x="540" y="1010" ${FONT} font-weight="900" font-size="96" fill="${T.text}" text-anchor="middle" letter-spacing="2">CONAFEPH</text><text x="540" y="1060" ${FONT} font-weight="600" font-size="28" fill="${T.mute}" text-anchor="middle" letter-spacing="2">FEDERACIONES Y PATRONATOS DE HONDURAS</text>`);
+    s += popS(prog(u, .9, 1.3), pill(540, 1150, 'Busque orientación con CONAFEPH', { anchor: 'middle', size: 40 }), 540, 1150);
+    s += fadeUp(prog(u, 1.3, 1.7), pill(320, 1250, 'Asesoría a patronatos', { anchor: 'middle', size: 30, bg: '#1A2740', fg: T.text }) + pill(780, 1250, 'Convivencia vecinal', { anchor: 'middle', size: 30, bg: '#1A2740', fg: T.text }));
+  }
+  return s;
+}
+// íconos de pasos
+function ico1(t) { const b = Math.sin(t * 6) * 3; return `<circle r="62" fill="#17304A"/><path d="M-36 -26 h44 q12 0 12 12 v20 q0 12 -12 12 h-24 l-14 12 v-12 h-6 q-12 0 -12 -12 v-20 q0 -12 12 -12z" fill="${T.text}" transform="translate(0,${b})"/><path d="M4 -4 h32 q12 0 12 12 v18 q0 12 -12 12 h-4 v12 l-14 -12 h-14 q-12 0 -12 -12 v-18 q0 -12 12 -12z" fill="${T.acc}" transform="translate(0,${-b})"/>`; }
+function ico2() { return `<circle r="62" fill="#17304A"/><path d="M-40 -6 L0 -36 L40 -6Z" fill="${T.acc}"/><rect x="-34" y="-6" width="68" height="44" fill="${T.text}"/><rect x="-10" y="12" width="20" height="26" fill="#17304A"/>`; }
+function ico3(t) { return `<circle r="62" fill="#17304A"/><path d="M0 -40 L32 -28 V0 Q32 28 0 42 Q-32 28 -32 0 V-28Z" fill="${T.acc2}"/><path d="M-12 2 l9 9 l17 -19" stroke="#111" stroke-width="7" fill="none" stroke-linecap="round"/>`; }
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  // transición: el contenido sale/entra con un leve desvanecido
+  const fin = clamp((t - sh.start) / .25), fout = k < SHOTS.length - 1 ? clamp((sh.end - t) / .2) : 1;
+  let out = FILTERS + `<rect width="1080" height="1920" fill="url(#vig)"/>`;
+  out += `<g opacity="${Math.min(fin, fout)}">${scene(sh, t)}</g>`;
+  out += header(t) + progress(t);
+  if (sh.scene !== 'cierre') out += captions(t);
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
