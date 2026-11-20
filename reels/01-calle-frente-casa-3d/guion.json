@@ -1,0 +1,33 @@
+{
+  "titulo": "¿La calle frente a su casa es SUYA?",
+  "speed": 1.0,
+  "lead": 0.6,
+  "tail": 3.2,
+  "segments": [
+    {"scene": "hook", "text": "¿Le han parqueado frente a su casa… y sintió que le robaron algo?", "pause": 0.6},
+
+    {"scene": "pleito", "text": "Doña Marta sale a reclamar:", "pause": 0.15},
+    {"scene": "pleito", "who": "marta", "text": "¡Ahí no se parquea, ese es MI frente!", "say": "¡Ahí no se parquea! ¡Ese es mi frente!", "pause": 0.3},
+    {"scene": "pleito", "text": "Y don Carlos le responde:", "pause": 0.15},
+    {"scene": "pleito", "who": "carlos", "text": "Mire, la calle es pública. No tiene su nombre.", "pause": 0.6},
+
+    {"scene": "lados", "text": "¿Quién tiene la razón?", "pause": 0.3},
+    {"scene": "lados", "text": "Ella barre su frente y necesita salir con su carro.", "pause": 0.2},
+    {"scene": "lados", "text": "Él no encuentra dónde parquear, y dice que la calle es de todos.", "pause": 0.6},
+
+    {"scene": "saber", "text": "Lo que hay que saber: la calle es de uso público.", "pause": 0.2},
+    {"scene": "saber", "text": "Nadie es dueño del espacio frente a su casa.", "pause": 0.35},
+    {"scene": "saber", "text": "Pero bloquear una entrada, un portón o una salida de emergencia, sí es una falta.", "pause": 0.6},
+
+    {"scene": "mito", "text": "Y ojo: poner llantas o piedras para apartar el espacio no lo hace suyo…", "pause": 0.2},
+    {"scene": "mito", "text": "y le puede traer problemas a usted.", "pause": 0.6},
+
+    {"scene": "hacer", "text": "¿Qué hacer? Primero: hable con calma.", "pause": 0.3},
+    {"scene": "hacer", "text": "Segundo: lleve el tema al patronato, para un acuerdo de parqueo en toda la colonia.", "pause": 0.3},
+    {"scene": "hacer", "text": "Y tercero: si le bloquean la entrada, avise a la autoridad municipal o a la policía.", "pause": 0.6},
+
+    {"scene": "final", "text": "Porque la calle es de todos… y la convivencia, también.", "pause": 0.5},
+
+    {"scene": "cierre", "text": "¿Problemas en su colonia? Busque orientación con CONAFEPH.", "say": "¿Problemas en su colonia? Busque orientación con Conafép."}
+  ]
+}

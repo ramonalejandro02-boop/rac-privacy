@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 01 3D · La calle frente a su casa</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script type="importmap">{"imports":{"three":"../motor/lib/three.module.js"}}</script>
+<style>
+:root{--navy:#0E2A47;--green:#1E8E4E;--soft:#F1F4F8;--alert:#C8553D;--alert-l:#FBEAE6;--green-l:#E3F3EA;--ink:#16212E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#fff;font-family:Montserrat,sans-serif}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+canvas{position:absolute;inset:0;width:1080px;height:1920px}
+.ov{position:absolute;opacity:0;will-change:transform,opacity}
+.vig{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.0) 0%,rgba(255,255,255,0) 70%,rgba(14,42,71,.18) 100%)}
+#topbar{position:absolute;top:96px;left:64px;right:64px;display:flex;justify-content:space-between;align-items:center;opacity:1}
+#brand{font-weight:900;font-size:34px;letter-spacing:3px;color:var(--navy);background:rgba(255,255,255,.92);padding:12px 22px;border-radius:16px}
+#brand span{color:var(--green)}
+#tag{font-weight:800;font-size:26px;color:#fff;background:var(--navy);padding:12px 22px;border-radius:40px}
+.card{background:#fff;border-radius:34px;box-shadow:0 18px 50px rgba(14,42,71,.22)}
+h1{font-weight:900;color:var(--navy);line-height:1.02;letter-spacing:-1px}
+.g{color:var(--green)}
+#hookT{top:250px;left:64px;right:64px;padding:40px 46px}
+#hookT h1{font-size:104px}
+#qmark{width:120px;height:120px;border-radius:50%;background:var(--alert);color:#fff;font-weight:900;font-size:86px;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.bubble{max-width:620px;padding:30px 36px;font-weight:800;font-size:46px;line-height:1.15;border-radius:34px}
+.bubble .who{font-size:24px;letter-spacing:3px;margin-bottom:10px;font-weight:900}
+#bM{background:#fff;color:var(--navy);border:5px solid var(--navy)}
+#bM .who{color:var(--green)}
+#bC{background:var(--navy);color:#fff}
+#bC .who{color:#8FE0B0}
+.tail{position:absolute;bottom:-26px;width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent}
+#bM .tail{left:60px;border-top:28px solid var(--navy)}
+#bC .tail{right:60px;border-top:28px solid var(--navy)}
+#ladosT{top:240px;left:64px;right:64px;text-align:center;padding:26px}
+#ladosT h1{font-size:68px}
+.side{top:410px;width:425px;padding:30px 32px}
+#sideM{left:64px} #sideC{right:64px}
+.side .n{font-weight:900;font-size:30px;letter-spacing:2px;color:#fff;background:var(--navy);display:inline-block;padding:8px 18px;border-radius:12px;margin-bottom:16px}
+#sideC .n{background:var(--green)}
+.side p{font-weight:700;font-size:36px;line-height:1.2;color:var(--ink)}
+#vs{top:480px;left:490px;width:100px;height:100px;border-radius:50%;background:var(--green);color:#fff;font-weight:900;font-size:46px;display:grid;place-items:center;box-shadow:0 0 0 10px #fff}
+#saberT{top:240px;left:64px;padding:26px 40px}
+#saberT h1{font-size:72px}
+.lbl{font-weight:900;font-size:32px;letter-spacing:2px;padding:14px 22px;border-radius:14px;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+#lCalle{background:#fff;color:var(--navy)}
+#lNadie{background:var(--navy);color:#fff}
+#lAcc{background:var(--green);color:#fff}
+#lFalta{background:var(--alert);color:#fff}
+#lOk{background:#fff;color:var(--green)}
+.mk{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:70px;color:#fff;box-shadow:0 0 0 8px #fff,0 10px 30px rgba(0,0,0,.3)}
+#mkX{background:var(--alert)} #mkOk{background:var(--green)}
+.mr{left:64px;right:64px;padding:38px 44px}
+.mr .k{display:inline-block;font-weight:900;font-size:40px;letter-spacing:4px;padding:8px 24px;border:6px solid;border-radius:14px;margin-bottom:20px;transform:rotate(-5deg)}
+.mr p{font-weight:800;font-size:50px;line-height:1.18}
+#mito{top:250px;background:var(--alert-l)} #mito .k{color:var(--alert)} #mito p{color:#5a2a20}
+#real{top:640px;background:var(--green-l)} #real .k{color:var(--green)} #real p{color:var(--navy)}
+#hacerT{top:240px;left:64px;padding:22px 36px}
+#hacerT h1{font-size:68px}
+.step{left:64px;right:64px;display:flex;gap:26px;align-items:center;padding:22px 30px;border-radius:28px;background:#fff;box-shadow:0 12px 34px rgba(14,42,71,.18)}
+.step .n{flex:none;width:84px;height:84px;border-radius:50%;background:var(--navy);color:#fff;font-weight:900;font-size:48px;display:grid;place-items:center}
+.step.on .n{background:var(--green)}
+.step p{font-weight:700;font-size:36px;line-height:1.18;color:var(--ink)}
+.step p b{font-weight:900;color:var(--navy)}
+#st1{top:380px}#st2{top:540px}#st3{top:700px}
+.icons{display:flex;gap:24px}
+.ic{background:#fff;border-radius:26px;padding:22px 26px;font-weight:900;font-size:30px;color:var(--navy);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.ic i{display:block;font-style:normal;font-size:64px;margin-bottom:6px}
+#finalT{top:300px;left:64px;right:64px;text-align:center;padding:40px}
+#finalT h1{font-size:84px}
+#subs{left:60px;right:60px;top:1500px;display:flex;justify-content:center;text-align:center}
+#subs p{font-weight:800;font-size:46px;line-height:1.22;color:var(--navy);background:rgba(255,255,255,.96);padding:18px 30px;border-radius:24px;box-shadow:0 10px 30px rgba(14,42,71,.18)}
+#subs b{color:var(--green);font-weight:900}
+#end{inset:0;background:#fff}
+#end .logo{position:absolute;top:400px;left:0;right:0;text-align:center}
+#end .mark{width:300px;height:300px;margin:0 auto 30px;border-radius:50%;border:12px solid var(--navy);display:grid;place-items:center;position:relative}
+#end .mark::after{content:"";position:absolute;inset:26px;border-radius:50%;border:10px solid var(--green)}
+#end .mark span{font-weight:900;font-size:64px;color:var(--navy)}
+#end .wm{font-weight:900;font-size:80px;letter-spacing:6px;color:var(--navy)}
+#end .wm span{color:var(--green)}
+#end .q{position:absolute;top:1010px;left:64px;right:64px;text-align:center;font-weight:800;font-size:58px;line-height:1.18;color:var(--navy)}
+#end .cta{position:absolute;top:1300px;left:130px;right:130px;text-align:center;background:var(--green);color:#fff;font-weight:900;font-size:46px;padding:34px;border-radius:80px}
+#end .contact{position:absolute;top:1480px;left:64px;right:64px;text-align:center;font-weight:700;font-size:34px;color:#1B3E66}
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c"></canvas>
+  <div class="vig"></div>
+  <div id="topbar"><div id="brand">CONAFEP<span>H</span></div><div id="tag">Convivencia vecinal</div></div>
+
+  <div id="hookT" class="ov card"><h1>¿Este espacio<br>es <span class="g">SUYO?</span></h1></div>
+  <div id="qmark" class="ov">?</div>
+
+  <div id="bM" class="ov bubble"><div class="who">DOÑA MARTA</div>¡Ahí no se parquea,<br>ese es MI frente!<div class="tail"></div></div>
+  <div id="bC" class="ov bubble"><div class="who">DON CARLOS</div>Mire, la calle es pública.<br>No tiene su nombre.<div class="tail"></div></div>
+
+  <div id="ladosT" class="ov card"><h1>¿Quién tiene la <span class="g">razón?</span></h1></div>
+  <div id="sideM" class="ov card side"><div class="n">DOÑA MARTA</div><p>“Yo barro mi frente y necesito salir con mi carro.”</p></div>
+  <div id="sideC" class="ov card side"><div class="n">DON CARLOS</div><p>“No hay dónde parquear. La calle es de todos.”</p></div>
+  <div id="vs" class="ov">VS</div>
+
+  <div id="saberT" class="ov card"><h1>Lo que hay<br>que <span class="g">saber</span></h1></div>
+  <div id="lCalle" class="ov lbl">CALLE · USO PÚBLICO</div>
+  <div id="lNadie" class="ov lbl">NADIE ES DUEÑO DE ESTE ESPACIO</div>
+  <div id="lOk" class="ov lbl">✓ SIN BLOQUEAR</div>
+  <div id="mkOk" class="ov mk">✓</div>
+  <div id="lAcc" class="ov lbl">ENTRADA</div>
+  <div id="mkX" class="ov mk">✕</div>
+  <div id="lFalta" class="ov lbl">BLOQUEAR LA ENTRADA = FALTA</div>
+
+  <div id="mito" class="ov card mr"><div class="k">MITO</div><p>“Si pongo llantas o piedras, el espacio ya es mío.”</p></div>
+  <div id="real" class="ov card mr"><div class="k">REALIDAD</div><p>Eso obstaculiza la vía pública y le puede traer problemas <b>a usted</b>.</p></div>
+
+  <div id="hacerT" class="ov card"><h1>¿Qué <span class="g">hacer?</span></h1></div>
+  <div id="st1" class="ov step"><div class="n">1</div><p><b>Hable primero</b>, con calma.</p></div>
+  <div id="st2" class="ov step"><div class="n">2</div><p>Lleve el tema al <b>patronato</b>: acuerdo de parqueo.</p></div>
+  <div id="st3" class="ov step"><div class="n">3</div><p>¿Le bloquean la entrada? <b>Avise a la autoridad.</b></p></div>
+  <div id="icons" class="ov icons"><div class="ic"><i>🏛️</i>Municipalidad</div><div class="ic"><i>🚓</i>Policía</div></div>
+
+  <div id="finalT" class="ov card"><h1>La calle es de todos.<br><span class="g">La convivencia también.</span></h1></div>
+
+  <div id="subs" class="ov"><p></p></div>
+
+  <div id="end" class="ov">
+    <div class="logo"><div class="mark"><span>CNF</span></div><div class="wm">CONAFEP<span>H</span></div></div>
+    <div class="q">¿Problemas de convivencia<br>en su colonia?</div>
+    <div class="cta">Busque orientación con CONAFEPH</div>
+    <div class="contact">WhatsApp · Oficinas · Facebook CONAFEPH</div>
+  </div>
+</div>
+
+<script type="module">
+import { THREE, PAL, createWorld, buildColonia, car, character, pose, face, broom, tire, stone, textPlane, toScreen, shot, clamp, lerp, ease, easeOut, easeBack, prog, v3, mat, mesh } from '../motor/engine.js';
+
+const TL = await (await fetch('timeline.json')).json();
+await document.fonts.ready;
+const SEG = TL.segments, SC = TL.scenes, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const W = createWorld(document.getElementById('c'));
+const { scene, camera, renderer, sun, hemi } = W;
+const R = buildColonia(scene);
+
+// actores
+const blue = car(0x5B7A99); scene.add(blue); blue.position.set(-28, 0, -2.95);
+const red = car(0xB84A3A); red.rotation.y = Math.PI; scene.add(red);
+const marta = character({ shirt: 0xA8577A, skirt: PAL.navy, pants: PAL.skin2, skin: PAL.skin1, hair: 0x2B1E17, bun: true, blinkOff: .7, collar: 0xFFFFFF });
+const carlos = character({ shirt: PAL.green, pants: 0x3B5B85, skin: PAL.skin2, hair: 0x2A2321, mustache: true, cap: PAL.navy, blinkOff: 1.9, collar: 0x17723E });
+const n1 = character({ shirt: 0xF0C75E, pants: 0x4A4A55, skin: PAL.skin3, hair: 0x1E1612, longHair: true, skirt: 0x5C6F86, blinkOff: 2.3 });
+const n2 = character({ shirt: 0x8FB3D9, pants: 0x2F3B4A, skin: PAL.skin1, hair: 0x5A5550, glasses: true, blinkOff: .3 });
+const n3 = character({ shirt: 0xFFFFFF, sleeve: 0xFFFFFF, pants: PAL.navy, skin: PAL.skin2, hair: 0x1A1412, blinkOff: 1.2, collar: PAL.navy });
+[marta, carlos, n1, n2, n3].forEach(c => scene.add(c));
+const brm = broom(); brm.position.set(.02, -.62, .1); brm.rotation.x = .15; marta.userData.arms[1].add(brm);
+const phone = mesh(new THREE.BoxGeometry(.09, .17, .02), mat(0x111111), [0, -.58, .08]); marta.userData.arms[0].add(phone); phone.visible = false;
+const clip = mesh(new THREE.BoxGeometry(.3, .38, .03), mat(0xF5F1E6), [0, -.55, .14]); n3.userData.arms[0].add(clip);
+// banner patronato
+const banner = textPlane('REUNIÓN DEL PATRONATO', { w: 4.6, h: .8, size: 92 }); banner.position.set(6.8, 2.75, -6.62); scene.add(banner);
+// marcadores sobre el piso
+const flat = (w, d, color, op) => { const m = mesh(new THREE.PlaneGeometry(w, d), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: op, depthWrite: false, toneMapped: false }), [0, .03, 0], false); m.rotation.x = -Math.PI / 2; scene.add(m); return m; };
+const tintRoad = flat(40, 8, PAL.navy, .5);
+const zone = flat(6.4, 1.9, 0xFFFFFF, .45); zone.position.set(0, .04, -3.0);
+const acc = flat(2.8, 3.4, PAL.green, .7); acc.position.set(1.6, .2, -3.9);
+const props = [tire(), tire(), stone(1.1), stone(.9), stone(1.2)];
+const propPos = [[-3.1, -3.35], [-2.0, -3.4], [-1.0, -3.3], [-.4, -3.5], [.2, -3.3]];
+props.forEach((p, i) => { p.position.set(propPos[i][0], 0, propPos[i][1]); scene.add(p); });
+
+// overlays
+const $ = id => document.getElementById(id);
+const OV = [...document.querySelectorAll('.ov')];
+function show(el, p, { dy = 40, sc = 0, x, y } = {}) {
+  if (p <= 0) { el.style.opacity = 0; return; }
+  const k = easeOut(p);
+  el.style.opacity = clamp(p * 1.6);
+  let tr = '';
+  if (x !== undefined) { el.style.left = x + 'px'; el.style.top = y + 'px'; tr += 'translate(-50%,-100%) '; }
+  tr += `translateY(${(1 - k) * dy}px)`;
+  if (sc) tr += ` scale(${lerp(sc, 1, easeBack(p))})`;
+  el.style.transform = tr;
+}
+const win = (t, a, b, fi = .35, fo = .3) => clamp(Math.min((t - a) / fi, (b - t) / fo));
+const head = c => c.localToWorld(v3(0, 2.15, 0));
+const scr = p => toScreen(camera, p);
+const talkAmt = t => ENV[Math.min(ENV.length - 1, Math.floor(t * 30))] || 0;
+
+// subtítulos (solo narrador)
+const SUBS = [];
+SEG.forEach(s => {
+  if (s.who || s.scene === 'cierre') return;
+  const words = s.text.split(' '); const chunks = []; let cur = '';
+  words.forEach(w => { if ((cur + ' ' + w).trim().length > 34 && cur) { chunks.push(cur); cur = w; } else cur = (cur + ' ' + w).trim(); });
+  if (cur) chunks.push(cur);
+  const tot = chunks.reduce((a, c) => a + c.length, 0); let t0 = s.start;
+  chunks.forEach(c => { const d = (s.end - s.start) * c.length / tot; SUBS.push([t0, t0 + d, c]); t0 += d; });
+});
+const KEY = /(uso público|dueño|falta|patronato|calma|autoridad|todos|convivencia|problemas|razón|llantas|piedras|robaron)/gi;
+
+let lastBlue = -28, lastRed = 30;
+function setCar(c, x, last) { c.userData.setX(x, last); return x; }
+
+window.seek = function (t) {
+  // valores por defecto
+  OV.forEach(e => e.style.opacity = 0);
+  [marta, carlos, n1, n2, n3].forEach(c => c.visible = false);
+  red.visible = false; tintRoad.visible = zone.visible = acc.visible = false; props.forEach(p => p.visible = false);
+  phone.visible = false; brm.visible = true;
+  sun.color.setHex(0xFFF1DC); sun.intensity = 2.6; renderer.toneMappingExposure = 1.05;
+  $('topbar').style.opacity = 1;
+  const id = Object.keys(SC).find(k => t >= SC[k][0] && t < SC[k][1]) || 'cierre';
+  const [a, b] = SC[id]; const u = t - a;
+  const P = { t };
+
+  if (id === 'hook') {
+    shot(camera, [{ t: 0, pos: [-7, 7.5, 10], look: [-1.5, .8, -3], fov: 40 }, { t: 3.6, pos: [1.6, 1.7, 4.6], look: [-1.4, 1.0, -3.4], fov: 38 }, { t: 9, pos: [1.9, 1.6, 4.2], look: [-1.4, 1.0, -3.4], fov: 37 }], u);
+    lastBlue = setCar(blue, lerp(-28, -2.4, easeOut(prog(u, .1, 2.8))), lastBlue);
+    show($('hookT'), prog(u, .3, .9), { dy: 60 });
+    const q = scr(v3(-2.4, 2.6, -2.95)); show($('qmark'), prog(u, 2.9, 3.2), { sc: .3, x: q.x, y: q.y });
+  }
+  if (id !== 'hook') lastBlue = setCar(blue, -2.4, lastBlue);
+
+  if (id === 'pleito' || id === 'lados') {
+    marta.visible = carlos.visible = true;
+    const mw = prog(u, 0, 1.8), cw = prog(u, .3, 2.1);
+    if (id === 'pleito') {
+      marta.position.set(lerp(2.6, 1.0, ease(mw)), .16, lerp(-5.1, -4.5, ease(mw)));
+      carlos.position.set(lerp(-1.8, -.2, ease(cw)), 0, -1.75);
+    } else { marta.position.set(1.0, .16, -4.5); carlos.position.set(-.2, 0, -1.75); }
+    face(marta, carlos.position.x, carlos.position.z); face(carlos, marta.position.x, marta.position.z);
+    const mTalk = t > S(2) && t < E(2), cTalk = t > S(4) && t < E(4);
+    pose(marta, { t, walk: id === 'pleito' && mw < 1 ? 1 : 0, talk: mTalk ? talkAmt(t) : 0, armR: mTalk ? -1.4 + Math.sin(t * 6) * .15 : (id === 'lados' ? -.25 : undefined), armRz: mTalk ? .5 : .12, brow: mTalk ? -1 : 0, armL: -.3 });
+    pose(carlos, { t, walk: id === 'pleito' && cw < 1 ? 1 : 0, talk: cTalk ? talkAmt(t) : 0, armR: cTalk ? -.6 : undefined, armL: cTalk ? -.6 : undefined, armRz: cTalk ? .9 : .12, armLz: cTalk ? .9 : .12, tilt: cTalk ? .12 : 0, brow: cTalk ? 1 : 0 });
+    if (id === 'pleito') {
+      const k0 = 0, k1 = S(2) - a, k2 = E(2) - a, k3 = S(4) - a, k4 = b - a;
+      shot(camera, [
+        { t: k0, pos: [1.0, 1.8, 4.6], look: [.4, 1.1, -3.0], fov: 40 },
+        { t: k1 - .2, pos: [.6, 1.7, 3.2], look: [.4, 1.15, -3.2], fov: 40 },
+        { t: k1 + .3, pos: [3.6, 1.75, -.2], look: [1.0, 1.45, -4.5], fov: 36 },
+        { t: k2 + .2, pos: [3.4, 1.75, -.5], look: [1.0, 1.45, -4.5], fov: 35 },
+        { t: k3 - .1, pos: [3.4, 1.75, -4.7], look: [-.2, 1.35, -1.75], fov: 38 },
+        { t: k4, pos: [3.2, 1.75, -4.6], look: [-.2, 1.35, -1.75], fov: 36 }], u);
+      const hm = scr(head(marta)), hc = scr(head(carlos));
+      show($('bM'), win(t, S(2) - .1, E(2) + .5, .25, .25), { sc: .6, x: 540, y: 640 });
+      show($('bC'), win(t, S(4) - .1, E(4) + .5, .25, .25), { sc: .6, x: 540, y: 640 });
+    } else {
+      shot(camera, [{ t: 0, pos: [.6, 2.0, 6.2], look: [.4, 1.25, -3.0], fov: 38 }, { t: b - a, pos: [-1.0, 2.3, 5.6], look: [.4, 1.2, -3.0], fov: 38 }], u);
+      show($('ladosT'), prog(u, 0, .4));
+      show($('sideM'), prog(t, S(6) - .2, S(6) + .3), { dy: 0, sc: .7 });
+      show($('sideC'), prog(t, S(7) - .2, S(7) + .3), { dy: 0, sc: .7 });
+      show($('vs'), prog(t, S(7) + .2, S(7) + .5), { dy: 0, sc: .2 });
+    }
+  }
+
+  if (id === 'saber') {
+    marta.visible = carlos.visible = true; marta.position.set(1.0, .16, -4.5); carlos.position.set(-.2, 0, -1.75);
+    face(marta, -.2, -1.75); face(carlos, 1, -4.5); pose(marta, P); pose(carlos, P);
+    shot(camera, [{ t: 0, pos: [.8, 4, 6], look: [.5, 1, -3], fov: 40 }, { t: 1.6, pos: [.8, 16, 5.5], look: [.6, 0, -2.6], fov: 44 }, { t: b - a, pos: [.8, 15.5, 5.2], look: [.6, 0, -2.6], fov: 44 }], u);
+    show($('saberT'), prog(u, 1.2, 1.7));
+    tintRoad.visible = true; tintRoad.material.opacity = .45 * prog(t, S(8) + 1.5, S(8) + 2.2);
+    const pc = scr(v3(-1.2, 0, 1.6)); show($('lCalle'), prog(t, S(8) + 1.8, S(8) + 2.2), { sc: .5, x: pc.x, y: pc.y });
+    zone.visible = true; zone.material.opacity = .7 * win(t, S(9), S(10) + .3, .3, .3);
+    const pz = scr(v3(0, 0, -.9)); show($('lNadie'), win(t, S(9) + .1, S(10) + .3, .3, .3), { sc: .5, x: pz.x, y: pz.y + 30 });
+    // carro rojo bloquea entrada
+    red.visible = t > S(10); lastRed = setCar(red, lerp(26, 1.75, easeOut(prog(t, S(10), S(10) + 2.6))), lastRed); red.position.z = -2.95;
+    acc.visible = true; acc.material.opacity = .75 * prog(t, S(10) + .2, S(10) + .6) * (0.85 + .15 * Math.sin(t * 8));
+    const pa = scr(v3(1.6, .2, -5.3)); show($('lAcc'), prog(t, S(10) + .3, S(10) + .6), { sc: .5, x: pa.x, y: pa.y + 10 });
+    const pr = scr(v3(1.75, 2, -2.95)); show($('mkX'), prog(t, S(10) + 2.7, S(10) + 3.0), { sc: .2, x: pr.x, y: pr.y + 40 });
+    show($('lFalta'), prog(t, S(10) + 3.0, S(10) + 3.4), { sc: .5, x: 540, y: pr.y + 220 });
+    const pb = scr(v3(-2.4, 2, -2.95)); show($('mkOk'), prog(t, S(10) + 3.6, S(10) + 3.9), { sc: .2, x: pb.x, y: pb.y + 40 });
+  } else lastRed = 26;
+
+  if (id === 'mito') {
+    blue.visible = false;
+    marta.visible = true; marta.position.set(1.4, .16, -4.6); face(marta, -1, -3.3);
+    pose(marta, { t, armRz: .9, armR: .2, armLz: .12 });
+    shot(camera, [{ t: 0, pos: [-5.2, .9, -1.2], look: [-.8, .7, -3.6], fov: 42 }, { t: b - a, pos: [-4.6, 1.1, -.6], look: [-.6, .7, -3.6], fov: 40 }], u);
+    props.forEach((p, i) => { const k = prog(u, .3 + i * .25, .6 + i * .25); p.visible = k > 0; p.scale.setScalar(Math.max(.001, easeBack(k))); });
+    show($('mito'), prog(u, .1, .6), { dy: -40 });
+    show($('real'), prog(t, S(12) - .3, S(12) + .2), { dy: 40 });
+  } else blue.visible = true;
+
+  if (id === 'hacer') {
+    const st = t < S(14) - .2 ? 1 : t < S(15) - .2 ? 2 : 3;
+    show($('hacerT'), prog(u, 0, .4));
+    [1, 2, 3].forEach(i => {
+      const el = $('st' + i); const sp = prog(t, S(12 + i) - .2, S(12 + i) + .3);
+      show(el, sp, { dy: 0, sc: .85 }); el.classList.toggle('on', i === st); el.style.opacity = sp > 0 ? (i === st ? 1 : .55) * clamp(sp * 1.6) : 0;
+    });
+    if (st === 1) {
+      marta.visible = carlos.visible = true; marta.position.set(.4, .16, -4.6); carlos.position.set(-1.0, .16, -4.6);
+      face(marta, -1, -4.6); face(carlos, .4, -4.6);
+      const shake = prog(t, E(13) - .8, E(13));
+      pose(marta, { t, talk: Math.max(0, Math.sin(t * 9)) * .6 * (Math.floor(t * 1.2) % 2), armR: shake > 0 ? -1.0 : undefined, armRz: .12 });
+      pose(carlos, { t, talk: Math.max(0, Math.sin(t * 9)) * .6 * (1 - Math.floor(t * 1.2) % 2), armR: shake > 0 ? -1.0 : undefined, nod: Math.sin(t * 5) * .06 });
+      shot(camera, [{ t: 0, pos: [-.3, 1.7, 3.2], look: [-.3, 1.0, -4.6], fov: 36 }, { t: E(13) - a, pos: [-.3, 1.6, 2.4], look: [-.3, 1.0, -4.6], fov: 35 }], u);
+    } else if (st === 2) {
+      const cx = 6.8, cz = -4.15;
+      [[marta, 5.5, -4.2], [carlos, 8.1, -4.2], [n1, 6.0, -3.2], [n2, 7.6, -3.15], [n3, 6.8, -4.95]].forEach(([c, x, z], i) => {
+        c.visible = true; c.position.set(x, .16, z); face(c, cx, cz - (c === n3 ? -1 : 0));
+        pose(c, { t, talk: c === n3 ? Math.max(0, Math.sin(t * 10)) * .7 : 0, nod: c !== n3 ? Math.sin(t * 3 + i) * .05 : 0, armR: c === n3 ? -.9 : undefined });
+      });
+      brm.visible = false;
+      shot(camera, [{ t: S(14) - a - .2, pos: [6.8, 2.9, 4.4], look: [6.8, 1.5, -5.0], fov: 40 }, { t: E(14) - a + .3, pos: [6.8, 2.6, 3.4], look: [6.8, 1.5, -5.0], fov: 40 }], u);
+    } else {
+      red.visible = true; red.position.set(1.75, 0, -2.95);
+      marta.visible = true; marta.position.set(2.9, .16, -4.6); face(marta, 0, 2); brm.visible = false; phone.visible = true;
+      pose(marta, { t, armR: -2.5, armRz: .55, talk: Math.max(0, Math.sin(t * 9)) * .5, look: .3 });
+      shot(camera, [{ t: S(15) - a - .2, pos: [6.2, 2.3, 3.8], look: [1.9, 1.0, -3.6], fov: 40 }, { t: b - a, pos: [5.6, 2.1, 3.0], look: [1.9, 1.0, -3.6], fov: 39 }], u);
+      show($('icons'), prog(t, S(15) + 1.6, S(15) + 2.0), { sc: .6, x: 540, y: 1340 });
+    }
+  }
+
+  if (id === 'final') {
+    sun.color.setHex(0xFFD9A8); sun.intensity = 2.9; renderer.toneMappingExposure = 1.1;
+    marta.visible = carlos.visible = true; marta.position.set(1.0, .16, -4.5); carlos.position.set(.0, .16, -4.6);
+    face(marta, 0, 6); face(carlos, 0, 6);
+    pose(marta, { t, armR: -2.6 + Math.sin(t * 7) * .25, armRz: .4 }); pose(carlos, { t, armL: -2.6 + Math.sin(t * 7 + 1) * .25, armLz: .4 });
+    shot(camera, [{ t: 0, pos: [.5, 1.6, 3], look: [.4, 1.2, -4.4], fov: 38 }, { t: b - a, pos: [.6, 7.5, 11], look: [.3, 1.0, -4.0], fov: 40 }], u);
+    show($('finalT'), prog(u, .2, .7));
+  }
+
+  if (id === 'cierre') {
+    shot(camera, [{ t: 0, pos: [.6, 7.5, 11], look: [.3, 1, -4], fov: 40 }], 0);
+    show($('end'), prog(u, 0, .5), { dy: 0 });
+    $('topbar').style.opacity = 1 - prog(u, 0, .3);
+  }
+
+  // subtítulos
+  const sb = SUBS.find(x => t >= x[0] && t < x[1]);
+  if (sb && id !== 'cierre') { const p = $('subs').firstChild; p.innerHTML = sb[2].replace(KEY, '<b>$1</b>'); $('subs').style.opacity = 1; $('subs').style.transform = 'none'; }
+  renderer.render(scene, camera);
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
