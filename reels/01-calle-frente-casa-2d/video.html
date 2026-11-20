@@ -94,7 +94,13 @@ function miniBubble(x, y, t) {
 const CHUNKS = [];
 SEG.forEach((s, i) => {
   if (s.scene === 'cierre') return;
-  const ws = (s.words && s.words.length) ? s.words : s.text.split(' ').map((w, k, a) => ({ w, s: S(i) + (E(i) - S(i)) * k / a.length, e: S(i) + (E(i) - S(i)) * (k + 1) / a.length }));
+  // texto del guion con los tiempos de Whisper (mapeo proporcional por índice)
+  const sw = s.text.split(' '), aw = s.words || [];
+  const ws = sw.map((w, k) => {
+    if (!aw.length) return { w, s: S(i) + (E(i) - S(i)) * k / sw.length, e: S(i) + (E(i) - S(i)) * (k + 1) / sw.length };
+    const j = sw.length === aw.length ? k : Math.round(k * (aw.length - 1) / Math.max(1, sw.length - 1));
+    return { w, s: aw[j].s, e: aw[j].e };
+  });
   let cur = [];
   ws.forEach((w, k) => {
     cur.push(w); const len = cur.map(x => x.w).join(' ').length;

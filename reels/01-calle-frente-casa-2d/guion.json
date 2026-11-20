@@ -1,29 +1,116 @@
 {
-  "titulo": "¿La calle frente a su casa es SUYA?",
-  "lead": 0.4,
-  "tail": 3.6,
-  "exag": 0.45,
-  "cfg": 0.4,
-  "music": 0.10,
-  "whoosh": [10, 13, 16],
-  "segments": [
-    {"scene": "hook", "text": "¿Le han parqueado frente a su casa… y sintió que le robaron algo?", "pause": 0.35},
-    {"scene": "marta", "text": "Ella es doña Marta. Todas las mañanas barre su frente.", "pause": 0.25},
-    {"scene": "llega", "text": "Pero hoy, don Carlos parqueó su carro justo ahí.", "pause": 0.25},
-    {"scene": "reclamo", "text": "Y doña Marta le reclamó:", "pause": 0.15},
-    {"scene": "reclamo", "who": "marta", "text": "¡Ahí no se parquea! ¡Ese es mi frente!", "exag": 0.75, "cfg": 0.35, "pause": 0.3},
-    {"scene": "respuesta", "text": "Don Carlos le contestó:", "pause": 0.15},
-    {"scene": "respuesta", "who": "carlos", "text": "Mire, la calle es pública. No tiene su nombre.", "exag": 0.6, "pause": 0.35},
-    {"scene": "lados", "text": "¿Quién tiene la razón?", "pause": 0.2},
-    {"scene": "ladoM", "text": "Ella cuida su frente y necesita salir con su carro.", "pause": 0.2},
-    {"scene": "ladoC", "text": "Él no tiene dónde parquear… y la calle es de todos.", "pause": 0.35},
-    {"scene": "saber", "text": "Lo que hay que saber: la calle es de uso público. Nadie es dueño del espacio frente a su casa.", "pause": 0.25},
-    {"scene": "falta", "text": "Pero bloquear una entrada, un portón o una salida de emergencia, sí es una falta.", "pause": 0.35},
-    {"scene": "mito", "text": "Y poner llantas o piedras para apartar el espacio no lo hace suyo. Le puede traer problemas.", "pause": 0.35},
-    {"scene": "paso1", "text": "¿Qué hacer? Primero: hablar con calma.", "pause": 0.2},
-    {"scene": "paso2", "text": "Segundo: llevar el tema al patronato, y hacer un acuerdo de parqueo.", "pause": 0.2},
-    {"scene": "paso3", "text": "Tercero: si le bloquean la entrada, avisar a la autoridad.", "pause": 0.35},
-    {"scene": "final", "text": "Porque la calle es de todos… y la convivencia, también.", "pause": 0.35},
-    {"scene": "cierre", "text": "¿Problemas en su colonia? Busque orientación con CONAFEPH.", "say": "¿Problemas en su colonia? Busque orientación con Conafép."}
-  ]
+ "titulo": "¿La calle frente a su casa es SUYA?",
+ "lead": 0.4,
+ "tail": 3.6,
+ "exag": 0.45,
+ "cfg": 0.4,
+ "music": 0.1,
+ "whoosh": [
+  10,
+  13,
+  16
+ ],
+ "segments": [
+  {
+   "scene": "hook",
+   "text": "¿Le han parqueado frente a su casa… y sintió que le robaron algo?",
+   "pause": 0.35
+  },
+  {
+   "scene": "marta",
+   "text": "Ella es doña Marta. Todas las mañanas limpia su frente.",
+   "pause": 0.25,
+   "seed": 77
+  },
+  {
+   "scene": "llega",
+   "text": "Pero hoy, don Carlos parqueó su carro justo ahí.",
+   "pause": 0.25
+  },
+  {
+   "scene": "reclamo",
+   "text": "Y doña Marta le reclamó:",
+   "pause": 0.15
+  },
+  {
+   "scene": "reclamo",
+   "who": "marta",
+   "text": "¡Ahí no se parquea! ¡Ese es mi frente!",
+   "exag": 0.75,
+   "cfg": 0.35,
+   "pause": 0.3
+  },
+  {
+   "scene": "respuesta",
+   "text": "Don Carlos le contestó:",
+   "pause": 0.15,
+   "seed": 77
+  },
+  {
+   "scene": "respuesta",
+   "who": "carlos",
+   "text": "Mire, la calle es pública. No tiene su nombre.",
+   "exag": 0.6,
+   "pause": 0.35
+  },
+  {
+   "scene": "lados",
+   "text": "¿Quién tiene la razón?",
+   "pause": 0.2
+  },
+  {
+   "scene": "ladoM",
+   "text": "Ella cuida su frente y necesita salir con su carro.",
+   "pause": 0.2
+  },
+  {
+   "scene": "ladoC",
+   "text": "Él no tiene dónde parquear… y la calle es de todos.",
+   "pause": 0.35
+  },
+  {
+   "scene": "saber",
+   "text": "Lo que hay que saber: la calle es de uso público. Nadie es dueño del espacio frente a su casa.",
+   "pause": 0.25,
+   "seed": 77
+  },
+  {
+   "scene": "falta",
+   "text": "Pero bloquear una entrada, un portón o una salida de emergencia, sí es una falta.",
+   "pause": 0.35
+  },
+  {
+   "scene": "mito",
+   "text": "Y poner llantas o piedras para apartar el espacio no lo hace suyo. Le puede traer problemas.",
+   "pause": 0.35
+  },
+  {
+   "scene": "paso1",
+   "text": "Entonces, ¿qué hacer? Primero: hablar con calma.",
+   "pause": 0.2,
+   "seed": 77
+  },
+  {
+   "scene": "paso2",
+   "text": "Segundo: llevar el tema al patronato, y hacer un acuerdo de parqueo.",
+   "pause": 0.2,
+   "seed": 77
+  },
+  {
+   "scene": "paso3",
+   "text": "Tercero: si le bloquean la entrada, avisar a la autoridad.",
+   "pause": 0.35
+  },
+  {
+   "scene": "final",
+   "text": "Porque la calle es de todos… y la convivencia, también.",
+   "pause": 0.35
+  },
+  {
+   "scene": "cierre",
+   "text": "¿Problemas en su colonia? Busque orientación con CONAFEPH.",
+   "say": "¿Problemas en su colonia? Busque orientación con Conafép.",
+   "seed": 77
+  }
+ ]
 }
