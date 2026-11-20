@@ -1,0 +1,28 @@
+{
+  "titulo": "¿El árbol del vecino le rompe la casa? ¿Quién paga?",
+  "lead": 0.4,
+  "tail": 3.8,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "¿El árbol del vecino le está rompiendo la casa? ¿Quién paga?", "pause": 0.35},
+    {"scene": "rafael", "text": "Don Rafael tiene un palo de mango enorme en su patio.", "pause": 0.25},
+    {"scene": "danos", "text": "Pero las raíces ya rajaron la pared de doña Lucía, y las hojas le tapan el canal del techo.", "pause": 0.3},
+    {"scene": "reclamo", "text": "Doña Lucía le reclama:", "pause": 0.15},
+    {"scene": "reclamo", "who": "lucia", "voice": "ef_dora", "text": "¡Ese árbol me está dañando la casa! ¡Córtelo ya!", "pause": 0.3},
+    {"scene": "respuesta", "text": "Y don Rafael le responde:", "pause": 0.15},
+    {"scene": "respuesta", "who": "rafael", "voice": "em_santa", "text": "El árbol está en mi terreno. Yo no lo voy a cortar.", "pause": 0.35},
+    {"scene": "lados", "text": "¿Quién tiene la razón?", "pause": 0.2},
+    {"scene": "ladoL", "text": "Ella está sufriendo daños en su casa.", "pause": 0.2},
+    {"scene": "ladoR", "text": "Él tiene derecho a su árbol y a su terreno.", "pause": 0.35},
+    {"scene": "ramas", "text": "Lo que hay que saber: en general, si las ramas pasan a su terreno, usted puede pedir que las corten.", "pause": 0.25},
+    {"scene": "raices", "text": "Y las raíces que entran a su propiedad, las puede cortar usted, con cuidado.", "pause": 0.25},
+    {"scene": "responde", "text": "Además, si el árbol causa daños, el dueño puede tener que responder por ellos.", "pause": 0.35},
+    {"scene": "mito", "text": "Pero ojo: cortar o envenenar el árbol del vecino no es la solución. Le puede traer problemas.", "pause": 0.35},
+    {"scene": "paso1", "text": "¿Qué hacer? Primero: hablar con calma, y tomar fotos de los daños.", "pause": 0.2},
+    {"scene": "paso2", "text": "Segundo: pedir la mediación del patronato.", "pause": 0.2},
+    {"scene": "paso3", "text": "Y tercero: si no hay acuerdo, acudir a la municipalidad o buscar asesoría legal.", "pause": 0.35},
+    {"scene": "final", "text": "Porque un buen vecino cuida su árbol… y también su vecindad.", "pause": 0.35},
+    {"scene": "cierre", "text": "¿Problemas con vecinos en su colonia? Busque orientación con CONAFEPH.", "say": "¿Problemas con vecinos en su colonia? Busque orientación con Conafép."}
+  ]
+}

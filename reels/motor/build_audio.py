@@ -132,7 +132,7 @@ def main(script_path, out_dir, model, py=None):
     segs = []; voice_parts = []
     human = model.endswith(".wav") or model == "default" or model.startswith("kokoro:")
     if human:
-        jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "cfg": s.get("cfg", sc.get("cfg", 0.45)), "seed": s.get("seed", 1234)}
+        jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "cfg": s.get("cfg", sc.get("cfg", 0.45)), "seed": s.get("seed", 1234), **({"voice": s["voice"]} if s.get("voice") else {}), "speed": s.get("speed", sc.get("speed", 1.0))}
                 for i, s in enumerate(sc["segments"])]
         todo = [j for j in jobs if not os.path.exists(j["out"])]
         if todo:

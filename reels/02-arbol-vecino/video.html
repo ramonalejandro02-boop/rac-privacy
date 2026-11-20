@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 02 · El árbol del vecino</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#fff}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as Z from '../motor/cartoon.js';
+const { K, C, clamp, lerp, ease, easeOut, easeBack, prog, person, POSE, house, sidewalk, car, tire, stone, ground, grassScene,
+  anger, qmark, excl, sparkle, sweat, notes, check, cross, label, bubble, stamp, icoMuni, icoPolice, noParking, wipe, broom, holdBroom, holdPhone, holdClip,
+  mangoTree, roots, crack, leaf, icoScissors, icoSaw, icoCamera, icoPoison, icoLaw, sideHouse } = Z;
+
+await Promise.all(['700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env, N = SEG.length;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const env = t => ENV[Math.min(ENV.length - 1, Math.max(0, Math.floor(t * 30)))] || 0;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+// tiempo de una palabra dentro de un segmento (Whisper); si no aparece, proporcional al texto
+function wt(i, word, end = false) {
+  const ws = SEG[i].words || [], n = norm(word);
+  const w = ws.find(x => norm(x.w).startsWith(n));
+  if (w) return end ? w.e : w.s;
+  const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length);
+  return S(i) + (E(i) - S(i)) * Math.max(0, k);
+}
+const speaking = (i, t) => (SEG[i].words?.length ? SEG[i].words.some(w => t >= w.s - .03 && t <= w.e + .04) : (t > S(i) && t < E(i)));
+const mouth = (i, t) => speaking(i, t) ? clamp(.25 + env(t) * 1.25) : 0;
+
+// tomas = grupos de segmentos consecutivos con la misma escena
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .22; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+const WIPES = new Set(['ramas', 'paso1', 'final', 'cierre']);
+
+// zonas seguras de Reels (1080x1920): contenido entre y 260 y 1430; x 90..990 (centrado)
+const SAFE = { top: 260, bottom: 1430, left: 90, right: 990 };
+
+const MARTA = { skin: '#D9A27A', shirt: '#B5527A', skirt: '#0E2A47', hair: '#2A1E18', style: 'bun', collar: '#fff' };
+const CARLOS = { skin: '#C68A60', shirt: '#1E8E4E', pants: '#3B5B85', hair: '#2A2321', style: 'short', mustache: true, cap: '#0E2A47', capLogo: true };
+const N1 = { skin: '#E3B48E', shirt: '#F0C75E', skirt: '#5C6F86', hair: '#1E1612', style: 'long' };
+const N2 = { skin: '#D59C72', shirt: '#8FB3D9', pants: '#2F3B4A', hair: '#6A645E', style: 'bald', glasses: true };
+const N3 = { skin: '#C2875C', shirt: '#FFFFFF', pants: '#0E2A47', hair: '#1A1412', style: 'short', collar: '#0E2A47' };
+const blinkAt = (t, o = 0) => ((t + o) % 3.3) < .13;
+const P = (base, t, o = 0, extra = {}) => person({ ...base, blink: blinkAt(t, o), bob: Math.sin(t * 2.4 + o) * 3, ...extra });
+const LOGO = '../motor/assets/conafeph-logo.png';
+
+// ---------- gráficos ----------
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})">${svg}</g>`;
+const slide = (p, svg, dx = -120, dy = 0) => p <= 0 ? '' : `<g transform="translate(${(1 - easeOut(p)) * dx},${(1 - easeOut(p)) * dy})" opacity="${clamp(p * 1.6)}">${svg}</g>`;
+const draw = (d, p, o = {}) => p <= 0 ? '' : `<path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" fill="none" stroke="${o.c ?? K}" stroke-width="${o.w ?? 8}" stroke-linecap="round" stroke-linejoin="round"/>`;
+function titleCard(lines, p, y = 340, fs = 88) {
+  if (p <= 0) return '';
+  const maxLen = Math.max(...lines.map(l => l.replace(/<[^>]+>/g, '').length));
+  fs = Math.min(fs, 780 / (maxLen * .62));
+  const h = lines.length * fs + fs * .6;
+  return `<g transform="translate(540,${y}) scale(${lerp(.7, 1, easeBack(p))})" opacity="${clamp(p * 2)}"><rect x="-424" y="${-h / 2 + 10}" width="860" height="${h}" rx="34" fill="#0E2A47"/><rect x="-430" y="${-h / 2}" width="860" height="${h}" rx="34" fill="#fff" stroke="${K}" stroke-width="6"/>` +
+    lines.map((l, i) => `<text x="0" y="${-h / 2 + fs * .3 + (i + .78) * fs}" font-family="Brand" font-weight="900" font-size="${fs}" text-anchor="middle" fill="${C.navy}">${l}</text>`).join('') + `</g>`;
+}
+const stepCard = (n, text, p) => p <= 0 ? '' : `<g transform="translate(540,430) scale(${lerp(.7, 1, easeBack(p))})" opacity="${clamp(p * 2)}"><rect x="-414" y="-54" width="840" height="128" rx="64" fill="#0E2A47"/><rect x="-420" y="-64" width="840" height="128" rx="64" fill="#fff" stroke="${K}" stroke-width="6"/><circle cx="-354" cy="0" r="50" fill="${C.green}" stroke="${K}" stroke-width="5"/><text x="-354" y="22" font-family="Brand" font-weight="800" font-size="62" text-anchor="middle" fill="#fff">${n}</text><text x="40" y="18" font-family="Brand" font-weight="800" font-size="50" text-anchor="middle" fill="${C.navy}">${text}</text></g>`;
+const card = (x, y, w, icon, text, o = {}) => `<g transform="translate(${x},${y})"><rect x="${-w / 2 + 6}" y="-36" width="${w}" height="88" rx="22" fill="#0E2A47"/><rect x="${-w / 2}" y="-44" width="${w}" height="88" rx="22" fill="${o.bg ?? '#fff'}" stroke="${K}" stroke-width="5"/>${icon ? `<g transform="translate(${-w / 2 + 50},0)">${icon}</g>` : ''}<text x="${icon ? 36 : 0}" y="15" font-family="Brand" font-weight="800" font-size="${Math.max(42, o.fs ?? 46)}" text-anchor="middle" fill="${o.fg ?? C.navy}">${text}</text></g>`;
+const speedLines = (x, y, a) => a <= 0 ? '' : [0, 1, 2].map(k => `<path d="M${x - k * 30} ${y - 220 + k * 70} h-${120 + k * 40}" stroke="${K}" stroke-width="6" stroke-linecap="round" opacity="${a * (1 - k * .2)}"/>`).join('');
+function scaleBal(x, y, tilt, p) {
+  if (p <= 0) return '';
+  const a = tilt * 14, r = a * Math.PI / 180, L = 170;
+  const lx = x - L * Math.cos(r), ly = y - L * Math.sin(r), rx = x + L * Math.cos(r), ry = y + L * Math.sin(r);
+  const pan = (px, py, txt, c) => `<path d="M${px - 70} ${py + 90} L${px} ${py} L${px + 70} ${py + 90}" stroke="${K}" stroke-width="4" fill="none"/><path d="M${px - 80} ${py + 90} h160 q-10 46 -80 46 q-70 0 -80 -46z" fill="${c}" stroke="${K}" stroke-width="5"/><text x="${px}" y="${py + 124}" font-family="Brand" font-weight="800" font-size="38" text-anchor="middle" fill="#fff">${txt}</text>`;
+  return `<g transform="translate(${x},${y}) scale(${easeBack(p)}) translate(${-x},${-y})"><path d="M${x} ${y} V${y + 260}" stroke="${K}" stroke-width="12"/><path d="M${x - 70} ${y + 270} h140" stroke="${K}" stroke-width="14" stroke-linecap="round"/><path d="M${lx} ${ly} L${rx} ${ry}" stroke="#C79B66" stroke-width="16" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="16" fill="#F2C230" stroke="${K}" stroke-width="5"/>${pan(lx, ly, 'ELLA', '#B5527A')}${pan(rx, ry, 'ÉL', C.green)}</g>`;
+}
+const sun = (x, y, t) => `<g transform="translate(${x},${y}) rotate(${t * 20})">${[...Array(8)].map((_, k) => `<path d="M0 -58 V-74" stroke="${K}" stroke-width="5" stroke-linecap="round" transform="rotate(${k * 45})"/>`).join('')}<circle r="44" fill="#F7C948" stroke="${K}" stroke-width="5"/></g>`;
+function phoneWaves(x, y, t) { return [0, 1, 2].map(k => { const p = (t * 1.4 + k / 3) % 1; return `<path d="M${x + 30 + p * 50} ${y - 40 - p * 20} q${24 + p * 20} 40 0 ${80 + p * 40}" stroke="${C.green}" stroke-width="6" fill="none" opacity="${1 - p}" stroke-linecap="round"/>`; }).join(''); }
+function docCard(x, y, t0, t) {
+  const items = ['Respetar entradas', 'Espacio para visitas', 'Turnos acordados'];
+  let s = `<g transform="translate(${x},${y})"><rect x="-354" y="-30" width="720" height="300" rx="20" fill="#0E2A47"/><rect x="-360" y="-40" width="720" height="300" rx="20" fill="#fff" stroke="${K}" stroke-width="6"/><rect x="-360" y="-40" width="720" height="74" rx="20" fill="${C.navy}" stroke="${K}" stroke-width="6"/><text y="12" font-family="Brand" font-weight="800" font-size="44" text-anchor="middle" fill="#fff">ACUERDO DE PARQUEO</text>`;
+  items.forEach((it, k) => { const p = prog(t, t0 + .3 + k * .45, t0 + .6 + k * .45); s += `<g opacity="${p}"><g transform="translate(-300,${86 + k * 62}) scale(${.42 * Math.max(.01, easeBack(p))})">${check(0, 0)}</g><text x="-256" y="${102 + k * 62}" font-family="Brand" font-weight="700" font-size="44" fill="${C.navy}">${it}</text></g>`; });
+  return s + `</g>`;
+}
+function topCar(x, y, color) {
+  return `<g transform="translate(${x},${y})"><rect x="-110" y="-50" width="220" height="100" rx="38" fill="${color}" stroke="${K}" stroke-width="6"/><rect x="-36" y="-40" width="88" height="80" rx="18" fill="#CFE8F6" stroke="${K}" stroke-width="5"/><rect x="-24" y="-30" width="60" height="60" rx="10" fill="${color}" stroke="${K}" stroke-width="4"/></g>`;
+}
+function ambulance(x, y) { return `<g transform="translate(${x},${y}) scale(.7)"><rect x="-56" y="-34" width="112" height="56" rx="10" fill="#fff" stroke="${K}" stroke-width="5"/><path d="M-6 -20 h12 v10 h10 v12 h-10 v10 h-12 v-10 h-10 v-12 h10z" fill="${C.red}"/><circle cx="-30" cy="24" r="12" fill="${K}"/><circle cx="30" cy="24" r="12" fill="${K}"/></g>`; }
+function miniBubble(x, y, t) {
+  const d = [0, 1, 2].map(k => `<circle cx="${x - 36 + k * 36}" cy="${y - 6 - Math.max(0, Math.sin(t * 8 - k)) * 10}" r="11" fill="${C.navy}"/>`).join('');
+  return `<path d="M${x - 90} ${y - 60} h180 q30 0 30 30 v40 q0 30 -30 30 h-70 l-20 30 l-6 -30 h-84 q-30 0 -30 -30 v-40 q0 -30 30 -30z" fill="#fff" stroke="${K}" stroke-width="5"/>${d}`;
+}
+
+// ---------- subtítulos palabra por palabra (tiempos de Whisper) ----------
+const CHUNKS = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  // texto del guion con los tiempos de Whisper (mapeo proporcional por índice)
+  const sw = s.text.split(' '), aw = s.words || [];
+  const ws = []; let j = 0;
+  sw.forEach(w => {
+    let hit = -1;
+    for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } }
+    if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null });
+  });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => {
+    cur.push(w); const len = cur.map(x => x.w).join(' ').length;
+    if (len > 19 || (/[.?!:,…]$/.test(w.w) && len > 10) || k === ws.length - 1) { CHUNKS.push({ words: cur, s: cur[0].s - .08, e: (ws[k + 1] ? ws[k + 1].s - .08 : E(i) + .05) }); cur = []; }
+  });
+});
+const KEY = /^(arbol|raices|ramas|danos|danando|patronato|calma|fotos|municipalidad|asesoria|problemas|razon|paga|cortar|envenenar|vecindad|mango|pared|canal)/;
+function subs(t) {
+  const c = CHUNKS.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const parts = c.words.map(w => {
+    const said = t >= w.s - .02, now = said && t <= w.e + .05;
+    return `<tspan fill="${KEY.test(norm(w.w)) ? C.green : C.navy}" fill-opacity="${said ? 1 : .38}"${now ? ' font-size="66"' : ''}>${w.w.replace(/&/g, '&amp;')}</tspan>`;
+  }).join(' ');
+  return `<text x="540" y="1395" font-family="Brand" font-weight="800" font-size="60" text-anchor="middle" stroke="#fff" stroke-width="18" paint-order="stroke" stroke-linejoin="round">${parts}</text>`;
+}
+const brand = `<g><rect x="381" y="266" width="330" height="70" rx="35" fill="#0E2A47"/><rect x="375" y="258" width="330" height="70" rx="35" fill="#fff" stroke="${K}" stroke-width="4"/><image href="${LOGO}" x="381" y="260" width="66" height="66"/><text x="573" y="306" font-family="Brand" font-weight="800" font-size="34" text-anchor="middle" fill="${C.navy}" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas ----------
+const LUCIA = { skin: '#E0AE85', shirt: '#E9823A', skirt: '#0E2A47', hair: '#3A2418', style: 'long', collar: '#fff' };
+const RAFAEL = { skin: '#B9784F', shirt: '#F4F4F0', sleeve: '#F4F4F0', pants: '#5A4632', hair: '#8E8E8E', style: 'bald', mustache: true, collar: '#C79B66' };
+const GY = 1180, PS = .6;
+// patio de perfil: casa de don Rafael (izq.), árbol, muro lindero y casa de doña Lucía (der.)
+function yard(t, o = {}) {
+  let s = `<defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD3F2"/><stop offset="1" stop-color="#E6F4FB"/></linearGradient></defs><rect width="1080" height="${GY}" fill="url(#sky2)"/>`;
+  s += `<rect x="-20" y="${GY - 520}" width="200" height="520" fill="#DCE8F0" stroke="${K}" stroke-width="6"/><rect x="40" y="${GY - 400}" width="110" height="100" fill="#BFE0F2" stroke="${K}" stroke-width="5"/>`;
+  s += sideHouse(600, GY, 520, 470, { color: '#F6E7C8' });
+  s += `<rect x="548" y="${GY - 230}" width="34" height="230" fill="#D9D2C3" stroke="${K}" stroke-width="5"/>`;
+  s += `<rect x="-20" y="${GY}" width="1120" height="760" fill="#86BE5E" stroke="${K}" stroke-width="5"/><rect x="-20" y="${GY + 60}" width="1120" height="700" fill="#7A5A44" opacity=".25"/>`;
+  [[60, GY + 30], [460, GY + 40], [900, GY + 26]].forEach(([x, y]) => s += Z.tuft(x, y, 1.1));
+  if (o.roots) s += roots(330, GY + 30, 650, o.roots);
+  if (o.crack) s += crack(660, GY - 4, o.crack, 1.2, o.crackRed ? C.red : K);
+  s += mangoTree(300, GY, 1, t, { over: 330 });
+  if (o.pile) for (let k = 0; k < 6; k++) s += leaf(570 + k * 10, 694 - (k % 2) * 6, k * 30, .8 * clamp(o.pile * 6 - k));
+  if (o.falling) for (let k = 0; k < 6; k++) { const p = (t * .35 + k / 6) % 1; s += leaf(600 + Math.sin(t * 2 + k) * 40 + k * 30, 640 + p * 520, t * 90 + k * 50, .9); }
+  return s;
+}
+function lindero(t, mode, i) { // diagrama de corte: árbol, lindero y raíces
+  let s = `<rect width="1080" height="1920" fill="#FAFAF7"/><rect x="0" y="1060" width="1080" height="900" fill="#C9A47E"/><rect x="0" y="1040" width="1080" height="30" fill="#86BE5E" stroke="${K}" stroke-width="5"/>`;
+  s += mangoTree(340, 1050, .95, t, { over: 360 });
+  s += `<path d="M560 560 V1420" stroke="${C.navy}" stroke-width="6" stroke-dasharray="26 16"/>`;
+  s += label(560, 600, 'LINDERO', { fs: 40, bg: C.navy, fg: '#fff' });
+  s += `<text x="320" y="1000" font-family="Brand" font-weight="800" font-size="44" text-anchor="middle" fill="${C.navy}" opacity=".85">Terreno de él</text><text x="810" y="1000" font-family="Brand" font-weight="800" font-size="44" text-anchor="middle" fill="${C.navy}" opacity=".85">Terreno de ella</text>`;
+  if (mode === 'ramas') {
+    const ra = wt(i, 'ramas'), pi = wt(i, 'pedir');
+    const p = prog(t, ra - .2, ra + .3);
+    if (p > 0) s += `<circle cx="700" cy="${1050 - 285}" r="${150}" fill="${C.green}" fill-opacity="${.15 * p}" stroke="#F2C230" stroke-width="8" stroke-dasharray="20 14" opacity="${p}"/>`;
+    s += pop(prog(t, pi - .2, pi + .2), `<g>${card(700, 560, 580, icoScissors(0, 0, .6), 'Pueden cortarse')}</g>`, 700, 560);
+  } else {
+    const rz = wt(i, 'raices'), cu = wt(i, 'cortar');
+    s += roots(370, 1080, 820, prog(t, rz - .2, rz + .9), '#8A5A3B');
+    s += pop(prog(t, cu - .3, cu + .1), `<g>${card(740, 1250, 580, icoSaw(0, 0, .55), 'Usted las corta')}</g>`, 760, 1260);
+  }
+  return s;
+}
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene;
+  let s = '';
+  if (id === 'hook') {
+    const pa = wt(i, 'paga');
+    s += yard(t, { crack: prog(u, 1.0, 2.0), crackRed: true, falling: true });
+    s += P(LUCIA, t, .2, { x: 830, y: GY + 10, s: PS, expr: 'shock', arms: POSE.head });
+    s += titleCard(['¿El árbol del vecino', `le <tspan fill="${C.red}">rompe</tspan> la casa?`], prog(u, .1, .6), 470, 80);
+    s += pop(prog(t, pa - .3, pa), label(760, 1070 - 280, '¿Quién paga?', { fs: 54, bg: C.red, fg: '#fff' }), 760, 790);
+  }
+  if (id === 'rafael') {
+    s += yard(t, {});
+    const wk = prog(u, 0, 1.2);
+    s += P(RAFAEL, t, 1, { x: lerp(-120, 190, easeOut(wk)), y: GY + 10, s: PS, expr: wk < 1 ? 'happy' : 'smug', arms: wk < 1 ? POSE.idle : POSE.hips, walk: t * 9, walkAmt: wk < 1 ? 1 : 0 });
+    s += pop(prog(u, .9, 1.2), label(200, 760, 'Don Rafael', { fs: 50 }), 200, 760);
+    const ma = wt(i, 'mango');
+    s += pop(prog(t, ma - .2, ma + .1), label(330, 520, 'Palo de mango', { fs: 46, bg: '#F2A93B' }), 330, 520);
+    [[200, 820], [420, 760], [300, 650]].forEach(([x, y], k) => s += `<g opacity="${.5 + .5 * Math.sin(t * 4 + k)}">${sparkle(x, y, .8)}</g>`);
+  }
+  if (id === 'danos') {
+    const rz = wt(i, 'raices'), ra = wt(i, 'rajaron'), ho = wt(i, 'hojas'), ca = wt(i, 'canal');
+    s += yard(t, { roots: prog(t, rz - .1, rz + 1.0), crack: prog(t, ra - .1, ra + .6), crackRed: true, pile: prog(t, ho, ca + .5), falling: t > ho - .3 });
+    s += P(LUCIA, t, .2, { x: 860, y: GY + 10, s: PS, expr: t > ra ? 'shock' : 'neutral', arms: t > ra ? POSE.head : POSE.idle });
+    s += pop(prog(t, ra, ra + .3), label(700, 900, 'Pared rajada', { fs: 46, bg: C.red, fg: '#fff' }), 700, 900);
+    s += pop(prog(t, ca - .1, ca + .2), label(420, 600, 'Canal tapado', { fs: 46 }), 420, 600);
+    s += pop(prog(t, rz, rz + .3), label(330, GY + 160, 'Raíces', { fs: 44, bg: '#8A5A3B', fg: '#fff' }), 330, GY + 160);
+  }
+  if (id === 'reclamo') {
+    s += yard(t, { crack: 1, crackRed: true, pile: 1 });
+    s += `<rect width="1080" height="1920" fill="#fff" opacity=".35"/>`;
+    const q = sh.i1, talking = speaking(q, t);
+    s += P(RAFAEL, t, 1, { x: 800, y: 1350, s: 1.05, expr: t > S(q) ? 'worried' : 'neutral', arms: POSE.idle, look: -1 });
+    s += P(LUCIA, t, .2, { x: 290, y: 1350, s: 1.15, expr: 'angry', talk: mouth(q, t), arms: t > S(q) - .1 ? POSE.point : POSE.hips, look: 1, tilt: talking ? Math.sin(t * 9) * 2 : 0 });
+    if (t > S(q) - .1) s += anger(290, 640, t, .95);
+    s += sayBubble(q, t, ['¡Ese árbol me daña la casa!', '¡Córtelo ya!'], { who: 'DOÑA LUCÍA', tail: -220, w: 900 });
+  }
+  if (id === 'respuesta') {
+    s += yard(t, { crack: 1, crackRed: true, pile: 1 });
+    s += `<rect width="1080" height="1920" fill="#fff" opacity=".35"/>`;
+    const q = sh.i1, talking = speaking(q, t);
+    s += P(LUCIA, t, .2, { x: 280, y: 1350, s: 1.05, expr: 'angry', arms: POSE.cross, look: 1 });
+    s += P(RAFAEL, t, 1, { x: 790, y: 1350, s: 1.15, expr: t > S(q) ? 'smug' : 'neutral', talk: mouth(q, t), arms: t > S(q) ? POSE.cross : POSE.idle, look: -1, tilt: talking ? -3 : 0 });
+    s += sayBubble(q, t, ['El árbol está en mi terreno.', 'Yo no lo voy a cortar.'], { who: 'DON RAFAEL', tail: 200, tailDx: 240, w: 900, bg: C.navy, fg: '#fff' });
+  }
+  if (['lados', 'ladoL', 'ladoR'].includes(id)) {
+    s += ground(1250, [130, 540, 950]);
+    const target = id === 'ladoL' ? -1 : id === 'ladoR' ? 1 : 0;
+    const tiltS = id === 'lados' ? Math.sin(t * 2.2) * .8 : lerp(id === 'ladoR' ? -1 : 0, target, easeOut(prog(u, 0, .7)));
+    s += P(LUCIA, t, .2, { x: 250, y: 1250, s: .9, expr: id === 'ladoL' ? 'worried' : 'think', arms: id === 'ladoL' ? POSE.hand : POSE.chin, dim: id === 'ladoR' ? .35 : 1 });
+    s += P(RAFAEL, t, 1, { x: 830, y: 1250, s: .9, expr: id === 'ladoR' ? 'smug' : 'think', arms: id === 'ladoR' ? POSE.hips : POSE.chinL, dim: id === 'ladoL' ? .35 : 1 });
+    s += scaleBal(540, id === 'lados' ? 640 : 720, tiltS, id === 'lados' ? prog(u, .2, .6) : 1);
+    if (id === 'lados') s += titleCard([`¿Quién tiene la <tspan fill="${C.green}">razón?</tspan>`], prog(u, 0, .4), 450, 66);
+    if (id === 'ladoL') {
+      const a = wt(i, 'sufriendo'), b = wt(i, 'casa');
+      s += slide(prog(t, a - .3, a + .1), card(540, 440, 720, crack(0, 30, 1, .5, C.red), 'Sufre daños'), -200);
+      s += slide(prog(t, b - .3, b + .1), card(540, 560, 720, '', 'en su casa'), -200);
+    }
+    if (id === 'ladoR') {
+      const a = wt(i, 'arbol'), b = wt(i, 'terreno');
+      s += slide(prog(t, a - .3, a + .1), card(540, 440, 720, `<g transform="scale(.16) translate(0,280)">${mangoTree(0, 0, 1, t)}</g>`, 'Es su árbol'), 200);
+      s += slide(prog(t, b - .3, b + .1), card(540, 560, 720, '', 'y su terreno'), 200);
+    }
+  }
+  if (id === 'ramas' || id === 'raices') {
+    s += lindero(t, id, i);
+    s += titleCard(id === 'ramas' ? [`Lo que hay que <tspan fill="${C.green}">saber</tspan>`] : [`Las <tspan fill="#8A5A3B">raíces</tspan>`], prog(u, 0, .4), 430, 64);
+  }
+  if (id === 'responde') {
+    s += ground(1250, [130, 950]);
+    s += P(RAFAEL, t, 1, { x: 800, y: 1250, s: .9, expr: 'worried', arms: POSE.chinL });
+    s += titleCard([`Si hay <tspan fill="${C.red}">daños</tspan>…`], prog(u, 0, .4), 430, 70);
+    const du = wt(i, 'dueno');
+    s += pop(prog(u, .3, .6), `<g transform="translate(330,850)">${icoLaw(0, 0, 2.4)}</g>`, 300, 860);
+    s += pop(prog(t, du - .2, du + .2), card(540, 1120, 820, '', 'El dueño puede responder', { fs: 46 }), 540, 1120);
+  }
+  if (id === 'mito') {
+    s += ground(1250, [130, 950]);
+    const pr = wt(i, 'problemas'), late = t > pr - .3;
+    s += late ? stamp(540, 450, 'REALIDAD', C.green, prog(t, pr - .3, pr), 6) : stamp(540, 450, 'MITO', C.red, prog(u, .1, .45));
+    s += pop(prog(u, .3, .6), `<g>${icoSaw(360, 820, 2.2)}${icoPoison(730, 830, 2)}</g>`, 540, 830);
+    if (late) s += `<path d="M260 680 L840 980 M840 680 L260 980" stroke="${C.red}" stroke-width="18" stroke-linecap="round" opacity="${prog(t, pr - .3, pr)}"/>`;
+    s += late ? pop(prog(t, pr, pr + .3), card(540, 1140, 860, `<path d="M0 -30 L30 24 H-30Z" fill="#F7C948" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`, 'Le puede traer problemas', { bg: '#FFF4D6' }), 540, 1140)
+      : pop(prog(u, .5, .8), card(540, 1140, 860, '', 'Cortar o envenenar su árbol'), 540, 1140);
+  }
+  if (id === 'paso1') {
+    s += yard(t, { crack: 1, crackRed: true });
+    const fo = wt(i, 'fotos'), fl = clamp((t - fo) / .4);
+    const photo = t > fo - .4;
+    s += P(RAFAEL, t, 1, { x: 200, y: GY + 10, s: PS, expr: 'content', arms: POSE.idle, look: 1, talk: !photo ? Math.max(0, Math.sin(t * 11)) * .4 * (Math.floor(t * 1.2) % 2) : 0 });
+    s += P(LUCIA, t, .2, { x: 860, y: GY + 10, s: PS, expr: photo ? 'neutral' : 'content', arms: photo ? { r: [70, 60], l: [70, 60] } : POSE.idle, look: photo ? -1 : -1, talk: !photo ? Math.max(0, Math.sin(t * 11)) * .4 * (1 - Math.floor(t * 1.2) % 2) : 0 });
+    if (!photo) s += miniBubble(520, 820, t);
+    if (photo) s += icoCamera(770, 880, 1.1, fl < 1 ? fl : 0) + pop(prog(t, fo, fo + .3), label(660, 760, 'Fotos de los daños', { fs: 42 }), 660, 760);
+    s += stepCard(1, 'Hablar y documentar', prog(u, 0, .4));
+  }
+  if (id === 'paso2') {
+    s += ground(1250, [80, 1000]);
+    s += P(N3, t, 2, { x: 540, y: 1200, s: .68, expr: 'happy', talk: speaking(i, t) ? Math.max(0, Math.sin(t * 10)) * .55 : 0, arms: { r: [30, -100], l: [70, 20] }, hold: { r: holdClip() } });
+    s += `<rect x="270" y="1140" width="540" height="40" rx="8" fill="#C79B66" stroke="${K}" stroke-width="6"/><path d="M310 1180 v70 M770 1180 v70" stroke="${K}" stroke-width="12"/>`;
+    s += P(N1, t, 2.5, { x: 160, y: 1250, s: .68, expr: 'content', arms: POSE.idle, look: 1 });
+    s += P(LUCIA, t, .2, { x: 350, y: 1290, s: .72, expr: 'happy', arms: POSE.idle, look: 1 });
+    s += P(RAFAEL, t, 1, { x: 730, y: 1290, s: .72, expr: 'content', arms: POSE.idle, look: -1 });
+    s += P(N2, t, 1.7, { x: 920, y: 1250, s: .68, expr: 'content', arms: POSE.idle, look: -1 });
+    s += pop(prog(u, .2, .5), `<rect x="166" y="568" width="760" height="110" rx="14" fill="${K}"/><rect x="160" y="560" width="760" height="110" rx="14" fill="${C.navy}" stroke="${K}" stroke-width="6"/><text x="540" y="633" font-family="Brand" font-weight="800" font-size="48" text-anchor="middle" fill="#fff">MEDIACIÓN DEL PATRONATO</text>`, 540, 615);
+    s += stepCard(2, 'Mediación del patronato', prog(u, 0, .4));
+  }
+  if (id === 'paso3') {
+    s += ground(1250, [130, 950]);
+    const mu = wt(i, 'municipalidad'), as = wt(i, 'asesoria');
+    s += pop(prog(t, mu - .3, mu), `<g>${icoMuni(320, 760, 1.3)}${label(320, 930, 'Municipalidad', { fs: 44 })}</g>`, 320, 800);
+    s += pop(prog(t, as - .3, as), `<g>${icoLaw(760, 760, 1.4)}${label(760, 930, 'Asesoría legal', { fs: 44 })}</g>`, 760, 800);
+    s += P(LUCIA, t, .2, { x: 540, y: 1250, s: .62, expr: 'content', arms: POSE.idle });
+    s += stepCard(3, 'Si no hay acuerdo', prog(u, 0, .4));
+  }
+  if (id === 'final') {
+    s += yard(t, {});
+    const cutP = prog(u, .4, 2.0);
+    s += P(RAFAEL, t, 1, { x: 420, y: GY + 10, s: PS, expr: 'happy', arms: { r: [12, 4], l: [150, 30 + Math.sin(t * 14) * 12] }, hold: { l: (hx, hy) => icoSaw(hx + 40, hy - 10, .6) } });
+    if (cutP > .6) { const p = (cutP - .6) / .4; s += `<g transform="translate(${640},${700 + p * 420}) rotate(${p * 70})"><circle r="70" fill="${K}"/><circle r="64" fill="#4CA35A"/></g>`; }
+    s += P(LUCIA, t, .2, { x: 860, y: GY + 10, s: PS, expr: 'big', arms: POSE.thumb, thumb: { l: true } });
+    s += titleCard(['Cuide su árbol…', `<tspan fill="${C.green}">y su vecindad</tspan>`], prog(u, .1, .5), 470, 80);
+  }
+  if (id === 'cierre') {
+    s += `<defs><radialGradient id="lg" cx=".5" cy=".4" r=".8"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4E8EE"/></radialGradient></defs><rect width="1080" height="1920" fill="url(#lg)"/>`;
+    const p = prog(u, .1, .9), k = easeBack(p);
+    s += `<g transform="translate(540,640) scale(${lerp(.2, 1, k)}) rotate(${lerp(-90, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="220" fill="#000" opacity=".06" cy="12"/><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    const shn = prog(u, 1.0, 1.7); if (shn > 0 && shn < 1) s += `<defs><clipPath id="lc"><circle cx="540" cy="640" r="202"/></clipPath></defs><rect clip-path="url(#lc)" x="${lerp(250, 830, shn) - 30}" y="400" width="46" height="480" fill="#fff" opacity=".55" transform="rotate(20 540 640)"/>`;
+    s += `<g opacity="${prog(u, .7, 1.1)}" transform="translate(0,${(1 - easeOut(prog(u, .7, 1.1))) * 40})"><text x="540" y="950" font-family="Brand" font-weight="900" font-size="100" text-anchor="middle" fill="${C.navy}" letter-spacing="6">CONAFEPH</text></g>`;
+    s += `<g opacity="${prog(u, 1.2, 1.6)}"><text x="540" y="1060" font-family="Brand" font-weight="800" font-size="52" text-anchor="middle" fill="${C.navy}">¿Problemas con vecinos?</text></g>`;
+    s += pop(prog(u, 1.7, 2.1), `<rect x="136" y="1118" width="820" height="120" rx="60" fill="#0E2A47"/><rect x="130" y="1110" width="820" height="120" rx="60" fill="${C.green}" stroke="${K}" stroke-width="6"/><text x="540" y="1186" font-family="Brand" font-weight="800" font-size="42" text-anchor="middle" fill="#fff">Busque orientación con CONAFEPH</text>`, 540, 1170);
+    s += `<text x="540" y="1320" font-family="Brand" font-weight="700" font-size="42" text-anchor="middle" fill="#1B3E66" opacity="${prog(u, 2.2, 2.6)}">WhatsApp · Facebook · Oficinas</text>`;
+  }
+  return s;
+}
+function sayBubble(q, t, lines, o) {
+  if (t < S(q) - .25) return '';
+  const ws = SEG[q].words || [];
+  const tokens = lines.map(l => l.split(' ')), total = tokens.flat().length;
+  const said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * total / ws.length) : Math.round(total * prog(t, S(q), E(q)));
+  let wi = 0;
+  const shown = tokens.map(row => row.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : 0}">${w}</tspan>`).join(' '));
+  return pop(prog(t, S(q) - .25, S(q) + .05), bubble(540, 610, shown, { ...o, fs: 52 }), 540, 560);
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const zoom = 1 + .04 * ease(prog(t, sh.start, sh.end));
+  let out = `<defs><filter id="blur"><feGaussianBlur stdDeviation="14"/></filter></defs><rect width="1080" height="1920" fill="#fff"/>`;
+  out += `<g transform="translate(540,900) scale(${zoom}) translate(-540,-900)">${scene(sh, t)}</g>`;
+  if (sh.scene !== 'cierre') out += subs(t) + brand;
+  for (const sc of WIPES) { const s2 = SHOTS.find(x => x.scene === sc); if (!s2) continue; out += wipe((t - (s2.start - .42)) / .85); }
+  if (window.SAFE_DEBUG) out += `<rect x="${SAFE.left}" y="${SAFE.top}" width="${SAFE.right - SAFE.left}" height="${SAFE.bottom - SAFE.top}" fill="none" stroke="red" stroke-width="4" stroke-dasharray="20 10"/>`;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+window.SAFE_DEBUG = new URLSearchParams(location.search).has('safe');
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>

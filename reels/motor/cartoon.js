@@ -272,3 +272,45 @@ export function wipe(p) {
   d += ` L${X + 1600} 1960 L${X + 1600} -40Z`;
   return `<path d="${d}" fill="#000" opacity=".12" transform="translate(-28,0)" filter="url(#blur)"/><path d="${d}" fill="#fff"/>`;
 }
+
+// ---------- árbol, raíces, daños e íconos (tema: árbol del vecino) ----------
+export function mangoTree(x, y, s = 1, t = 0, o = {}) {
+  const sw = Math.sin(t * 1.6) * 2;
+  let g = `<g transform="translate(${f(x)},${f(y)}) scale(${s})">`;
+  g += `<ellipse cx="0" cy="4" rx="${o.cut ? 120 : 260}" ry="26" fill="#000" opacity=".08"/>`;
+  g += `<path d="M-38 0 Q-30 -150 -46 -300 L-10 -310 Q6 -170 34 0Z" fill="#8A5A3B" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>`;
+  g += `<path d="M-30 -230 Q-90 -270 -150 -300 M-20 -260 Q40 -300 120 -330" stroke="${K}" stroke-width="20" stroke-linecap="round" fill="none"/><path d="M-30 -230 Q-90 -270 -150 -300 M-20 -260 Q40 -300 120 -330" stroke="#8A5A3B" stroke-width="10" stroke-linecap="round" fill="none"/>`;
+  g += `<g transform="rotate(${f(sw)} 0 -300)">`;
+  const blobs = [[-170, -360, 120], [-40, -430, 150], [110, -380, 130], [230, -330, 100], [-250, -290, 90], [40, -300, 110], [o.over ?? 330, -300, o.over ? 120 : 0]];
+  blobs.forEach(([bx, by, r]) => { if (r) g += `<circle cx="${bx}" cy="${by}" r="${r + 6}" fill="${K}"/>`; });
+  blobs.forEach(([bx, by, r], k) => { if (r) g += `<circle cx="${bx}" cy="${by}" r="${r}" fill="${['#3E8E4B', '#4CA35A', '#3A8746'][k % 3]}"/>`; });
+  [[-120, -330], [60, -360], [170, -300], [-30, -280], [-200, -260], [260, -270]].forEach(([mx, my], k) => g += `<ellipse cx="${mx}" cy="${my + Math.sin(t * 2 + k) * 2}" rx="18" ry="24" fill="#F2A93B" stroke="${K}" stroke-width="4"/>`);
+  g += `</g></g>`;
+  return g;
+}
+export function roots(x0, y0, x1, p, c = '#8A5A3B') {
+  if (p <= 0) return '';
+  const d = `M${x0} ${y0} C${x0 + 80} ${y0 + 60} ${(x0 + x1) / 2} ${y0 + 20} ${x1} ${y0 + 70} M${x0} ${y0 + 10} C${x0 + 60} ${y0 + 120} ${(x0 + x1) / 2} ${y0 + 110} ${x1 - 40} ${y0 + 140}`;
+  return `<path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="${K}" stroke-width="22" fill="none" stroke-linecap="round"/><path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="${c}" stroke-width="12" fill="none" stroke-linecap="round"/>`;
+}
+export function crack(x, y, p, s = 1, c = K) {
+  if (p <= 0) return '';
+  const d = 'M0 0 l-14 -40 l18 -30 l-20 -46 l14 -36 l-10 -40 M-12 -76 l-30 -10 M4 -110 l26 -14';
+  return `<path transform="translate(${x},${y}) scale(${s})" d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="${c}" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+export function leaf(x, y, r = 0, s = 1) { return `<path transform="translate(${f(x)},${f(y)}) rotate(${f(r)}) scale(${s})" d="M0 -18 Q16 -4 0 18 Q-16 -4 0 -18Z" fill="#4CA35A" stroke="${K}" stroke-width="3"/>`; }
+export function icoScissors(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})" stroke="${K}" stroke-width="6" fill="none" stroke-linecap="round"><circle cx="-22" cy="28" r="16" fill="#fff"/><circle cx="22" cy="28" r="16" fill="#fff"/><path d="M-12 16 L18 -40 M12 16 L-18 -40" stroke-width="8"/></g>`; }
+export function icoSaw(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-50 -10 H40 L40 14 H-50Z" fill="#C8CDD4" stroke="${K}" stroke-width="5"/><path d="M-50 14 l8 10 l8 -10 l8 10 l8 -10 l8 10 l8 -10 l8 10 l8 -10 l8 10 l8 -10 l8 10 l2 -10" fill="none" stroke="${K}" stroke-width="4"/><rect x="38" y="-22" width="36" height="46" rx="12" fill="${C.green}" stroke="${K}" stroke-width="5"/></g>`; }
+export function icoCamera(x, y, s = 1, flash = 0) { return `<g transform="translate(${x},${y}) scale(${s})">${flash > 0 ? `<circle r="${70 + flash * 40}" fill="#FFF6C8" opacity="${1 - flash}"/>` : ''}<rect x="-50" y="-30" width="100" height="70" rx="12" fill="#2A2F36" stroke="${K}" stroke-width="5"/><rect x="-20" y="-44" width="40" height="18" rx="5" fill="#2A2F36" stroke="${K}" stroke-width="5"/><circle cy="5" r="22" fill="#9DB7CC" stroke="#fff" stroke-width="5"/></g>`; }
+export function icoPoison(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><rect x="-26" y="-60" width="52" height="20" rx="5" fill="#666" stroke="${K}" stroke-width="5"/><path d="M-36 -40 h72 v86 q0 14 -14 14 h-44 q-14 0 -14 -14z" fill="#7B4FA0" stroke="${K}" stroke-width="5"/><circle cy="0" r="16" fill="#fff"/><path d="M-6 -4 h4 M2 -4 h4 M-8 8 h16" stroke="${K}" stroke-width="3"/></g>`; }
+export function icoLaw(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})" stroke="${K}" stroke-width="5"><path d="M0 -60 V50 M-50 -40 H50" fill="none"/><path d="M-50 -40 L-72 10 H-28Z M50 -40 L28 10 H72Z" fill="#F2C230"/><rect x="-30" y="50" width="60" height="14" rx="4" fill="#C79B66"/></g>`; }
+// casa de perfil del vecino con canal (para el tema del árbol)
+export function sideHouse(x, y, w = 520, h = 520, o = {}) {
+  const c = o.color ?? '#F6E7C8';
+  let g = `<rect x="${x}" y="${y - h}" width="${w}" height="${h}" fill="${c}" stroke="${K}" stroke-width="6"/>`;
+  g += `<path d="M${x - 30} ${y - h} L${x + w / 2} ${y - h - 140} L${x + w + 30} ${y - h}Z" fill="${o.roof ?? '#C9563E'}" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>`;
+  g += `<rect x="${x - 40}" y="${y - h - 6}" width="70" height="26" rx="6" fill="#9AA1AC" stroke="${K}" stroke-width="5"/>`; // canal
+  g += `<rect x="${x + w * .55}" y="${y - h * .62}" width="150" height="130" fill="#BFE0F2" stroke="${K}" stroke-width="5"/><path d="M${x + w * .55 + 75} ${y - h * .62} v130 M${x + w * .55} ${y - h * .62 + 65} h150" stroke="${K}" stroke-width="4"/>`;
+  g += `<rect x="${x + w * .18}" y="${y - 250}" width="120" height="250" fill="#8A5A3B" stroke="${K}" stroke-width="5"/><circle cx="${x + w * .18 + 98}" cy="${y - 120}" r="7" fill="${K}"/>`;
+  return g;
+}
