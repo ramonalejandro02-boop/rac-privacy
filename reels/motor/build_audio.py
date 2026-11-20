@@ -104,10 +104,24 @@ def pop(d=0.12):
     return np.sin(2 * np.pi * (900 - 2500 * t) * t) * np.exp(-t * 40) * 0.35
 
 
-def clean(x):
-    idx = np.where(np.abs(x) > 0.012)[0]
-    x = x[max(0, idx[0] - 600): idx[-1] + 1800] if len(idx) else x
-    return x / (np.max(np.abs(x)) + 1e-9) * 0.89
+def clean(x, max_gap=0.32):
+    x = x / (np.max(np.abs(x)) + 1e-9)
+    hop = 441; n = len(x) // hop
+    rms = np.array([np.sqrt(np.mean(x[i * hop:(i + 1) * hop] ** 2)) for i in range(n)])
+    voiced = rms > 0.025
+    if not voiced.any(): return x * .89
+    a, b = np.argmax(voiced), n - np.argmax(voiced[::-1])
+    a = max(0, a - 10); b = min(n, b + 22)          # 0.1 s antes, 0.22 s despues (no cortar finales)
+    out = []; i = a; gap = 0
+    while i < b:
+        if not voiced[i]:
+            gap += 1
+            if gap * hop / SR > max_gap: i += 1; continue   # recorta silencios internos largos
+        else: gap = 0
+        out.append(x[i * hop:(i + 1) * hop]); i += 1
+    y = np.concatenate(out)
+    f = int(.01 * SR); y[:f] *= np.linspace(0, 1, f); y[-f:] *= np.linspace(1, 0, f)
+    return y * .89
 
 
 def main(script_path, out_dir, model, py=None):
@@ -116,20 +130,29 @@ def main(script_path, out_dir, model, py=None):
     speed = sc.get("speed", 1.0)
     t = sc.get("lead", 0.5)
     segs = []; voice_parts = []
-    human = model.endswith(".wav")
+    human = model.endswith(".wav") or model == "default"
     if human:
-        jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "seed": s.get("seed", 1234)}
+        jobs = [{"text": s.get("say", s["text"]), "out": f"{out_dir}/seg{i:02d}.wav", "exaggeration": s.get("exag", sc.get("exag", 0.55)), "cfg": s.get("cfg", sc.get("cfg", 0.45)), "seed": s.get("seed", 1234)}
                 for i, s in enumerate(sc["segments"])]
         todo = [j for j in jobs if not os.path.exists(j["out"])]
         if todo:
             json.dump(todo, open(f"{out_dir}/jobs.json", "w"), ensure_ascii=False)
             subprocess.run([py, os.path.join(os.path.dirname(__file__), "tts_chatterbox.py"), f"{out_dir}/jobs.json", model], check=True)
     for i, s in enumerate(sc["segments"]):
-        x = clean(read_wav(f"{out_dir}/seg{i:02d}.wav")) if human else tts(s.get("say", s["text"]), model, f"{out_dir}/seg{i:02d}.wav", s.get("speed", speed))
+        if human:
+            x = clean(read_wav(f"{out_dir}/seg{i:02d}.wav")); write_wav(f"{out_dir}/clean{i:02d}.wav", x)
+        x = x if human else tts(s.get("say", s["text"]), model, f"{out_dir}/seg{i:02d}.wav", s.get("speed", speed))
         d = len(x) / SR
         segs.append({**s, "start": round(t, 3), "end": round(t + d, 3)})
         voice_parts.append((t, x))
         t += d + s.get("pause", 0.3)
+    if human:  # tiempos exactos por palabra (Whisper) sobre el audio limpio
+        wavs = [f"{out_dir}/clean{i:02d}.wav" for i in range(len(segs))]
+        json.dump(wavs, open(f"{out_dir}/asr_in.json", "w"))
+        subprocess.run([py, os.path.join(os.path.dirname(__file__), "asr.py"), f"{out_dir}/asr_in.json", f"{out_dir}/asr.json"], check=True)
+        asr = json.load(open(f"{out_dir}/asr.json"))
+        for i, s in enumerate(segs):
+            s["words"] = [{"w": w["w"], "s": round(s["start"] + w["s"], 3), "e": round(s["start"] + w["e"], 3)} for w in asr[wavs[i]]]
     total = t + sc.get("tail", 2.5)
     voice = np.zeros(int(total * SR))
     for st, x in voice_parts: voice[int(st * SR): int(st * SR) + len(x)] += x
@@ -149,11 +172,10 @@ def main(script_path, out_dir, model, py=None):
     venv = np.repeat(np.array(env), hop)[: len(mus)]
     venv = np.convolve(venv, np.ones(SR // 5) / (SR // 5), mode="same")
     duck = 1 - 0.55 * np.clip(venv * 1.4, 0, 1)
-    mix = voice * 0.95 + mus * 0.16 * duck
+    mix = voice * 0.95 + mus * sc.get("music", 0.11) * duck
     # efectos en cambios de escena y apariciones
-    for k, sid in enumerate(ids):
-        if k == 0: continue
-        w = whoosh(); st = int(max(0, scenes[sid][0] - 0.3) * SR); mix[st: st + len(w)] += w[: len(mix) - st] * 0.5
+    for c in sc.get("whoosh", []):
+        w = whoosh(); st = int(max(0, segs[c]["start"] - 0.35) * SR); mix[st: st + len(w)] += w[: len(mix) - st] * 0.22
     for c in sc.get("pops", []):
         p = pop(); st = int(c * SR); mix[st: st + len(p)] += p[: len(mix) - st]
     mix /= max(1.0, np.max(np.abs(mix)) / 0.95)

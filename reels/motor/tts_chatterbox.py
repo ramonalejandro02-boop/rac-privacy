@@ -12,7 +12,8 @@ jobs, ref = json.load(open(sys.argv[1])), sys.argv[2]
 m = ChatterboxMultilingualTTS.from_pretrained(device="cpu")
 for i, j in enumerate(jobs):
     torch.manual_seed(j.get("seed", 1234))
-    w = m.generate(j["text"], language_id="es", audio_prompt_path=ref,
+    kw = {} if ref == "default" else {"audio_prompt_path": j.get("ref", ref)}
+    w = m.generate(j["text"], language_id="es", **kw,
                    exaggeration=j.get("exaggeration", 0.55), cfg_weight=j.get("cfg", 0.5),
                    temperature=j.get("temperature", 0.75))
     ta.save(j["out"], w, m.sr)

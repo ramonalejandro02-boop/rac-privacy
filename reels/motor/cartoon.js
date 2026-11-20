@@ -33,14 +33,16 @@ export function person(o) {
   const bob = o.bob ?? 0;
   let g = `<g transform="translate(${f(o.x)},${f(o.y)}) scale(${s})" ${o.dim ? `opacity="${o.dim}"` : ''}>`;
   g += shadow(0, 0, 120);
-  // piernas
-  const legTop = -260 + bob;
-  if (o.skirt) {
-    for (const sx of [-30, 30]) g += `<rect x="${sx - 17}" y="${legTop + 40}" width="34" height="${-legTop - 60}" rx="14" fill="${skin}" stroke="${K}" stroke-width="5"/>`;
-  } else {
-    for (const sx of [-34, 34]) g += `<rect x="${sx - 26}" y="${legTop}" width="52" height="${-legTop - 30}" rx="12" fill="${pants}" stroke="${K}" stroke-width="5"/>`;
+  // piernas (con caminata: o.walk = fase en radianes, o.walkAmt 0..1)
+  const legTop = -260 + bob, wk = o.walkAmt ?? 0, ph = o.walk ?? 0;
+  for (const [i, sx] of [[0, -1], [1, 1]]) {
+    const ang = Math.sin(ph + i * Math.PI) * 22 * wk, lx = sx * (o.skirt ? 30 : 34);
+    let leg = o.skirt ? `<rect x="${lx - 17}" y="${legTop + 40}" width="34" height="${-legTop - 60}" rx="14" fill="${skin}" stroke="${K}" stroke-width="5"/>`
+      : `<rect x="${lx - 26}" y="${legTop}" width="52" height="${-legTop - 30}" rx="12" fill="${pants}" stroke="${K}" stroke-width="5"/>`;
+    const sw = o.skirt ? 34 : 38, ex = o.skirt ? 22 : 26, fx = sx * 36;
+    leg += `<path d="M${fx - 30} -4 v-30 q0 -14 14 -14 h${sw} q16 0 ${ex} 22 v22 z" fill="${shoes}" stroke="${K}" stroke-width="5" stroke-linejoin="round" transform="${sx < 0 ? `translate(${2 * fx},0) scale(-1,1)` : ''}"/>`;
+    g += `<g transform="rotate(${f(ang)} ${lx} ${legTop + 10})">${leg}</g>`;
   }
-  for (const sx of [-36, 36]) g += `<path d="M${sx - 30} -4 v-30 q0 -14 14 -14 h${o.skirt ? 34 : 38} q16 0 ${o.skirt ? 22 : 26} 22 v22 z" fill="${shoes}" stroke="${K}" stroke-width="5" stroke-linejoin="round" transform="${sx < 0 ? `translate(${2 * sx},0) scale(-1,1)` : ''}"/>`;
   // torso
   const sh = -440 + bob, hip = -250 + bob;
   g += `<path d="M-86 ${sh + 28} q0 -30 30 -30 h112 q30 0 30 30 l10 ${hip - sh - 10} q0 14 -14 14 h-164 q-14 0 -14 -14 z" fill="${shirt}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
@@ -52,7 +54,8 @@ export function person(o) {
   const arms = o.arms ?? {};
   let front = '';
   for (const [side, sd] of [['r', -1], ['l', 1]]) {
-    const [a1, a2] = arms[side] ?? [12, 6];
+    let [a1, a2] = arms[side] ?? [12, 6];
+    if (o.walkAmt && !arms[side + 'Fix']) a1 += Math.sin((o.walk ?? 0) + (sd > 0 ? 0 : Math.PI)) * 18 * o.walkAmt;
     const x0 = sd * 84, y0 = sh + 26;
     const ex = x0 + sd * Math.sin(a1 * D2R) * 100, ey = y0 + Math.cos(a1 * D2R) * 100;
     const hx = ex + sd * Math.sin((a1 + a2) * D2R) * 96, hy = ey + Math.cos((a1 + a2) * D2R) * 96;
