@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 01 · ¿La calle frente a su casa es suya?</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0E2A47; --navy2:#1B3E66; --green:#1E8E4E; --green-l:#E3F3EA;
+    --bg:#FFFFFF; --soft:#F1F4F8; --alert:#C8553D; --alert-l:#FBEAE6; --ink:#16212E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-family:Montserrat,sans-serif;color:var(--ink)}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+  .scene{position:absolute;inset:0;opacity:0;display:none}
+
+  /* barra superior fija */
+  #topbar{position:absolute;top:110px;left:70px;right:70px;display:flex;align-items:center;justify-content:space-between;z-index:20}
+  #brand{font-weight:900;font-size:34px;letter-spacing:3px;color:var(--navy)}
+  #brand span{color:var(--green)}
+  #tag{font-weight:700;font-size:26px;color:var(--navy);background:var(--soft);padding:12px 22px;border-radius:40px}
+  #progress{position:absolute;top:70px;left:70px;right:70px;height:8px;background:var(--soft);border-radius:8px;z-index:20;overflow:hidden}
+  #progress i{display:block;height:100%;width:0;background:var(--green)}
+
+  /* subtítulos */
+  #subs{position:absolute;left:70px;right:70px;top:1470px;min-height:170px;display:flex;align-items:center;justify-content:center;text-align:center;z-index:20}
+  #subs p{font-weight:700;font-size:48px;line-height:1.25;color:var(--navy);background:#fff;padding:18px 30px;border-radius:24px;box-shadow:0 10px 30px rgba(14,42,71,.12)}
+  #subs b{color:var(--green);font-weight:900}
+
+  h1{font-weight:900;color:var(--navy);line-height:1.02;letter-spacing:-1px}
+  .green{color:var(--green)} .alert{color:var(--alert)}
+
+  /* animaciones (se controlan por tiempo) */
+  .a{animation-duration:.6s;animation-fill-mode:both;animation-timing-function:cubic-bezier(.2,.9,.25,1.15);animation-play-state:paused}
+  .pop{animation-name:pop} .up{animation-name:up} .left{animation-name:left} .right{animation-name:right}
+  .stamp{animation-name:stamp;animation-duration:.45s} .fade{animation-name:fade}
+  .carIn{animation-name:carIn;animation-duration:1.4s;animation-timing-function:cubic-bezier(.25,.8,.3,1)}
+  .carDrive{animation-name:carDrive;animation-duration:1.6s;animation-timing-function:cubic-bezier(.3,.7,.3,1)}
+  .shake{animation-name:shake;animation-duration:.5s}
+  .grow{animation-name:grow;animation-duration:.9s;animation-timing-function:ease-out}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+  @keyframes up{from{opacity:0;transform:translateY(80px)}to{opacity:1;transform:none}}
+  @keyframes left{from{opacity:0;transform:translateX(-160px)}to{opacity:1;transform:none}}
+  @keyframes right{from{opacity:0;transform:translateX(160px)}to{opacity:1;transform:none}}
+  @keyframes stamp{0%{opacity:0;transform:scale(2.2) rotate(-14deg)}70%{opacity:1;transform:scale(.95) rotate(-6deg)}100%{opacity:1;transform:scale(1) rotate(-6deg)}}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes carIn{from{transform:translateX(-900px)}to{transform:none}}
+  @keyframes carDrive{from{transform:translate(-700px,0)}to{transform:none}}
+  @keyframes shake{0%,100%{transform:none}20%{transform:translateX(-14px)}40%{transform:translateX(14px)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+  @keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+  /* escena 1 */
+  #s1 h1{position:absolute;top:300px;left:70px;right:70px;font-size:124px}
+  #s1 .ill{position:absolute;top:770px;left:0;right:0;height:640px}
+  /* escena 2 */
+  .bubble{position:absolute;left:70px;right:70px;padding:44px 50px;border-radius:40px;font-weight:700;font-size:54px;line-height:1.2}
+  .bubble .who{display:flex;align-items:center;gap:18px;font-size:30px;font-weight:800;letter-spacing:2px;margin-bottom:18px}
+  .avatar{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;font-size:34px;color:#fff;font-weight:900}
+  .b1{top:330px;background:var(--soft);color:var(--navy);border-bottom-left-radius:8px}
+  .b1 .avatar{background:var(--navy)}
+  .b2{top:760px;background:var(--navy);color:#fff;border-bottom-right-radius:8px;text-align:right}
+  .b2 .who{justify-content:flex-end;color:#cfe0f2}
+  .b2 .avatar{background:var(--green)}
+  /* escena 3 */
+  #s3 h1{position:absolute;top:250px;left:70px;right:70px;font-size:76px;text-align:center}
+  .col{position:absolute;top:470px;width:440px;height:900px;border-radius:36px;padding:44px 36px;display:flex;flex-direction:column;gap:30px}
+  .col.l{left:70px;background:var(--soft)} .col.r{right:70px;background:var(--soft)}
+  .col .name{font-weight:900;font-size:40px;color:var(--navy);letter-spacing:1px}
+  .col .item{font-weight:600;font-size:40px;line-height:1.25;color:var(--ink);display:flex;gap:16px}
+  .col .item i{font-style:normal;color:var(--green);font-weight:900}
+  .vs{position:absolute;top:840px;left:465px;width:150px;height:150px;border-radius:50%;background:var(--green);color:#fff;font-weight:900;font-size:56px;display:grid;place-items:center;box-shadow:0 0 0 14px #fff;z-index:2}
+  /* escena 4 */
+  #s4 h1{position:absolute;top:240px;left:70px;right:70px;font-size:72px}
+  #s4 .map{position:absolute;top:470px;left:70px;width:940px;height:960px;border-radius:36px;background:var(--soft);overflow:hidden}
+  .lbl{position:absolute;font-weight:900;font-size:34px;letter-spacing:2px;padding:12px 22px;border-radius:14px}
+  /* escena 5 */
+  .card{position:absolute;left:70px;right:70px;border-radius:36px;padding:50px;}
+  .card .k{display:inline-block;font-weight:900;font-size:44px;letter-spacing:4px;padding:10px 26px;border:6px solid;border-radius:14px;margin-bottom:28px}
+  .card p{font-weight:700;font-size:56px;line-height:1.2}
+  .mito{top:290px;background:var(--alert-l)} .mito .k{color:var(--alert);border-color:var(--alert)} .mito p{color:#5a2a20}
+  .real{top:820px;background:var(--green-l)} .real .k{color:var(--green);border-color:var(--green)} .real p{color:var(--navy)}
+  /* escena 6 */
+  #s6 h1{position:absolute;top:260px;left:70px;right:70px;font-size:84px}
+  .step{position:absolute;left:70px;right:70px;display:flex;gap:34px;align-items:center;background:var(--soft);border-radius:30px;padding:36px 40px}
+  .step .n{flex:none;width:110px;height:110px;border-radius:50%;background:var(--green);color:#fff;font-weight:900;font-size:64px;display:grid;place-items:center}
+  .step p{font-weight:600;font-size:44px;line-height:1.2;color:var(--ink)}
+  .step p b{font-weight:900;color:var(--navy)}
+  /* escena 7 */
+  #s7{background:var(--navy)}
+  #s7 h1{position:absolute;top:640px;left:80px;right:80px;color:#fff;font-size:104px}
+  #s7 .line{position:absolute;top:600px;left:80px;width:200px;height:14px;background:var(--green);transform-origin:left}
+  /* escena 8 */
+  #s8 .logo{position:absolute;top:420px;left:50%;width:520px;margin-left:-260px;text-align:center}
+  #s8 .logo .mark{width:300px;height:300px;margin:0 auto 30px;border-radius:50%;border:12px solid var(--navy);display:grid;place-items:center;position:relative}
+  #s8 .logo .mark::after{content:"";position:absolute;inset:26px;border-radius:50%;border:10px solid var(--green)}
+  #s8 .logo .mark span{font-weight:900;font-size:64px;color:var(--navy)}
+  #s8 .logo .wm{font-weight:900;font-size:76px;letter-spacing:6px;color:var(--navy)}
+  #s8 .logo .wm span{color:var(--green)}
+  #s8 .q{position:absolute;top:1020px;left:70px;right:70px;text-align:center;font-weight:800;font-size:58px;line-height:1.18;color:var(--navy)}
+  #s8 .cta{position:absolute;top:1330px;left:150px;right:150px;text-align:center;background:var(--green);color:#fff;font-weight:900;font-size:46px;padding:34px;border-radius:80px}
+  #s8 .contact{position:absolute;top:1490px;left:70px;right:70px;text-align:center;font-weight:600;font-size:36px;color:var(--navy2)}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="progress"><i></i></div>
+  <div id="topbar"><div id="brand">CONAFEP<span>H</span></div><div id="tag">Convivencia vecinal</div></div>
+
+  <!-- ESCENA 1: gancho -->
+  <section class="scene" id="s1" data-start="0" data-end="4">
+    <h1 class="a up" data-in="0">¿Este espacio<br>es <span class="green">SUYO?</span></h1>
+    <svg class="ill" viewBox="0 0 1080 640">
+      <!-- casa -->
+      <g class="a fade" data-in="0">
+        <rect x="120" y="40" width="840" height="430" rx="10" fill="#F1F4F8"/>
+        <rect x="100" y="20" width="880" height="40" rx="10" fill="#0E2A47"/>
+        <rect x="180" y="130" width="200" height="150" rx="8" fill="#fff" stroke="#0E2A47" stroke-width="8"/>
+        <line x1="280" y1="130" x2="280" y2="280" stroke="#0E2A47" stroke-width="6"/>
+        <!-- portón -->
+        <rect x="470" y="150" width="420" height="320" fill="#fff" stroke="#0E2A47" stroke-width="10"/>
+        <g stroke="#0E2A47" stroke-width="8">
+          <line x1="530" y1="150" x2="530" y2="470"/><line x1="590" y1="150" x2="590" y2="470"/><line x1="650" y1="150" x2="650" y2="470"/>
+          <line x1="710" y1="150" x2="710" y2="470"/><line x1="770" y1="150" x2="770" y2="470"/><line x1="830" y1="150" x2="830" y2="470"/>
+        </g>
+        <rect x="0" y="470" width="1080" height="170" fill="#0E2A47"/>
+        <g fill="#fff"><rect x="40" y="548" width="120" height="14" rx="7"/><rect x="260" y="548" width="120" height="14" rx="7"/><rect x="480" y="548" width="120" height="14" rx="7"/><rect x="700" y="548" width="120" height="14" rx="7"/><rect x="920" y="548" width="120" height="14" rx="7"/></g>
+      </g>
+      <!-- carro -->
+      <g class="a carIn" data-in="0.5">
+        <g transform="translate(420,330)">
+          <path d="M40 170 L40 110 Q40 90 60 85 L140 70 L200 10 Q215 0 240 0 L400 0 Q425 0 440 15 L500 75 L560 85 Q590 92 590 120 L590 170 Z" fill="#1E8E4E"/>
+          <path d="M215 22 L250 22 L250 75 L165 75 Z M275 22 L390 22 Q405 22 415 32 L455 75 L275 75 Z" fill="#E3F3EA"/>
+          <circle cx="160" cy="175" r="48" fill="#16212E"/><circle cx="160" cy="175" r="20" fill="#F1F4F8"/>
+          <circle cx="480" cy="175" r="48" fill="#16212E"/><circle cx="480" cy="175" r="20" fill="#F1F4F8"/>
+        </g>
+      </g>
+      <g class="a pop" data-in="2.1" style="transform-origin:860px 300px">
+        <circle cx="860" cy="250" r="70" fill="#C8553D"/>
+        <text x="860" y="285" text-anchor="middle" font-family="Montserrat" font-weight="900" font-size="100" fill="#fff">?</text>
+      </g>
+    </svg>
+  </section>
+
+  <!-- ESCENA 2: la situación -->
+  <section class="scene" id="s2" data-start="4" data-end="14">
+    <div class="bubble b1 a left" data-in="0.3">
+      <div class="who"><div class="avatar">M</div>DOÑA MARTA</div>
+      "¡Ey! Ahí no se parquea…<br><span class="green">ese es MI frente.</span>"
+    </div>
+    <div class="bubble b2 a right" data-in="4.2">
+      <div class="who">DON CARLOS<div class="avatar">C</div></div>
+      "Mire, la calle es pública.<br>No tiene su nombre."
+    </div>
+  </section>
+
+  <!-- ESCENA 3: los dos lados -->
+  <section class="scene" id="s3" data-start="14" data-end="24">
+    <h1 class="a up" data-in="0">¿Quién tiene <span class="green">razón?</span></h1>
+    <div class="col l a left" data-in="0.5">
+      <div class="name">DOÑA MARTA</div>
+      <div class="item a up" data-in="1.2"><i>›</i>Yo barro y cuido mi frente.</div>
+      <div class="item a up" data-in="2.0"><i>›</i>Necesito salir con mi carro.</div>
+      <div class="item a up" data-in="2.8"><i>›</i>Siempre lo he usado yo.</div>
+    </div>
+    <div class="col r a right" data-in="0.5">
+      <div class="name">DON CARLOS</div>
+      <div class="item a up" data-in="3.6"><i>›</i>No hay dónde parquear.</div>
+      <div class="item a up" data-in="4.4"><i>›</i>La calle es de todos.</div>
+      <div class="item a up" data-in="5.2"><i>›</i>No le estoy tapando nada.</div>
+    </div>
+    <div class="vs a pop" data-in="0.9">VS</div>
+  </section>
+
+  <!-- ESCENA 4: lo que hay que saber -->
+  <section class="scene" id="s4" data-start="24" data-end="36">
+    <h1 class="a up" data-in="0">Lo que hay<br>que <span class="green">saber</span></h1>
+    <div class="map a fade" data-in="0.3">
+      <svg viewBox="0 0 940 960" width="940" height="960" style="position:absolute;inset:0">
+        <!-- casas -->
+        <rect x="40" y="40" width="250" height="300" rx="16" fill="#fff" stroke="#C9D3DF" stroke-width="4"/>
+        <rect x="345" y="40" width="250" height="300" rx="16" fill="#fff" stroke="#0E2A47" stroke-width="8"/>
+        <rect x="650" y="40" width="250" height="300" rx="16" fill="#fff" stroke="#C9D3DF" stroke-width="4"/>
+        <text x="470" y="200" text-anchor="middle" font-family="Montserrat" font-weight="800" font-size="34" fill="#0E2A47">Casa de</text>
+        <text x="470" y="245" text-anchor="middle" font-family="Montserrat" font-weight="800" font-size="34" fill="#0E2A47">Doña Marta</text>
+        <!-- acera -->
+        <rect x="0" y="360" width="940" height="60" fill="#E2E8EF"/>
+        <!-- calle -->
+        <rect class="a fade" data-in="1.0" x="0" y="420" width="940" height="420" fill="#0E2A47"/>
+        <g class="a fade" data-in="1.0" fill="#fff"><rect x="30" y="620" width="110" height="16" rx="8"/><rect x="230" y="620" width="110" height="16" rx="8"/><rect x="430" y="620" width="110" height="16" rx="8"/><rect x="630" y="620" width="110" height="16" rx="8"/><rect x="830" y="620" width="110" height="16" rx="8"/></g>
+        <!-- entrada (acceso) -->
+        <rect class="a fade" data-in="4.2" x="395" y="340" width="150" height="250" fill="#1E8E4E" opacity=".9"/>
+        <!-- carros bien parqueados -->
+        <g class="a fade" data-in="2.4">
+          <rect x="60" y="450" width="230" height="110" rx="30" fill="#E3F3EA"/>
+          <rect x="680" y="450" width="230" height="110" rx="30" fill="#E3F3EA"/>
+        </g>
+        <!-- carro que bloquea -->
+        <g class="a carDrive" data-in="6.0">
+          <rect x="355" y="455" width="230" height="110" rx="30" fill="#C8553D"/>
+        </g>
+        <g class="a stamp" data-in="7.6" style="transform-origin:470px 510px">
+          <circle cx="470" cy="510" r="80" fill="#fff"/>
+          <path d="M430 470 L510 550 M510 470 L430 550" stroke="#C8553D" stroke-width="22" stroke-linecap="round"/>
+        </g>
+      </svg>
+      <div class="lbl a pop" data-in="1.4" style="left:40px;top:860px;background:#fff;color:var(--navy)">CALLE · USO PÚBLICO</div>
+      <div class="lbl a pop" data-in="4.6" style="right:30px;top:600px;background:var(--green);color:#fff;border:4px solid #fff">ACCESO: NO SE BLOQUEA</div>
+    </div>
+  </section>
+
+  <!-- ESCENA 5: mito / realidad -->
+  <section class="scene" id="s5" data-start="36" data-end="42">
+    <div class="card mito a left" data-in="0.1">
+      <div class="k a stamp" data-in="0.4">MITO</div>
+      <p>"Si pongo llantas o piedras, el espacio ya es mío."</p>
+    </div>
+    <div class="card real a right" data-in="2.6">
+      <div class="k a stamp" data-in="2.9">REALIDAD</div>
+      <p>Eso <b>obstaculiza la vía pública</b> y le puede traer problemas a <b>usted</b>.</p>
+    </div>
+  </section>
+
+  <!-- ESCENA 6: qué hacer -->
+  <section class="scene" id="s6" data-start="42" data-end="54">
+    <h1 class="a up" data-in="0">¿Qué <span class="green">hacer?</span></h1>
+    <div class="step a left" data-in="0.8" style="top:480px"><div class="n">1</div><p><b>Hable primero</b>, con calma y respeto.</p></div>
+    <div class="step a left" data-in="3.6" style="top:760px"><div class="n">2</div><p>Lleve el tema al <b>patronato</b> para un acuerdo de parqueo en la colonia.</p></div>
+    <div class="step a left" data-in="7.4" style="top:1090px"><div class="n">3</div><p>Si <b>bloquean su entrada</b>, avise a la autoridad municipal o a la policía.</p></div>
+  </section>
+
+  <!-- ESCENA 7: reflexión -->
+  <section class="scene" id="s7" data-start="54" data-end="56.5">
+    <div class="line a grow" data-in="0"></div>
+    <h1 class="a up" data-in="0.1">La calle es de todos.<br><span style="color:#7FD3A2">La convivencia también.</span></h1>
+  </section>
+
+  <!-- ESCENA 8: cierre institucional -->
+  <section class="scene" id="s8" data-start="56.5" data-end="61">
+    <div class="logo a pop" data-in="0.1">
+      <!-- REEMPLAZAR por el logo oficial de CONAFEPH -->
+      <div class="mark"><span>CNF</span></div>
+      <div class="wm">CONAFEP<span>H</span></div>
+    </div>
+    <div class="q a up" data-in="0.6">¿Problemas de convivencia<br>en su colonia?</div>
+    <div class="cta a pop" data-in="1.2">Busque orientación con CONAFEPH</div>
+    <div class="contact a fade" data-in="1.7">WhatsApp · Oficinas · Facebook CONAFEPH</div>
+  </section>
+
+  <div id="subs"><p></p></div>
+</div>
+
+<script>
+const DURATION = 61;
+const SUBS = [
+  [0.0, 4.0,  "¿Le han parqueado frente a su casa… y sintió que le <b>robaron algo</b>?"],
+  [5.0,13.5, "Pasa en todas las colonias… y casi siempre termina en <b>pleito</b>."],
+  [14.0,19.0, "Así empiezan muchos pleitos en las <b>colonias de Honduras</b>."],
+  [19.0,24.0, "Y lo curioso es que <b>los dos</b> tienen parte de razón."],
+  [24.5,30.0, "La calle es de <b>uso público</b>: nadie es dueño del espacio frente a su casa."],
+  [30.0,36.0, "<b>Pero</b> bloquear una entrada, un portón o una salida de emergencia <b>sí es una falta</b>."],
+  [36.5,42.0, "Y ojo: <b>apartar el espacio</b> no lo hace suyo."],
+  [42.5,48.0, "Esto se arregla mejor con <b>acuerdos</b>, no con llantas ni piedras."],
+  [48.0,54.0, "Su <b>patronato</b> puede reunir a los vecinos y poner reglas claras para toda la colonia."],
+];
+const scenes=[...document.querySelectorAll('.scene')];
+// fijar delays absolutos
+scenes.forEach(s=>{
+  const st=+s.dataset.start;
+  s.querySelectorAll('[data-in]').forEach(el=>{ el.style.animationDelay=(st+ +el.dataset.in)+'s'; });
+});
+const subP=document.querySelector('#subs p'), subBox=document.getElementById('subs');
+const bar=document.querySelector('#progress i'), topbar=document.getElementById('topbar');
+let lastSub=null;
+window.seek=function(t){
+  scenes.forEach(s=>{
+    const a=+s.dataset.start,b=+s.dataset.end;
+    if(t>=a && t<b){
+      s.style.display='block';
+      const f=Math.min(1,(t-a)/0.25, (b-t)/0.25);
+      s.style.opacity=Math.max(0,f);
+    } else s.style.display='none';
+  });
+  document.getAnimations().forEach(an=>{an.pause(); an.currentTime=t*1000;});
+  const cur=SUBS.find(x=>t>=x[0]&&t<x[1]);
+  if(cur){ if(lastSub!==cur){subP.innerHTML=cur[2]; lastSub=cur;} subBox.style.opacity=Math.min(1,(t-cur[0])/0.2,(cur[1]-t)/0.2); subBox.style.display='flex'; }
+  else { subBox.style.display='none'; lastSub=null; }
+  bar.style.width=(Math.min(t,56.5)/56.5*100)+'%';
+  const hideTop = t>=54;
+  topbar.style.display = hideTop?'none':'flex';
+  document.getElementById('progress').style.display = hideTop?'none':'block';
+};
+window.DURATION=DURATION;
+seek(0);
+</script>
+</body>
+</html>
