@@ -183,12 +183,12 @@
    ]
   },
   {
-   "congelar": 11.0,
+   "congelar": 10.4,
    "caja": [
-    0.25,
-    0.18,
+    0.15,
+    0.1,
     0.95,
-    0.7
+    0.65
    ],
    "estilo": "noticiero",
    "texto": "¿DÓNDE ESTÁ\nEL INGENIERO? 🔍",
