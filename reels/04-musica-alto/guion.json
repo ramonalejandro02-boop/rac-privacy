@@ -1,0 +1,105 @@
+{
+ "titulo": "Música a todo volumen: ¿derecho a celebrar o falta de respeto?",
+ "lead": 0.4,
+ "tail": 3.8,
+ "music": 0.08,
+ "whoosh": [],
+ "segments": [
+  {
+   "scene": "hook",
+   "text": "Sábado, una de la madrugada, y la música del vecino a todo volumen. ¿Derecho a celebrar, o falta de respeto?",
+   "pause": 0.35
+  },
+  {
+   "scene": "chepe",
+   "text": "Don Chepe está celebrando su cumpleaños con familia y amigos.",
+   "pause": 0.25,
+   "say": "Don Chépe está celebrando su cumpleaños con familia y amigos."
+  },
+  {
+   "scene": "karla",
+   "text": "Al lado, doña Karla intenta dormir a su bebé.",
+   "pause": 0.3
+  },
+  {
+   "scene": "reclamo",
+   "text": "Doña Karla sale y le pide:",
+   "pause": 0.15
+  },
+  {
+   "scene": "reclamo",
+   "who": "karla",
+   "voice": "ef_dora",
+   "text": "¡Por favor, bájele! El niño no puede dormir.",
+   "pause": 0.3
+  },
+  {
+   "scene": "respuesta",
+   "text": "Y don Chepe le responde:",
+   "pause": 0.15,
+   "say": "Y don Chépe le responde:"
+  },
+  {
+   "scene": "respuesta",
+   "who": "chepe",
+   "voice": "em_santa",
+   "text": "Es mi casa, y es una vez al año. ¡Déjeme celebrar!",
+   "pause": 0.35
+  },
+  {
+   "scene": "lados",
+   "text": "¿Quién tiene la razón?",
+   "pause": 0.2
+  },
+  {
+   "scene": "ladoC",
+   "text": "Él tiene derecho a celebrar en su casa.",
+   "pause": 0.2
+  },
+  {
+   "scene": "ladoK",
+   "text": "Ella tiene derecho a descansar.",
+   "pause": 0.35
+  },
+  {
+   "scene": "normas",
+   "text": "Lo que hay que saber: celebrar no está prohibido. Pero existen normas de convivencia que limitan el ruido excesivo, sobre todo en horas de descanso.",
+   "pause": 0.25
+  },
+  {
+   "scene": "muni",
+   "text": "Y las municipalidades pueden establecer horarios y sanciones por la bulla.",
+   "pause": 0.35
+  },
+  {
+   "scene": "mito",
+   "text": "Pero ojo: cortarle la luz al vecino, tirar piedras o pelear, no es la solución. Empeora el problema.",
+   "pause": 0.35
+  },
+  {
+   "scene": "paso1",
+   "text": "¿Qué hacer? Primero: hablar con respeto, y acordar una hora para bajar el volumen.",
+   "pause": 0.2
+  },
+  {
+   "scene": "paso2",
+   "text": "Segundo: si se repite, pedir la mediación del patronato.",
+   "pause": 0.2
+  },
+  {
+   "scene": "paso3",
+   "text": "Y tercero: si no hay acuerdo, reportarlo a la autoridad municipal o a la policía.",
+   "pause": 0.35
+  },
+  {
+   "scene": "final",
+   "text": "Porque se puede celebrar, sin quitarle el sueño a nadie.",
+   "pause": 0.35
+  },
+  {
+   "scene": "cierre",
+   "text": "¿Problemas de convivencia en su colonia? Busque orientación con CONAFEPH.",
+   "say": "¿Problemas de convivencia en su colonia? Busque orientación con Conafép."
+  }
+ ]
+}
