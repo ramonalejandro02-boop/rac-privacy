@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 02 · El árbol del vecino (estilo ilustrado)</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#1A1238}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as F from '../motor/flat.js';
+const { clamp, lerp, ease, easeOut, easeBack, prog, FONT, defs, sky, glow, hill, particles, figure, ARMS, flatHouse, flatTree, paper, badge, bigNum, shade } = F;
+
+await Promise.all(['600', '700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) {
+  const ws = SEG[i].words || [], n = norm(word);
+  const w = ws.find(x => norm(x.w).startsWith(n));
+  if (w) return end ? w.e : w.s;
+  const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length);
+  return S(i) + (E(i) - S(i)) * Math.max(0, k);
+}
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .25; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+
+const DEFS = defs();
+const LOGO = '../motor/assets/conafeph-logo.png';
+const LUCIA = { c: '#C64A8A', bun: true, skirt: '#7A2E5C' };
+const RAFAEL = { c: '#3E56B0', hat: '#D8B26A' };
+const NEI = [{ c: '#2FA58C' }, { c: '#E07B3A', long: true }, { c: '#8E6FD8', cap: '#3A2E6B' }, { c: '#D94F4F', bun: true }];
+const fig = (b, t, o, x) => figure({ ...b, bob: Math.sin(t * 2.2 + o) * 3, ...x });
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})" opacity="${clamp(p * 2)}">${svg}</g>`;
+const fly = (p, svg, dy = 80, rot = 0) => p <= 0 ? '' : `<g transform="translate(0,${(1 - easeOut(p)) * dy}) rotate(${(1 - easeOut(p)) * rot} 540 900)" opacity="${clamp(p * 1.5)}">${svg}</g>`;
+const txt = (x, y, s, fs, o = {}) => `<text x="${x}" y="${y}" ${FONT} font-weight="${o.w ?? 800}" font-size="${fs}" fill="${o.c ?? '#1E2A4A'}" text-anchor="${o.a ?? 'start'}" ${o.ls ? `letter-spacing="${o.ls}"` : ''}>${s}</text>`;
+
+// ---------- fondos ----------
+function colonia(t, k = 'dusk', o = {}) {
+  let s = sky(k);
+  s += glow(o.sunX ?? 760, o.sunY ?? 640, 420, 'glowW', o.sun ?? .55);
+  s += hill(11, 560, 1300, shade(F.SKY[k][1], -.15), { houses: 200, size: 18, lit: k === 'night' || k === 'dusk' ? .5 : 0, amp: 80, op: .8 });
+  s += hill(23, 760, 1400, shade(F.SKY[k][1], -.3), { houses: 160, size: 26, lit: k === 'night' || k === 'dusk' ? .45 : 0, amp: 60 });
+  s += particles(t, 22, { y0: 500, h: 900, op: .5 });
+  return s;
+}
+const GY = 1260;
+function ground(o = {}) {
+  let s = `<rect x="-20" y="${GY}" width="1120" height="700" fill="url(#soil)"/><rect x="-20" y="${GY - 6}" width="1120" height="26" fill="url(#grassG)"/>`;
+  if (o.cut) s += `<rect x="-20" y="${GY + 20}" width="1120" height="700" fill="#2A1A10" opacity=".25"/>`;
+  return s;
+}
+function roots(p, x0 = 330, x1 = 640) {
+  if (p <= 0) return '';
+  const d = `M${x0} ${GY + 20} C${x0 + 80} ${GY + 90} ${(x0 + x1) / 2} ${GY + 40} ${x1} ${GY + 110} M${x0} ${GY + 30} C${x0 + 60} ${GY + 160} ${(x0 + x1) / 2} ${GY + 150} ${x1 - 30} ${GY + 190}`;
+  return `<path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#F2A93B" stroke-width="22" fill="none" stroke-linecap="round" opacity=".35" filter="url(#soft)"/><path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#C98A55" stroke-width="12" fill="none" stroke-linecap="round"/>`;
+}
+function crack(x, y, p, t) {
+  if (p <= 0) return '';
+  const d = 'M0 0 l-14 -40 l18 -30 l-20 -46 l14 -36 l-10 -40 M-12 -76 l-30 -10 M4 -110 l26 -14';
+  return glow(x - 6, y - 110, 110 + 10 * Math.sin(t * 6), 'glowR', .8 * p) + `<path transform="translate(${x},${y}) scale(1.3)" d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#FF5A4E" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+const leaf = (x, y, r, s = 1) => `<path transform="translate(${x},${y}) rotate(${r}) scale(${s})" d="M0 -18 Q16 -4 0 18 Q-16 -4 0 -18Z" fill="#4CA35A"/>`;
+function yard(t, o = {}) {
+  let s = colonia(t, o.sky ?? 'dusk', o);
+  s += ground();
+  s += flatHouse(560, GY, 470, 380, { wall: '#3FA7A0', door: '#C93A5C', filter: true });
+  s += `<rect x="520" y="${GY - 200}" width="34" height="200" fill="#B9AFA0"/>`;
+  s += roots(o.roots ?? 0);
+  s += crack(640, GY - 4, o.crack ?? 0, t);
+  s += flatTree(290, GY, 1.05, t, { over: 340 });
+  if (o.falling) for (let k = 0; k < 7; k++) { const p = (t * .32 + k / 7) % 1; s += leaf(600 + Math.sin(t * 2 + k) * 40 + k * 30, 640 + p * 600, t * 90 + k * 50, 1); }
+  if (o.pile) for (let k = 0; k < 7; k++) s += leaf(560 + k * 12, GY - 392 - (k % 2) * 8, k * 30, clamp(o.pile * 7 - k));
+  return s;
+}
+// tarjeta de diálogo
+function speech(x, y, who, lines, p, o = {}) {
+  if (p <= 0) return '';
+  const w = 800, h = 104 + lines.length * 62;
+  const body = `<text x="${-w / 2 + 40}" y="${-h / 2 + 112}" ${FONT} font-weight="800" font-size="48" fill="${o.fg ?? '#1E2A4A'}">${lines.map((l, k) => `<tspan x="${-w / 2 + 40}" dy="${k ? 62 : 0}">${l}</tspan>`).join('')}</text>`;
+  return pop(p, paper(x, y, w, h, { rot: o.rot ?? -2, bg: o.bg, body }) + badge(x - w / 2 + 40, y - h / 2 - 6, who, { anchor: 'start', fs: 30, bg: o.badge ?? '#C93A5C' }), x, y);
+}
+function revealLines(q, t, lines) {
+  const ws = SEG[q].words || [], tokens = lines.map(l => l.split(' ')), total = tokens.flat().length;
+  const said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * total / ws.length) : Math.round(total * prog(t, S(q), E(q)));
+  let wi = 0; return tokens.map(row => row.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : .15}">${w}</tspan>`).join(' '));
+}
+function scaleGold(x, y, tilt, p, l, r) {
+  if (p <= 0) return '';
+  const a = tilt * 13 * Math.PI / 180, L = 260;
+  const lx = x - L * Math.cos(a), ly = y - L * Math.sin(a), rx = x + L * Math.cos(a), ry = y + L * Math.sin(a);
+  const pan = (px, py, lab) => `<path d="M${px - 100} ${py + 150} L${px} ${py} L${px + 100} ${py + 150}" stroke="#E3C14B" stroke-width="5" fill="none"/><path d="M${px - 120} ${py + 150} h240 q-14 50 -120 50 q-106 0 -120 -50z" fill="#E3B23C"/>${lab ? paper(px, py + 100, 250, 96, { rot: -4, body: txt(0, 12, lab, 30, { a: 'middle', w: 900 }) }) : ''}`;
+  return pop(p, `<g filter="url(#sh)"><rect x="${x - 14}" y="${y}" width="28" height="440" fill="#D4A437"/><rect x="${x - 120}" y="${y + 430}" width="240" height="34" rx="10" fill="#B88A2A"/><path d="M${lx} ${ly} L${rx} ${ry}" stroke="#E3C14B" stroke-width="20" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="24" fill="#F7D774"/>${pan(lx, ly, l)}${pan(rx, ry, r)}</g>`, x, y + 200);
+}
+function island(t, inner) { // corte de terreno flotante
+  let s = `<g filter="url(#sh)"><path d="M120 1180 Q540 1150 960 1180 L900 1400 Q540 1440 180 1400Z" fill="url(#soil)"/><path d="M110 1150 Q540 1120 970 1150 L970 1190 Q540 1160 110 1190Z" fill="url(#grassG)"/></g>`;
+  return s + inner;
+}
+
+// ---------- subtítulos arriba (palabra actual enmarcada) ----------
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (s, fs, w = 700) => { cv.font = `${w} ${fs}px Brand`; return cv.measureText(s).width; };
+const CH = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  const sw = s.text.split(' '), aw = s.words || [], ws = []; let j = 0;
+  sw.forEach(w => { let hit = -1; for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } } if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null }); });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 26 || (/[.?!:,…]$/.test(w.w) && len > 12) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .06, e: ws[k + 1] ? ws[k + 1].s - .06 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const fs = 56, gap = 16, maxW = 860;
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, fs, 700) }));
+  const lines = [[]]; let lw = 0;
+  items.forEach(it => { if (lw + it.wd > maxW && lines.at(-1).length) { lines.push([]); lw = 0; } lines.at(-1).push(it); lw += it.wd + gap; });
+  let s = ''; let curI = -1; c.words.forEach((w, k) => { if (t >= w.s - .02) curI = k; });
+  let wi = 0;
+  lines.forEach((ln, li) => {
+    const total = ln.reduce((a, b) => a + b.wd, 0) + gap * (ln.length - 1); let x = 540 - total / 2; const y = 400 + li * 70;
+    ln.forEach(it => {
+      const idx = wi++, said = idx <= curI, now = idx === curI;
+      if (now) { const x0 = x - 10, x1 = x + it.wd + 10, y0 = y - 50, y1 = y + 16, L = 14; s += `<path d="M${x0} ${y0 + L} V${y0} H${x0 + L} M${x1 - L} ${y0} H${x1} V${y0 + L} M${x1} ${y1 - L} V${y1} H${x1 - L} M${x0 + L} ${y1} H${x0} V${y1 - L}" stroke="#fff" stroke-width="4" fill="none"/>`; }
+      s += `<text x="${x}" y="${y}" ${FONT} font-weight="${now ? 800 : 700}" font-size="${fs}" fill="#fff" fill-opacity="${said ? 1 : .45}" style="paint-order:stroke" stroke="#000" stroke-opacity=".25" stroke-width="6">${it.w.replace(/&/g, '&amp;')}</text>`;
+      x += it.wd + gap;
+    });
+  });
+  return s;
+}
+const brand = `<g filter="url(#sh)"><rect x="390" y="262" width="300" height="62" rx="31" fill="#141A2E" opacity=".85"/><image href="${LOGO}" x="396" y="265" width="56" height="56"/><text x="572" y="304" ${FONT} font-weight="800" font-size="30" text-anchor="middle" fill="#fff" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas ----------
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene; let s = '', cam = { x: 0, z: 1 };
+  const D = sh.end - sh.start;
+  if (id === 'hook') {
+    s += yard(t, { crack: prog(u, 1.0, 2.0), falling: true });
+    s += fig(LUCIA, t, .2, { x: 820, y: GY + 10, s: .62, arms: ARMS.head });
+    const pa = wt(i, 'paga');
+    s += pop(prog(t, pa - .3, pa), badge(760, 860, '¿Quién paga?', { fs: 52, bg: '#C93A5C' }), 760, 860);
+    cam = { x: lerp(-70, -50, ease(u / D)), z: lerp(1.18, 1.1, ease(u / D)), y: 1050 };
+  }
+  if (id === 'rafael') {
+    s += yard(t, {});
+    const wk = prog(u, 0, 1.3);
+    s += fig(RAFAEL, t, 1, { x: lerp(-120, 170, easeOut(wk)), y: GY + 10, s: .62, arms: wk < 1 ? ARMS.idle : ARMS.hips, walk: t * 8, walkAmt: wk < 1 ? 1 : 0 });
+    s += pop(prog(u, 1, 1.3), badge(180, 820, 'Don Rafael', { fs: 40 }), 180, 820);
+    const ma = wt(i, 'mango');
+    s += pop(prog(t, ma - .2, ma + .1), paper(330, 600, 330, 120, { rot: -5, body: txt(0, 18, '1 palo de mango', 40, { a: 'middle', w: 900, c: '#C46A12' }) }), 330, 600);
+    cam = { x: lerp(80, 50, ease(u / D)), z: 1.25, y: 1050 };
+  }
+  if (id === 'danos') {
+    const rz = wt(i, 'raices'), ra = wt(i, 'rajaron'), ho = wt(i, 'hojas'), ca = wt(i, 'canal');
+    s += yard(t, { roots: prog(t, rz - .1, rz + 1), crack: prog(t, ra - .1, ra + .6), pile: prog(t, ho, ca + .5), falling: t > ho - .3 });
+    s += fig(LUCIA, t, .2, { x: 860, y: GY + 10, s: .62, arms: t > ra ? ARMS.head : ARMS.idle });
+    s += pop(prog(t, ra, ra + .3), paper(720, 960, 330, 110, { rot: 4, bg: '#C93A5C', body: txt(0, 16, 'Pared rajada', 40, { a: 'middle', w: 900, c: '#fff' }) }), 720, 960);
+    s += pop(prog(t, ca - .1, ca + .2), paper(420, 640, 340, 110, { rot: -4, body: txt(0, 16, 'Canal tapado', 40, { a: 'middle', w: 900 }) }), 420, 640);
+    s += pop(prog(t, rz, rz + .3), badge(300, GY + 230, 'Raíces', { fs: 38, bg: '#6E4430' }), 300, GY + 230);
+    cam = { x: lerp(-30, -60, ease(u / D)), z: lerp(1.08, 1.14, ease(u / D)), y: 1050 };
+  }
+  if (id === 'reclamo' || id === 'respuesta') {
+    s += colonia(t, 'dusk', { sun: .7 }) + ground();
+    const q = sh.i1, isL = id === 'reclamo';
+    s += flatTree(980, GY, .9, t);
+    s += fig(RAFAEL, t, 1, { x: 740, y: GY + 60, s: .95, arms: isL ? ARMS.idle : (t > S(q) ? ARMS.cross : ARMS.idle) });
+    s += fig(LUCIA, t, .2, { x: 320, y: GY + 60, s: 1.0, arms: isL ? (t > S(q) - .1 ? ARMS.point : ARMS.hips) : ARMS.cross });
+    if (isL) s += speech(540, 700, 'DOÑA LUCÍA', revealLines(q, t, ['¡Ese árbol me daña', 'la casa! ¡Córtelo ya!']), prog(t, S(q) - .25, S(q) + .05), { rot: -2, badge: '#C64A8A' });
+    else s += speech(540, 700, 'DON RAFAEL', revealLines(q, t, ['El árbol está en mi', 'terreno. No lo corto.']), prog(t, S(q) - .25, S(q) + .05), { rot: 2, badge: '#3E56B0' });
+    cam = { x: isL ? lerp(20, 40, ease(u / D)) : lerp(-20, -40, ease(u / D)), z: 1.06 };
+  }
+  if (['lados', 'ladoL', 'ladoR'].includes(id)) {
+    s += sky('purple') + glow(540, 900, 520, 'glowW', .25) + particles(t, 20, { y0: 500, h: 1000, op: .4 });
+    const target = id === 'ladoL' ? -1 : id === 'ladoR' ? 1 : 0;
+    const tl = id === 'lados' ? Math.sin(t * 2) * .7 : lerp(id === 'ladoR' ? -1 : 0, target, easeOut(prog(u, 0, .7)));
+    s += scaleGold(540, 640, tl, id === 'lados' ? prog(u, .1, .5) : 1, 'SUS DAÑOS', 'SU TERRENO');
+    s += `<rect x="-20" y="1300" width="1120" height="700" fill="#140E2C" opacity=".7"/>`;
+    s += fig(LUCIA, t, .2, { x: 220, y: 1400, s: .55, arms: id === 'ladoL' ? ARMS.head : ARMS.idle });
+    s += fig(RAFAEL, t, 1, { x: 860, y: 1400, s: .55, arms: id === 'ladoR' ? ARMS.hips : ARMS.idle });
+    if (id === 'ladoL') s += fly(prog(u, .1, .5), paper(330, 1080, 400, 120, { rot: -5, bg: '#C93A5C', body: txt(0, 16, 'Daños en su casa', 38, { a: 'middle', w: 900, c: '#fff' }) }), 60, -4);
+    if (id === 'ladoR') s += fly(prog(u, .1, .5), paper(760, 1080, 420, 120, { rot: 5, body: txt(0, 16, 'Su árbol y terreno', 38, { a: 'middle', w: 900 }) }), 60, 4);
+    cam = { x: 0, z: lerp(1, 1.05, ease(u / D)) };
+  }
+  if (id === 'ramas' || id === 'raices') {
+    s += sky('teal') + glow(540, 760, 560, 'glowW', .35) + particles(t, 16, { op: .4 });
+    let inner = flatTree(330, 1160, .95, t, { over: 380 });
+    inner += `<path d="M560 520 V1430" stroke="#fff" stroke-width="6" stroke-dasharray="22 16" opacity=".9"/>`;
+    s += island(t, inner + (id === 'raices' ? roots(prog(t, wt(sh.i0, 'raices') - .2, wt(sh.i0, 'raices') + .9), 360, 820).replaceAll(`${GY}`, '1170') : ''));
+    s += badge(560, 1110, 'LINDERO', { fs: 32, bg: '#141A2E' });
+    s += txt(320, 1300, 'Terreno de él', 38, { a: 'middle', c: '#fff' }) + txt(780, 1300, 'Terreno de ella', 38, { a: 'middle', c: '#fff' });
+    if (id === 'ramas') {
+      const ra = wt(i, 'ramas'), pi = wt(i, 'pedir'), pa = prog(t, ra - .2, ra + .3);
+      if (pa > 0) s += `<circle cx="${330 + 380 * .95}" cy="${1160 - 300 * .95}" r="150" fill="none" stroke="#F7C948" stroke-width="7" stroke-dasharray="20 14" opacity="${pa}"/>`;
+      s += pop(prog(t, pi - .2, pi + .2), paper(540, 660, 480, 190, { rot: 3, head: 'RAMAS', headH: 60, headFs: 32, body: txt(0, 30, 'Puede pedir', 38, { a: 'middle' }) + txt(0, 76, 'que las corten', 38, { a: 'middle', c: '#2F7A3E', w: 900 }) }) , 540, 660);
+    } else {
+      const cu = wt(i, 'cortar');
+      s += pop(prog(t, cu - .3, cu + .1), paper(540, 660, 480, 190, { rot: -3, head: 'RAÍCES', headH: 60, headFs: 32, headBg: '#6E4430', body: txt(0, 30, 'Las puede cortar', 38, { a: 'middle' }) + txt(0, 76, 'con cuidado', 38, { a: 'middle', c: '#6E4430', w: 900 }) }), 540, 580);
+    }
+    cam = { x: 0, z: lerp(1, 1.06, ease(u / D)) };
+  }
+  if (id === 'responde') {
+    s += sky('green') + glow(540, 860, 500, 'glowG', .6) + particles(t, 14, { op: .35 });
+    const du = wt(i, 'dueno');
+    const body = txt(-280, -40, 'Si el árbol causa', 44, {}) + txt(-280, 20, 'daños, el dueño', 44, {}) + txt(-280, 80, 'puede responder.', 44, { c: '#C93A5C' }) +
+      `<circle cx="220" cy="170" r="46" fill="none" stroke="#C93A5C" stroke-width="5"/>` + txt(220, 180, 'LEY', 26, { a: 'middle', c: '#C93A5C', w: 900 });
+    s += fly(prog(u, .1, .6), paper(540, 880, 680, 520, { rot: -2, head: 'RESPONSABILIDAD', body }), 120, -6);
+    s += pop(prog(t, du - .2, du + .2), badge(540, 1210, 'Según el caso', { fs: 34, bg: '#F7C948', fg: '#1E2A4A' }), 540, 1210);
+    cam = { x: 0, z: lerp(1.04, 1, ease(u / D)) };
+  }
+  if (id === 'mito') {
+    s += sky('night') + glow(540, 900, 480, 'glowR', .35) + particles(t, 14, { op: .3 });
+    const pr = wt(i, 'problemas'), co = wt(i, 'cortar');
+    s += pop(prog(t, co - .2, co + .2), paper(400, 820, 400, 300, { rot: -6, head: 'MITO', headBg: '#C93A5C', body: txt(0, 20, 'Cortarlo o', 40, { a: 'middle' }) + txt(0, 75, 'envenenarlo', 40, { a: 'middle' }) }), 400, 820);
+    const ap = prog(t, pr - .5, pr - .1);
+    if (ap > 0) s += `<g transform="translate(760,980) scale(${easeBack(ap)})" filter="url(#sh)"><polygon points="-78,-188 78,-188 188,-78 188,78 78,188 -78,188 -188,78 -188,-78" fill="#D63A3A"/><polygon points="-70,-170 70,-170 170,-70 170,70 70,170 -70,170 -170,70 -170,-70" fill="none" stroke="#fff" stroke-width="10"/><text y="34" ${FONT} font-weight="900" font-size="96" text-anchor="middle" fill="#fff">ALTO</text></g>`;
+    s += pop(prog(t, pr, pr + .3), badge(540, 1250, 'Le puede traer problemas', { fs: 40, bg: '#141A2E', stroke: '#D63A3A' }), 540, 1250);
+    cam = { x: 0, z: lerp(1, 1.05, ease(u / D)) };
+  }
+  if (['paso1', 'paso2', 'paso3'].includes(id)) {
+    s += colonia(t, 'dusk', { sun: .4 });
+    s += `<rect width="1080" height="1920" fill="#140E2C" opacity=".35"/>`;
+    const p0 = SHOTS.find(x => x.scene === 'paso1').i0;
+    const lines = [['Hablar y tomar fotos', p0], ['Mediación del patronato', p0 + 1], ['Municipalidad o asesoría', p0 + 2]];
+    let body = txt(-300, -150, 'Qué hacer si el árbol del', 30, { c: '#5A6478', w: 600 }) + txt(-300, -112, 'vecino le causa daños', 30, { c: '#5A6478', w: 600 });
+    lines.forEach(([l, si], k) => {
+      const y = -60 + k * 112, p = prog(t, S(si) + .3, S(si) + 1.4);
+      body += txt(-300, y, `Paso ${k + 1}:`, 40, { w: 900 }) + `<path d="M-300 ${y + 58} H300" stroke="#C9C2B6" stroke-width="3" stroke-dasharray="6 8"/>`;
+      if (p > 0) body += `<clipPath id="cl${k}"><rect x="-300" y="${y + 6}" width="${p * 620}" height="60"/></clipPath><text x="-300" y="${y + 50}" clip-path="url(#cl${k})" ${FONT} font-weight="800" font-size="40" fill="#2F5BD3">${l}</text>`;
+    });
+    s += paper(540, 900, 700, 560, { rot: -2, head: 'GUÍA RÁPIDA', headBg: '#C93A5C', body });
+    s += `<g transform="translate(860,640) rotate(10)" filter="url(#sh)"><rect x="-60" y="-40" width="120" height="80" fill="#00509E"/><rect x="-60" y="-13" width="120" height="26" fill="#fff"/><g fill="#00509E">${[-24, 0, 24, -12, 12].map((dx, k) => `<circle cx="${dx}" cy="${k < 3 ? -2 : 6}" r="3"/>`).join('')}</g></g>`;
+    if (id === 'paso1') { const fo = wt(i, 'fotos'), fl = clamp((t - fo) / .5); if (t > fo - .1) s += `<g transform="translate(250,1300)" filter="url(#sh)">${fl < 1 ? `<circle r="${80 + fl * 60}" fill="#FFF6C8" opacity="${1 - fl}"/>` : ''}<rect x="-70" y="-46" width="140" height="96" rx="16" fill="#2A2F36"/><circle r="30" fill="#9DB7CC" stroke="#fff" stroke-width="6"/></g>`; }
+    if (id === 'paso2') s += pop(prog(u, .3, .6), badge(260, 1300, 'Patronato', { fs: 40, bg: '#2FA58C' }), 260, 1300);
+    if (id === 'paso3') { const mu = wt(i, 'municipalidad'); s += pop(prog(t, mu - .2, mu + .1), badge(280, 1300, 'Municipalidad', { fs: 38, bg: '#3E56B0' }), 280, 1300) + pop(prog(t, wt(i, 'asesoria') - .2, wt(i, 'asesoria') + .1), badge(800, 1300, 'Asesoría', { fs: 38, bg: '#8E6FD8' }), 800, 1300); }
+    cam = { x: 0, z: lerp(1.02, 1.06, ease(prog(t, SHOTS.find(x => x.scene === 'paso1').start, SHOTS.find(x => x.scene === 'paso3').end))) };
+  }
+  if (id === 'final') {
+    s += colonia(t, 'warm', { sun: .8, sunY: 700 }) + ground();
+    for (let k = 0; k < 14; k++) { const x = 40 + k * 75; s += `<path d="M${x} ${560 + Math.sin(k) * 10} l36 0 l-18 46z" fill="${['#E85D75', '#F2A93B', '#4FB0C6', '#5DBB63', '#8E6FD8'][k % 5]}"/>`; }
+    s += `<path d="M0 560 Q540 600 1080 560" stroke="#3A2E2E" stroke-width="3" fill="none"/>`;
+    s += flatTree(300, GY, 1.0, t);
+    const cut = prog(u, .5, 2.2);
+    s += fig(RAFAEL, t, 1, { x: 470, y: GY + 10, s: .62, arms: { r: [8, 4], l: [150, 30 + Math.sin(t * 14) * 10] } });
+    if (cut > .6) { const p = (cut - .6) / .4; s += `<g transform="translate(640,${720 + p * 520}) rotate(${p * 70})"><circle r="70" fill="#358A44"/></g>`; }
+    s += fig(LUCIA, t, .2, { x: 840, y: GY + 10, s: .62, arms: ARMS.wave });
+    s += pop(prog(u, .2, .6), paper(540, 760, 640, 140, { rot: -2, body: txt(0, 18, 'Cuide su árbol… y su vecindad', 38, { a: 'middle', w: 900 }) }), 540, 760);
+    cam = { x: 0, z: lerp(1.25, 1.15, ease(u / D)), y: 1050 };
+  }
+  if (id === 'cierre') {
+    s += sky('night') + glow(540, 700, lerp(200, 560, easeOut(prog(u, 0, 1))), 'glowG', .9) + particles(t, 24, { op: .5 });
+    const p = prog(u, .1, .9);
+    s += `<g transform="translate(540,700) scale(${lerp(.4, 1, easeBack(p))})" opacity="${clamp(p * 2)}" filter="url(#sh)"><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    s += `<g opacity="${prog(u, .6, 1)}">${txt(540, 1020, 'CONAFEPH', 100, { a: 'middle', c: '#fff', w: 900, ls: 6 })}${txt(540, 1070, '¿Problemas con vecinos?', 44, { a: 'middle', c: '#CFD6E4', w: 700 })}</g>`;
+    s += pop(prog(u, 1.2, 1.6), badge(540, 1180, 'Busque orientación con CONAFEPH', { fs: 42, bg: '#22B35E' }), 540, 1180);
+    s += `<g opacity="${prog(u, 1.8, 2.2)}">${txt(540, 1290, 'WhatsApp · Facebook · Oficinas', 38, { a: 'middle', c: '#CFD6E4', w: 600 })}</g>`;
+  }
+  return { s, cam };
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const { s, cam } = scene(sh, t);
+  const fin = clamp((t - sh.start) / .3), fout = k < SHOTS.length - 1 ? clamp((sh.end - t) / .25) : 1;
+  let out = DEFS + `<rect width="1080" height="1920" fill="#000"/>`;
+  out += `<g opacity="${Math.min(fin, fout) * .999 + .001}"><g transform="translate(${540 + cam.x},${cam.y ?? 960}) scale(${cam.z}) translate(-540,${-(cam.y ?? 960)})">${s}</g></g>`;
+  if (sh.scene !== 'cierre') out += captions(t) + brand;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
