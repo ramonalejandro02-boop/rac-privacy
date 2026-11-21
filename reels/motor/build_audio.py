@@ -73,7 +73,8 @@ def music(total):
     while t0 < total + 1:
         root, ch = prog[i % 4]
         def add(sig, at):
-            s = int(at * SR); e = min(len(out), s + len(sig)); out[s:e] += sig[: e - s]
+            s = int(at * SR); e = min(len(out), s + len(sig))
+            if e > s: out[s:e] += sig[: e - s]
         for m in ch[:3]: add(note(hz(m), bar + 0.4, "pad"), t0)
         add(note(hz(root), bar, "bass"), t0)
         arp = [ch[0], ch[1], ch[2], ch[3], ch[2], ch[1], ch[2], ch[3]]

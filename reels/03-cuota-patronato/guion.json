@@ -1,0 +1,26 @@
+{
+  "titulo": "¿Es obligatorio pagar la cuota del patronato?",
+  "lead": 0.4,
+  "tail": 3.8,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "¿Es obligatorio pagar la cuota del patronato? Esta pregunta divide a muchas colonias.", "pause": 0.35},
+    {"scene": "rosa", "text": "Doña Rosa es la tesorera del patronato. Cada mes cobra cien lempiras para el alumbrado y la vigilancia.", "pause": 0.3},
+    {"scene": "puerta", "text": "Pero don Mario le cierra la puerta:", "pause": 0.15},
+    {"scene": "puerta", "who": "mario", "voice": "em_santa", "text": "¡Yo no pago! Nunca nos dicen en qué gastan la plata.", "pause": 0.3},
+    {"scene": "luces", "text": "Y doña Rosa le responde:", "pause": 0.15},
+    {"scene": "luces", "who": "rosa", "voice": "ef_dora", "text": "Si nadie paga, no hay luz en las calles, ni vigilancia.", "pause": 0.35},
+    {"scene": "lados", "text": "¿Quién tiene la razón?", "pause": 0.2},
+    {"scene": "ladoR", "text": "Ella necesita fondos para mejorar la colonia.", "pause": 0.2},
+    {"scene": "ladoM", "text": "Él quiere saber en qué se usa su dinero.", "pause": 0.35},
+    {"scene": "asamblea", "text": "Lo que hay que saber: las cuotas del patronato se deben aprobar en asamblea, con la participación de los vecinos.", "pause": 0.25},
+    {"scene": "cuentas", "text": "Y la directiva tiene que rendir cuentas: informar cuánto entra, y en qué se gasta.", "pause": 0.35},
+    {"scene": "mito", "text": "Pero ojo: amenazar, cortar servicios o exponer a un vecino por no pagar, no es la solución.", "pause": 0.35},
+    {"scene": "paso1", "text": "¿Qué hacer? Primero: pedir un informe de cuentas por escrito.", "pause": 0.2},
+    {"scene": "paso2", "text": "Segundo: participar en las asambleas, y votar las cuotas.", "pause": 0.2},
+    {"scene": "paso3", "text": "Y tercero: si hay irregularidades, buscar orientación.", "pause": 0.35},
+    {"scene": "final", "text": "Porque una colonia unida y con cuentas claras, avanza más.", "pause": 0.35},
+    {"scene": "cierre", "text": "¿Su patronato necesita orientación? Busque a CONAFEPH.", "say": "¿Su patronato necesita orientación? Busque a Conafép."}
+  ]
+}
