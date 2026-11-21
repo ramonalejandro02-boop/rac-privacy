@@ -426,7 +426,9 @@ def main():
         audio_orig = np.frombuffer(crudo, np.int16).astype(np.float32) / 32768
         nueva = []
         for seg in plan["secuencia"]:
-            if "orig" in seg:
+            if "orig" in seg and seg.get("silencios", True) is False:
+                nueva.append({"orig": seg["orig"]})          # respetar pausas (reacciones)
+            elif "orig" in seg:
                 nueva += [{"orig": [x, y]} for x, y in sin_silencios_audio(seg["orig"][0], seg["orig"][1], audio_orig)]
             else:
                 nueva.append(seg)

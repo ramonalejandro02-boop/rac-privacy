@@ -1,0 +1,280 @@
+{
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "estilo": "farandula",
+  "recorte_fuente": [
+   0,
+   0.04,
+   1,
+   0.82
+  ],
+  "titulo": "LA FRUTA BUSCANDO\nAL INGENIERO 👷😂",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "subs_y": 0.875,
+  "claves": [
+   "ingeniero",
+   "medida",
+   "arriba",
+   "vaina",
+   "pintar"
+  ],
+  "eventos": [
+   {
+    "t": 17.6,
+    "tipo": "zoom",
+    "dur": 1.4,
+    "x": 0.55,
+    "y": 0.35,
+    "s": 1.35
+   },
+   {
+    "t": 17.9,
+    "tipo": "emoji",
+    "emoji": "😳",
+    "x": 0.18,
+    "y": 0.4,
+    "size": 220,
+    "dur": 1.1
+   },
+   {
+    "t": 0.0,
+    "tipo": "sticker",
+    "texto": "⏪ DESDE EL PRINCIPIO",
+    "fondo": "#FFFFFF",
+    "dur": 1.2,
+    "y": 0.235,
+    "rot": -3,
+    "size": 80,
+    "sfx": "scratch",
+    "vol": 0.45
+   },
+   {
+    "t": 3.0,
+    "tipo": "emoji",
+    "emoji": "👷",
+    "x": 0.15,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.0
+   },
+   {
+    "t": 4.2,
+    "tipo": "emoji",
+    "emoji": "🪣",
+    "x": 0.85,
+    "y": 0.62,
+    "size": 190,
+    "dur": 1.2
+   },
+   {
+    "t": 7.8,
+    "tipo": "emoji",
+    "emoji": "👀",
+    "x": 0.15,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.0
+   },
+   {
+    "t": 13.3,
+    "tipo": "sticker",
+    "texto": "MIRA LO DE ARRIBA ☝️",
+    "fondo": "#FFE600",
+    "dur": 1.2,
+    "y": 0.235,
+    "rot": -4
+   },
+   {
+    "t": 14.6,
+    "tipo": "zoom",
+    "dur": 2.6,
+    "x": 0.5,
+    "y": 0.35,
+    "s": 1.25
+   },
+   {
+    "t": 15.5,
+    "tipo": "emoji",
+    "emoji": "😳",
+    "x": 0.15,
+    "y": 0.45,
+    "size": 220,
+    "dur": 1.4
+   },
+   {
+    "t": 20.0,
+    "tipo": "sticker",
+    "texto": "¿¿ES EL INGENIERO?? 👷",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.6,
+    "y": 0.235,
+    "rot": 4,
+    "sfx": "boom",
+    "vol": 0.4
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    17.6,
+    19.0
+   ],
+   "silencios": false
+  },
+  {
+   "orig": [
+    0.0,
+    7.1
+   ]
+  },
+  {
+   "congelar": 5.0,
+   "caja": [
+    0.28,
+    0.12,
+    0.98,
+    0.6
+   ],
+   "estilo": "neon",
+   "texto": "¿Y EL INGENIERO\nPA' CUÁNDO? 👷",
+   "fondo": "#00E5FF",
+   "voz": "La Fruta con su cubeta de pintura, pensando que el ingeniero iba a llegar con casco, planos y un carro del año.",
+   "claves": [
+    "ingeniero",
+    "pintura",
+    "planos"
+   ],
+   "props": [
+    {
+     "emoji": "🪣",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "📐",
+     "anim": "desliza",
+     "desde": "der",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.0,
+     "size": 190
+    },
+    {
+     "emoji": "🚗",
+     "anim": "cruza",
+     "y": 0.78,
+     "t": 3.6,
+     "size": 200,
+     "dur_cruce": 2.0
+    }
+   ]
+  },
+  {
+   "orig": [
+    7.3,
+    12.3
+   ]
+  },
+  {
+   "congelar": 11.0,
+   "caja": [
+    0.25,
+    0.18,
+    0.95,
+    0.7
+   ],
+   "estilo": "noticiero",
+   "texto": "¿DÓNDE ESTÁ\nEL INGENIERO? 🔍",
+   "fondo": "#FFFFFF",
+   "voz": "Ya van como cuatro veces que le dicen que llegó el ingeniero, y La Fruta todavía no lo encuentra.",
+   "claves": [
+    "ingeniero",
+    "encuentra"
+   ],
+   "props": [
+    {
+     "emoji": "🔍",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🤔",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.7,
+     "t": 2.4,
+     "size": 200
+    }
+   ]
+  },
+  {
+   "orig": [
+    12.3,
+    14.5
+   ]
+  },
+  {
+   "orig": [
+    14.5,
+    22.5
+   ],
+   "silencios": false
+  },
+  {
+   "congelar": 18.0,
+   "caja": [
+    0.28,
+    0.18,
+    0.82,
+    0.62
+   ],
+   "estilo": "farandula",
+   "texto": "¿QUIÉN ES EL\nJEFE AQUÍ? 👷👇",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Mientras La Fruta buscaba al ingeniero, el ingeniero ya estaba arriba trabajando. ¿Quién es el jefe aquí? Déjalo en los comentarios.",
+   "claves": [
+    "ingeniero",
+    "trabajando",
+    "jefe",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "👷",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 210
+    },
+    {
+     "emoji": "📏",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.0,
+     "size": 190
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.72,
+     "t": 4.5,
+     "size": 190
+    }
+   ]
+  }
+ ]
+}
