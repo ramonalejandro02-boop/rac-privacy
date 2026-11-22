@@ -21,7 +21,8 @@ F_BLACK = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
 YELLOW, WHITE = (255, 212, 0), (255, 255, 255)
 BRAND = "@Alejandro Curiosidades"
 GOLD = (242, 193, 78)
-ESTILO = os.environ.get("ESTILO", "cine")  # "cine" (elegante, adultos) o "viral" (recuadros amarillos)
+ESTILO = os.environ.get("ESTILO", "cine")
+SOBRIO = ESTILO in ("cine", "ilustrado")  # sin whoosh ni golpes, fundidos suaves  # "cine" (elegante, adultos) o "viral" (recuadros amarillos)
 
 GUIONES = {
     "noe": [
@@ -157,6 +158,32 @@ def chunks(words, maxw=3, maxchars=18):
     if cur: out.append(cur)
     return out
 
+F_SEMI = "/usr/share/fonts/opentype/inter/Inter-SemiBold.otf"
+F_BOLD = "/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf"
+def draw_caption_ilus(img, chunk, t):
+    """Estilo de referencia: arriba, palabras dichas en gris, palabra actual en blanco y negrita; clave con caja suave."""
+    size = 62; fr, fb = ImageFont.truetype(F_SEMI, size), ImageFont.truetype(F_BOLD, size); sp = 18
+    ws = [fb.getlength(w["w"]) for w in chunk]; total = sum(ws) + sp * (len(chunk) - 1)
+    lines, cur, cw = [], [], 0
+    for w, ww in zip(chunk, ws):
+        if cur and cw + sp + ww > 900: lines.append(cur); cur, cw = [], 0
+        cur.append((w, ww)); cw += (sp if len(cur) > 1 else 0) + ww
+    if cur: lines.append(cur)
+    lay = Image.new("RGBA", (W, 300), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+    for li, line in enumerate(lines):
+        lw = sum(ww for _, ww in line) + sp * (len(line) - 1); x = (W - lw) / 2; y = 40 + li * int(size * 1.25)
+        for w, ww in line:
+            if t < w["t0"] - 0.02: x += ww + sp; continue
+            active = w["t0"] <= t < w["t1"] + 0.05
+            if w["kw"]:
+                d.rounded_rectangle([x - 10, y - 4, x + ww + 10, y + size * 1.12], radius=10, fill=(40, 90, 150, 170), outline=(150, 200, 255, 200), width=2)
+            f = fb if (active or w["kw"]) else fr
+            d.text((x, y), w["w"], font=f, fill=(255, 255, 255, 255) if (active or w["kw"]) else (225, 230, 235, 150))
+            x += ww + sp
+    sh = lay.getchannel("A").filter(ImageFilter.GaussianBlur(8)).point(lambda v: int(v * 0.45))
+    shadow = Image.new("RGBA", lay.size, (0, 0, 0, 0)); shadow.putalpha(sh)
+    img.alpha_composite(shadow, (0, 300)); img.alpha_composite(lay, (0, 296))
+
 def draw_caption(img, chunk, t):
     size = 92; f = font(size); sp = 26
     ws = [f.getlength(w["w"]) + (40 if w["kw"] and ESTILO == "viral" else 0) for w in chunk]
@@ -194,13 +221,13 @@ def build_audio(voice, total, segs, guion, music_path, kw_times):
         m = int(d * SR); X = np.fft.rfft(rng.normal(0, 1, m)); fr = np.fft.rfftfreq(m, 1 / SR)
         X[(fr < lo) | (fr > hi)] = 0; y = np.fft.irfft(X, m); return y / (np.abs(y).max() + 1e-9)
     for i, (a, b, s0, s1) in enumerate(segs):
-        if i > 0 and ESTILO != "cine":
+        if i > 0 and not SOBRIO:
             t_ = np.arange(int(0.35 * SR)) / SR
             add(bandnoise(0.35, 300, 4000) * np.sin(np.pi * t_ / 0.35) ** 2, a - 0.18, 0.18)
         if guion[i].get("sfx") == "trueno":
             t_ = np.arange(int(2.5 * SR)) / SR
             add(bandnoise(2.5, 30, 400) * np.exp(-t_ * 1.5), a + 2.3, 0.5); add(bandnoise(0.2, 2000, 12000) * np.exp(-t_[:int(0.2 * SR)] * 25), a + 2.3, 0.3)
-    for kt in (kw_times if ESTILO != "cine" else []):
+    for kt in (kw_times if not SOBRIO else []):
         t_ = np.arange(int(0.9 * SR)) / SR
         add(np.sin(2 * np.pi * np.cumsum(40 + 100 * np.exp(-t_ * 9)) / SR) * np.exp(-t_ * 4), kt, 0.22)
     if music_path == "PAD":
@@ -256,7 +283,7 @@ def main(name):
     for i, s in enumerate(segs): print(f"  escena {i+1}: {s[0]:.2f}–{s[1]:.2f} s  (habla {s[2]:.2f}–{s[3]:.2f})")
     allwords = []
     for g, (a, b, s0, s1) in zip(guion, segs):
-        ws = words_with_times(g["texto"], s0, s1); g["chunks"] = chunks(ws); allwords += ws
+        ws = words_with_times(g["texto"], s0, s1); g["chunks"] = chunks(ws, 7, 42) if ESTILO == "ilustrado" else chunks(ws); allwords += ws
     kw_times = [w["t0"] for w in allwords if w["kw"]]
     apath = build_audio(voice, total, segs, guion, music, kw_times)
     out = os.path.join(folder, "reel_final.mp4" if vpath else "reel_sin_voz.mp4")
@@ -273,24 +300,27 @@ def main(name):
         dur = b - a
         for k, fr in enumerate(scene_frames(src, dur, i)):
             t = a + k / FPS
-            arr = fr.astype(np.float32) * vign
+            arr = fr.astype(np.float32) * (vign if ESTILO != "ilustrado" else 1.0)
             if ESTILO == "cine":
                 arr = (arr - 128) * 1.08 + 128 + grain[k % len(grain)]
             lt = k / FPS
-            if i > 0 and ESTILO != "cine" and lt < 0.1: arr += (1 - lt / 0.1) * 200
-            if ESTILO == "cine":
+            if i > 0 and not SOBRIO and lt < 0.1: arr += (1 - lt / 0.1) * 200
+            if SOBRIO:
                 fin = b - t
                 if i > 0 and lt < 0.35: arr *= 0.25 + 0.75 * (lt / 0.35)
                 if i < len(segs) - 1 and fin < 0.35: arr *= 0.25 + 0.75 * (fin / 0.35)
             img = Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8)).convert("RGBA")
             cur = next((c for c in g["chunks"] if c[0]["t0"] - 0.02 <= t < c[-1]["t1"] + 0.25), None)
-            if cur: draw_caption(img, cur, t)
+            if cur: (draw_caption_ilus if ESTILO == "ilustrado" else draw_caption)(img, cur, t)
             d = ImageDraw.Draw(img)
-            d.rectangle([0, 0, W, 14], fill=(0, 0, 0, 120)); d.rectangle([0, 0, int(W * t / total), 14], fill=(GOLD if ESTILO == "cine" else YELLOW) + (255,))
-            d.text((W / 2, 150), BRAND, font=font(40), fill=(255, 255, 255, 190), anchor="mm", stroke_width=2, stroke_fill=(0, 0, 0, 140))
+            if ESTILO == "ilustrado":
+                d.text((W / 2, 112), BRAND, font=ImageFont.truetype(F_SEMI, 30), fill=(255, 255, 255, 150), anchor="mm")
+            else:
+                d.rectangle([0, 0, W, 14], fill=(0, 0, 0, 120)); d.rectangle([0, 0, int(W * t / total), 14], fill=(GOLD if ESTILO == "cine" else YELLOW) + (255,))
+                d.text((W / 2, 150), BRAND, font=font(40), fill=(255, 255, 255, 190), anchor="mm", stroke_width=2, stroke_fill=(0, 0, 0, 140))
             out_img = img.convert("RGB")
             # pequeño golpe de zoom en palabras clave
-            hit = 0 if ESTILO == "cine" else max([0] + [1 - (t - kt) / 0.25 for kt in kw_times if 0 <= t - kt < 0.25])
+            hit = 0 if SOBRIO else max([0] + [1 - (t - kt) / 0.25 for kt in kw_times if 0 <= t - kt < 0.25])
             if hit > 0:
                 zz = 1 + 0.03 * hit; cw, ch = W / zz, H / zz
                 out_img = out_img.resize((W, H), Image.BILINEAR, box=((W - cw) / 2, (H - ch) / 2, (W + cw) / 2, (H + ch) / 2))

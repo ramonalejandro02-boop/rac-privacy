@@ -21,7 +21,7 @@ for i, (l, exp) in enumerate(lines):
     best = None
     for take in range(3):
         torch.manual_seed(900 + i * 10 + take)
-        w = m.generate(l, language_id="es", audio_prompt_path=REF, exaggeration=0.55, cfg_weight=0.4)
+        w = m.generate(l, language_id="es", audio_prompt_path=REF, exaggeration=0.45, cfg_weight=0.5)
         p = f"{out}/{i+1}_t{take}.wav"; ta.save(p, w, m.sr)
         segs, _ = asr.transcribe(p, language="es"); hyp = " ".join(s.text for s in segs)
         sc = difflib.SequenceMatcher(None, norm(exp), norm(hyp)).ratio()
