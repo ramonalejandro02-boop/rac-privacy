@@ -59,6 +59,8 @@ GUIONES = {
     ],
 }
 
+GUIONES["espera2"] = GUIONES["espera"]
+
 def run(cmd, **kw):
     return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw)
 

@@ -28,20 +28,24 @@ function limb(parent, x, y, r1, l1, r2, l2) { // articulación: pivote -> segmen
 }
 function makeMan() {
   const root = new THREE.Group(), hips = new THREE.Group(); root.add(hips); hips.position.y = 0.52;
-  const pelvis = sph(0.085); pelvis.scale.set(1.25, 0.8, 0.8); hips.add(pelvis);
+  const pelvis = sph(0.075); pelvis.scale.set(1.3, 0.85, 0.85); hips.add(pelvis);
   const spine = new THREE.Group(); hips.add(spine);
-  const torso = cap(0.095, 0.2); torso.scale.set(1.35, 1, 0.75); torso.position.y = 0.15; spine.add(torso);
-  const chest = sph(0.1); chest.scale.set(1.55, 0.8, 0.85); chest.position.y = 0.25; spine.add(chest);
-  const neckG = new THREE.Group(); neckG.position.y = 0.33; spine.add(neckG);
-  const neck = cap(0.032, 0.04); neck.position.y = 0.02; neckG.add(neck);
-  const head = new THREE.Group(); head.position.y = 0.075; neckG.add(head);
-  const skull = sph(0.06); skull.scale.set(0.92, 1.12, 1.0); skull.position.y = 0.035; head.add(skull);
-  const hair = sph(0.062); hair.scale.set(0.98, 0.8, 1.05); hair.position.set(0, 0.06, -0.006); head.add(hair);
-  const nose = sph(0.012); nose.position.set(0, 0.03, 0.058); head.add(nose);
-  const armL = limb(spine, -0.135, 0.29, 0.032, 0.14, 0.027, 0.13), armR = limb(spine, 0.135, 0.29, 0.032, 0.14, 0.027, 0.13);
-  [armL, armR].forEach(A => { const h = sph(0.03); h.scale.set(0.8, 1.2, 0.6); A.end.add(h); const sh = sph(0.05); sh.scale.set(1, 0.8, 0.9); A.a.add(sh); });
-  const legL = limb(hips, -0.055, -0.02, 0.05, 0.22, 0.04, 0.22), legR = limb(hips, 0.055, -0.02, 0.05, 0.22, 0.04, 0.22);
-  [legL, legR].forEach(L => { const f = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.035, 0.14), M); f.position.set(0, -0.005, 0.035); L.end.add(f); });
+  // torso que se angosta en la cintura (abrigo)
+  const tor = new THREE.Mesh(new THREE.CylinderGeometry(0.118, 0.088, 0.3, 24), M); tor.scale.z = 0.62; tor.position.y = 0.15; spine.add(tor);
+  const sh = cap(0.05, 0.17); sh.rotation.z = Math.PI / 2; sh.scale.set(1, 1, 0.75); sh.position.y = 0.285; spine.add(sh); // línea de hombros
+  // abrigo largo hasta medio muslo (se abre al caminar)
+  const coat = new THREE.Mesh(new THREE.CylinderGeometry(0.098, 0.128, 0.3, 24, 1, true), new THREE.MeshBasicMaterial({ color: 0x050403, side: THREE.DoubleSide })); coat.scale.z = 0.7; coat.position.y = -0.1; spine.add(coat);
+  const neckG = new THREE.Group(); neckG.position.y = 0.31; spine.add(neckG);
+  const neck = cap(0.038, 0.05); neck.position.y = 0.025; neckG.add(neck);
+  const head = new THREE.Group(); head.position.y = 0.085; neckG.add(head);
+  const skull = sph(0.058); skull.scale.set(0.9, 1.12, 1.0); skull.position.y = 0.03; head.add(skull);
+  const jaw = sph(0.04); jaw.scale.set(0.95, 0.8, 1.0); jaw.position.set(0, -0.01, 0.012); head.add(jaw);
+  [[0, 0.075, -0.005, 0.05], [0.025, 0.07, 0.01, 0.035], [-0.028, 0.068, 0.0, 0.035], [0, 0.06, -0.035, 0.045]].forEach(([x, y, z, r]) => { const h = sph(r); h.position.set(x, y, z); head.add(h); }); // cabello
+  const nose = sph(0.011); nose.position.set(0, 0.025, 0.056); head.add(nose);
+  const armL = limb(spine, -0.122, 0.275, 0.034, 0.15, 0.028, 0.14), armR = limb(spine, 0.122, 0.275, 0.034, 0.15, 0.028, 0.14);
+  [armL, armR].forEach(A => { const h = sph(0.028); h.scale.set(0.75, 1.25, 0.55); A.end.add(h); });
+  const legL = limb(hips, -0.048, -0.02, 0.056, 0.22, 0.043, 0.22), legR = limb(hips, 0.048, -0.02, 0.056, 0.22, 0.043, 0.22);
+  [legL, legR].forEach(L => { const f = new THREE.Mesh(new THREE.BoxGeometry(0.058, 0.04, 0.15), M); f.position.set(0, -0.003, 0.035); L.end.add(f); });
   root.userData = { hips, spine, neckG, head, armL, armR, legL, legR };
   return root;
 }
@@ -50,15 +54,15 @@ function pose(man, P) {
   const u = man.userData, g = (k, d = 0) => (P[k] ?? d);
   u.hips.position.y = 0.52 + g('hipY'); u.hips.rotation.x = g('hipX'); u.spine.rotation.x = g('spineX'); u.spine.rotation.z = g('spineZ');
   u.neckG.rotation.x = g('neckX'); u.head.rotation.x = g('headX'); u.head.rotation.y = g('headY');
-  u.armL.a.rotation.set(g('lArmX'), 0, g('lArmZ', -0.08)); u.armL.b.rotation.x = g('lElbow', -0.15);
-  u.armR.a.rotation.set(g('rArmX'), 0, g('rArmZ', 0.08)); u.armR.b.rotation.x = g('rElbow', -0.15);
+  u.armL.a.rotation.set(g('lArmX'), 0, g('lArmZ', 0.06)); u.armL.b.rotation.x = g('lElbow', -0.15);
+  u.armR.a.rotation.set(g('rArmX'), 0, g('rArmZ', -0.06)); u.armR.b.rotation.x = g('rElbow', -0.15);
   u.legL.a.rotation.set(g('lLegX'), 0, -0.02); u.legL.b.rotation.x = g('lKnee');
   u.legR.a.rotation.set(g('rLegX'), 0, 0.02); u.legR.b.rotation.x = g('rKnee');
 }
 const breath = t => Math.sin(t * 1.6) * 0.012;
 const ACTIONS = {
   // de pie, cabeza agachada, hombros caídos
-  triste: (t) => ({ spineX: 0.12 + breath(t), neckX: 0.25, headX: lerp(0.1, 0.45, ease(t / 3)), lArmZ: -0.05, rArmZ: 0.05 }),
+  triste: (t) => ({ spineX: 0.12 + breath(t), neckX: 0.25, headX: lerp(0.1, 0.45, ease(t / 3)), lArmZ: 0.08, rArmZ: -0.08 }),
   // de rodillas orando (manos juntas frente al rostro)
   orar: (t) => ({ hipY: -0.235, lLegX: -0.15, rLegX: -0.15, lKnee: 1.62, rKnee: 1.62, spineX: 0.06 + breath(t), headX: 0.3, neckX: 0.1,
     lArmX: -0.75, rArmX: -0.75, lArmZ: 0.25, rArmZ: -0.25, lElbow: -1.55, rElbow: -1.55 }),
