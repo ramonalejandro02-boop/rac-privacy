@@ -59,19 +59,45 @@ function wipes(t){for(let i=1;i<TIM.scenes.length;i++){const c=S(i).start-0.3;co
   g.save();g.translate(x,H/2);g.rotate(0.38);g.fillStyle=INK;g.fillRect(-700,-2200,1400,4400);g.fillStyle=RED;g.fillRect(-760,-2200,60,4400);g.fillRect(700,-2200,24,4400);g.restore();}}
 function flash(t,t0,d){const a=1-prog(t,t0,t0+(d||0.25));if(t>=t0&&a>0){g.fillStyle=`rgba(255,255,255,${0.7*a})`;g.fillRect(0,0,W,H);}}
 
+
+// ---------- illustrated kart sprites ----------
+function spriteKart(gg,x,y,ang,s,o){o=o||{};const im=o.rival?IM.st:IM.st;const k=s*0.42;
+  gg.save();gg.translate(x,y);gg.rotate(ang+Math.PI/2);
+  gg.save();gg.globalAlpha=0.55;gg.filter='brightness(0) blur(14px)';gg.drawImage(im,-im.width/2*k+10,-im.height/2*k+16,im.width*k,im.height*k);gg.restore();
+  if(o.rival)gg.filter='hue-rotate(205deg) saturate(0.55) brightness(0.9)';
+  const lift=o.liftInner||0;if(lift>0){gg.transform(1,0,(o.inner||1)*-0.05*lift,1,0,0);}
+  gg.drawImage(im,-im.width/2*k,-im.height/2*k,im.width*k,im.height*k);gg.filter='none';
+  if(o.axleGlow){gg.save();gg.globalAlpha=o.axleGlow;gg.shadowColor=RED;gg.shadowBlur=30;gg.fillStyle=RED;gg.fillRect(-im.width*0.4*k,im.height*0.232*k,im.width*0.8*k,14*k);gg.restore();}
+  gg.restore();}
+function spriteRear(x,y,s,lift){const im=IM.sr,k=s;g.save();g.translate(x,y);
+  g.save();g.globalAlpha=0.6;g.filter='blur(10px)';g.fillStyle='#000';g.beginPath();g.ellipse(0,6,im.width*k*0.5,22,0,0,7);g.fill();g.restore();
+  const ang=Math.atan2(lift,im.width*k*0.85);g.translate(im.width*k*0.45,0);g.rotate(-ang);g.translate(-im.width*k*0.45,0);
+  g.drawImage(im,-im.width/2*k,-im.height*k,im.width*k,im.height*k);
+  // bumper name patch
+  g.fillStyle='#E4261F';const bx=-im.width/2*k+150*k,by=-im.height*k+303*k;g.beginPath();g.roundRect(bx,by,310*k,52*k,10*k);g.fill();g.fillStyle='#fff';g.font=`italic 900 ${36*k}px BC`;g.textAlign='center';g.textBaseline='middle';g.fillText('MAURO OSORTO',bx+155*k,by+28*k);
+  g.restore();}
+
 // ---------- karting world ----------
 function asphalt(){g.fillStyle='#24252B';g.fillRect(-2000,-2000,6000,6000);g.save();g.globalAlpha=0.06;for(let i=0;i<900;i++){g.fillStyle=rnd(i)>0.5?'#fff':'#000';g.fillRect(-600+rnd(i+1)*2400,-600+rnd(i+2)*3200,3,3);}g.restore();}
 function kerbArc(cx,cy,r,a0,a1,lw){g.save();g.lineWidth=lw||26;g.strokeStyle=WH;g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();g.setLineDash([30,30]);g.strokeStyle=RED;g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();g.restore();}
 function grassBand(){g.fillStyle='#1F3B22';}
 // a big track corner (world): centre (0,0), inner r 260, outer r 760, the kart drives anticlockwise (left turn) on screen
 const TC={x:0,y:0,ri:260,ro:760};
-function cornerWorld(t){g.fillStyle='#14241A';g.fillRect(-3000,-3000,6000,6000);
-  g.save();g.globalAlpha=0.08;for(let i=0;i<40;i++){g.fillStyle='#000';g.fillRect(-3000+i*160,-3000,80,6000);}g.restore();
-  g.fillStyle='#26272D';g.beginPath();g.arc(TC.x,TC.y,TC.ro,0,7);g.arc(TC.x,TC.y,TC.ri,0,7,true);g.fill();
-  g.strokeStyle='rgba(255,255,255,0.8)';g.lineWidth=6;g.beginPath();g.arc(0,0,TC.ro-26,0,7);g.stroke();g.beginPath();g.arc(0,0,TC.ri+26,0,7);g.stroke();
-  kerbArc(0,0,TC.ri+6,0,Math.PI*2,30);
-  // tyre barrier outside
-  for(let a=0;a<Math.PI*2;a+=0.045){const x=Math.cos(a)*(TC.ro+70),y=Math.sin(a)*(TC.ro+70);g.fillStyle='#0d0d0f';g.beginPath();g.arc(x,y,24,0,7);g.fill();g.fillStyle=Math.round(a/0.045)%6<3?RED:WH;g.beginPath();g.arc(x,y,10,0,7);g.fill();}
+function cornerWorld(t){
+  const gr=g.createRadialGradient(0,0,200,0,0,2200);gr.addColorStop(0,'#2f6b3b');gr.addColorStop(1,'#12301b');g.fillStyle=gr;g.fillRect(-3000,-3000,6000,6000);
+  g.save();g.globalAlpha=0.06;g.fillStyle='#fff';for(let i=0;i<30;i++){g.beginPath();g.arc(0,0,TC.ro+120+i*90,0,7);g.arc(0,0,TC.ro+160+i*90,0,7,true);g.fill();}g.restore();
+  // track with soft shadow
+  g.save();g.shadowColor='rgba(0,0,0,0.6)';g.shadowBlur=60;const ag=g.createRadialGradient(0,0,TC.ri,0,0,TC.ro);ag.addColorStop(0,'#3a3c44');ag.addColorStop(0.5,'#2e3037');ag.addColorStop(1,'#25272d');g.fillStyle=ag;g.beginPath();g.arc(0,0,TC.ro,0,7);g.arc(0,0,TC.ri,0,7,true);g.fill();g.restore();
+  // rubbered racing line
+  g.save();g.globalAlpha=0.25;g.strokeStyle='#15161a';g.lineWidth=150;g.filter='blur(14px)';g.beginPath();g.arc(0,0,(TC.ri+TC.ro)/2-40,0,7);g.stroke();g.restore();
+  g.strokeStyle='rgba(255,255,255,0.75)';g.lineWidth=7;g.beginPath();g.arc(0,0,TC.ro-26,0,7);g.stroke();g.beginPath();g.arc(0,0,TC.ri+30,0,7);g.stroke();
+  // smooth kerb
+  g.save();g.shadowColor='rgba(0,0,0,0.5)';g.shadowBlur=12;g.lineWidth=34;g.strokeStyle='#f3f3f3';g.beginPath();g.arc(0,0,TC.ri+4,0,7);g.stroke();g.restore();
+  g.save();g.lineWidth=34;g.strokeStyle=RED;g.setLineDash([36,36]);g.beginPath();g.arc(0,0,TC.ri+4,0,7);g.stroke();g.restore();
+  g.save();g.lineWidth=34;g.strokeStyle='rgba(255,255,255,0.18)';g.beginPath();g.arc(0,0,TC.ri+12,0,7);g.lineWidth=8;g.stroke();g.restore();
+  // tyre wall: rounded stacks with soft shading
+  for(let a=0;a<Math.PI*2;a+=0.05){const x=Math.cos(a)*(TC.ro+80),y=Math.sin(a)*(TC.ro+80);const tg=g.createRadialGradient(x-8,y-8,2,x,y,28);tg.addColorStop(0,'#3a3a40');tg.addColorStop(1,'#0b0b0d');g.fillStyle=tg;g.beginPath();g.arc(x,y,26,0,7);g.fill();
+    g.fillStyle=Math.round(a/0.05)%8<4?'rgba(225,6,0,0.9)':'rgba(255,255,255,0.9)';g.beginPath();g.arc(x,y,9,0,7);g.fill();}
 }
 function camera(cx,cy,z,rot){g.translate(W/2,H*0.46);g.rotate(rot||0);g.scale(z,z);g.translate(-cx,-cy);}
 function smoke(x,y,t,n,amt){g.save();for(let i=0;i<n;i++){const age=((t*1.4+rnd(i))%1);const r=10+age*60;g.fillStyle=`rgba(225,225,230,${0.3*(1-age)*amt})`;g.beginPath();g.arc(x+(rnd(i+3)-.5)*40*age,y+age*90,r,0,7);g.fill();}g.restore();}
@@ -87,7 +113,7 @@ function sceneHook(t){const a=-Math.PI*0.5+t*0.42;const R=(TC.ri+TC.ro)/2-40;con
   g.save();camera(kx,ky,lerp(1.35,1.15,eo(prog(t,0,4))),-head-Math.PI/2+0.25);cornerWorld(t);
   // tyre marks
   g.save();g.strokeStyle='rgba(0,0,0,0.35)';g.lineWidth=14;for(const off of [-60,60]){g.beginPath();g.arc(0,0,R+off,-Math.PI*0.5,a);g.stroke();}g.restore();
-  kartTop(g,kx,ky,head,1.6,{num:'2',steer:0.28,spin:t*90,liftInner:clamp(0.6+0.4*Math.sin(t*2)),inner:1});
+  spriteKart(g,kx,ky,head,1.6,{num:'2',steer:0.28,spin:t*90,liftInner:clamp(0.6+0.4*Math.sin(t*2)),inner:1});
   smoke(kx+Math.cos(head+Math.PI)*120,ky+Math.sin(head+Math.PI)*120,t,10,0.6);
   g.restore();speedLines(0.6,t);
   stamp('SIN DIFERENCIAL',W/2,360,96,WH,t,wT(0,'diferencial')-0.12,-0.04,RED);
@@ -97,9 +123,9 @@ function sceneHook(t){const a=-Math.PI*0.5+t*0.42;const R=(TC.ri+TC.ro)/2-40;con
 }
 // 1 the solid axle: zoom on the rear half, axle glowing, both wheels same rpm
 function sceneAxle(t){const s0=S(1).start;asphalt();
-  const z=lerp(2.1,2.4,eio(prog(t,s0,s0+5)));g.save();g.translate(W/2,H*0.6);g.scale(z,z);
-  const ax=eo(prog(t,wT(1,'eje')-0.2,wT(1,'eje')+0.3));kartTop(g,0,-60,-Math.PI/2,1,{num:'2',spin:t*160,axleGlow:ax});g.restore();
-  callout(W/2,H*0.6+3,W/2+40,1270,'1 SOLA BARRA','EJE SÓLIDO, SIN DIFERENCIAL',t,wT(1,'barra')-0.15,RED);
+  const z=lerp(1.7,1.95,eio(prog(t,s0,s0+5)));g.save();g.translate(W/2,H*0.6);g.scale(z,z);
+  const ax=eo(prog(t,wT(1,'eje')-0.2,wT(1,'eje')+0.3));spriteKart(g,0,-60,-Math.PI/2,1.55,{num:'2',spin:t*160,axleGlow:ax});g.restore();
+  callout(W/2+150,H*0.6+120,640,560,'1 SOLA BARRA','EJE SÓLIDO, SIN DIFERENCIAL',t,wT(1,'barra')-0.15,RED);
   const r=1480+Math.round(Math.sin(t*3)*20);rpmChip(220,380,r,t,wT(1,'llantas')-0.1,'IZQUIERDA');rpmChip(860,380,r,t,wT(1,'llantas')+0.05,'DERECHA');
   stamp('=',W/2,400,110,RED,t,wT(1,'misma')-0.1);stamp('MISMA VELOCIDAD',W/2,590,80,WH,t,wT(1,'velocidad')-0.12,-0.02,RED);
   mascotBust(130,1250,80,t);}
@@ -112,7 +138,7 @@ function sceneDist(t){const s0=S(2).start,s1=S(2).end;const arr=wT(2,'arrastra')
   g.lineCap='round';g.lineWidth=16;g.strokeStyle=WH;g.beginPath();g.arc(0,0,R+90,a0,a1);g.stroke();
   g.strokeStyle=RED;g.shadowColor=RED;g.shadowBlur=20;g.beginPath();g.arc(0,0,R-90,a0,a1);g.stroke();g.shadowBlur=0;
   const shake=t>arr?Math.sin(t*50)*6:0;const kx=Math.cos(a1)*R+shake,ky=Math.sin(a1)*R;
-  kartTop(g,kx,ky,a1+Math.PI/2,1.35,{num:'2',steer:0.3,spin:t*120});
+  spriteKart(g,kx,ky,a1+Math.PI/2,1.35,{num:'2',steer:0.3,spin:t*120});
   if(t>arr)smoke(Math.cos(a1)*(R-90),Math.sin(a1)*(R-90),t,14,1);
   g.restore();
   callout(260,700,380,520,'AFUERA','MÁS DISTANCIA',t,wT(2,'afuera')-0.1,WH);
@@ -123,11 +149,11 @@ function sceneDist(t){const s0=S(2).start,s1=S(2).end;const arr=wT(2,'arrastra')
 function sceneLift(t){const s0=S(3).start,flexT=wT(3,'flexiona')-0.2,liftT=wT(3,'levanta')-0.2,dobla=wT(3,'dobla')-0.3;
   bg(t);const lift=eio(prog(t,liftT,liftT+0.8))*150,flex=eio(prog(t,flexT,flexT+0.6));
   stamp('EL SECRETO',W/2,330,110,WH,t,s0-0.1,-0.03,RED);
-  if(t<dobla){g.save();g.fillStyle='#1b1c21';g.fillRect(0,1240,W,300);kartRear(g,W/2+70,1250,1.2,{lift,flex:flex*(1-0.3*Math.sin(t*12))});g.restore();
-    if(lift>20){g.save();g.strokeStyle=RED;g.lineWidth=8;g.setLineDash([16,12]);g.beginPath();g.moveTo(W/2-245,1250);g.lineTo(W/2-245,1250-lift);g.stroke();g.restore();
-      callout(W/2-245,1250-lift-200,330,620,'LLANTA DE ADENTRO','¡ARRIBA!',t,liftT+0.5,RED);}
-    if(flex>0.1)callout(W/2+120,1180,760,960,'CHASÍS','SE FLEXIONA',t,flexT,WH);}
-  else{g.save();camera(0,-80,0.75,0);cornerWorld(t);const a=Math.PI*0.9+(t-dobla)*0.9,R=(TC.ri+TC.ro)/2;kartTop(g,Math.cos(a)*R,Math.sin(a)*R,a+Math.PI/2,1.6,{num:'2',steer:0.28,spin:t*120,liftInner:1,inner:1});g.restore();speedLines(0.5,t);
+  if(t<dobla){g.save();g.fillStyle='#1b1c21';g.fillRect(0,1240,W,300);spriteRear(W/2+20,1250,1.45,lift);g.restore();
+    if(lift>20){g.save();g.strokeStyle=RED;g.lineWidth=8;g.setLineDash([16,12]);g.beginPath();g.moveTo(W/2-330,1250);g.lineTo(W/2-330,1250-lift);g.stroke();g.restore();
+      callout(W/2-330,1250-lift-200,330,620,'LLANTA DE ADENTRO','¡ARRIBA!',t,liftT+0.5,RED);}
+    if(flex>0.1)callout(W/2+60,1060,760,820,'CHASÍS','SE FLEXIONA',t,flexT,WH);}
+  else{g.save();camera(0,-80,0.75,0);cornerWorld(t);const a=Math.PI*0.9+(t-dobla)*0.9,R=(TC.ri+TC.ro)/2;spriteKart(g,Math.cos(a)*R,Math.sin(a)*R,a+Math.PI/2,1.6,{num:'2',steer:0.28,spin:t*120,liftInner:1,inner:1});g.restore();speedLines(0.5,t);
     stamp('¡DOBLA!',W/2,460,170,WH,t,dobla,-0.05,RED);flash(t,dobla,0.18);}
   mascotBust(950,1300,80,t);}
 // 4 the chassis is the suspension; stiff vs soft
@@ -144,7 +170,7 @@ function sceneChassis(t){const s0=S(4).start,cmp=wT(4,'rígido')-0.4;bg(t);
   mascotBust(950,640,80,t);}
 // 5 outro
 function sceneOutro(t){const s0=S(5).start;
-  g.save();camera(0,-80,0.8,0);cornerWorld(t);const a=Math.PI*0.6+(t-s0)*0.5,R=(TC.ri+TC.ro)/2;kartTop(g,Math.cos(a)*R,Math.sin(a)*R,a+Math.PI/2,1.7,{num:'2',steer:0.25,spin:t*120,liftInner:1,inner:1});g.restore();
+  g.save();camera(0,-80,0.8,0);cornerWorld(t);const a=Math.PI*0.6+(t-s0)*0.5,R=(TC.ri+TC.ro)/2;spriteKart(g,Math.cos(a)*R,Math.sin(a)*R,a+Math.PI/2,1.7,{num:'2',steer:0.25,spin:t*120,liftInner:1,inner:1});g.restore();
   const fo=eo(prog(t,wT(5,'sigue')-0.4,wT(5,'sigue')));g.fillStyle=`rgba(8,8,10,${0.2+0.6*fo})`;g.fillRect(0,0,W,H);
   stamp('UNA LLANTA EN EL AIRE',W/2,420,72,WH,t,s0,-0.03,RED);stamp('= KART BIEN PUESTO',W/2,540,60,WH,t,s0+0.3,0.02,'#111');
   if(fo>0){g.save();g.globalAlpha=fo;const lw=780;g.drawImage(IM.mo,W/2-lw/2,700,lw,lw*IM.mo.height/IM.mo.width);g.restore();
@@ -156,6 +182,6 @@ function render(t){g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;let k=0;TIM.scene
   g.fillStyle='rgba(255,255,255,0.12)';g.fillRect(0,H-10,W,10);g.fillStyle=RED;g.fillRect(0,H-10,W*t/TIM.total,10);
   const fo=prog(t,TIM.total-0.5,TIM.total);if(fo>0){g.fillStyle=`rgba(0,0,0,${fo})`;g.fillRect(0,0,W,H);}}
 window.setup=async(tim)=>{TIM=tim;await document.fonts.load('italic 900 40px BC');await document.fonts.load('italic 600 40px BC6');
-  const L=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=s;});IM.m=await L('mascot.png');IM.mo=await L('mo_white.png');IM.pz=await L('perzav_white.png');IM.wk=await L('willy_white.png');CARB=makeCarbon();};
+  const L=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=s;});IM.m=await L('mascot.png');IM.mo=await L('mo_white.png');IM.pz=await L('perzav_white.png');IM.wk=await L('willy_white.png');IM.st=await L('sprite_top.png');IM.sr=await L('sprite_rear.png');IM.hf=await L('hero_front.png');CARB=makeCarbon();};
 window.frame=(t)=>{render(t);return cv.toDataURL('image/jpeg',0.93);};
 </script></body></html>
