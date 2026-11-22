@@ -1,0 +1,50 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}canvas{display:block}</style></head><body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+// Anima ilustraciones fijas: cámara (zoom/paneo), neblina, destellos, lluvia, rayos de luz y grano.
+const W = 1080, H = 1920, ctx = document.getElementById('c').getContext('2d');
+const lerp = (a, b, t) => a + (b - a) * t, cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x)), ease = t => { t = cl(t); return t * t * (3 - 2 * t); };
+let seed = 1; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const off = (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
+const CFG = window.CFG || JSON.parse(new URLSearchParams(location.search).get('cfg') || 'null');
+// Configuración por escena (se puede reemplazar con ?cfg=)
+const SC = CFG || [
+  { img: 'ai/escena1.png', zoom: [1.0, 1.14], pan: [0, 40, 0, -40], fog: 0.35, sparkles: { n: 40, y: [0, 0.45], a: 0.7 }, tint: [20, 40, 70, 0.10] },
+  { img: 'ai/escena2.png', zoom: [1.14, 1.04], pan: [0, -30, 0, 30], fog: 0.25, rain: 0.55, flash: 2.4, tint: [10, 20, 40, 0.15] },
+  { img: 'ai/escena3.png', zoom: [1.02, 1.14], pan: [-30, 0, 30, -20], fog: 0.3, sparkles: { n: 24, y: [0.1, 0.6], a: 0.6 }, glowRise: [0.55, 0.62, 0.45] },
+  { img: 'ai/escena4.png', zoom: [1.12, 1.0], pan: [0, 60, 0, 0], beam: { x: 0.5, a: 0.35 }, sparkles: { n: 60, y: [0.05, 0.9], a: 1 }, rise: true },
+  { img: 'ai/escena5.png', zoom: [1.0, 1.12], pan: [0, 0, 0, -50], sparkles: { n: 55, y: [0.1, 0.8], a: 1 }, glowPulse: [0.5, 0.42, 0.5], fog: 0.2 },
+  { img: 'ai/escena6.png', zoom: [1.15, 1.0], pan: [0, -40, 0, 20], sparkles: { n: 45, y: [0.05, 0.7], a: 0.9 }, beam: { x: 0.5, a: 0.18 }, fog: 0.15 },
+];
+const IMG = [];
+function load(src) { return new Promise(r => { const im = new Image(); im.onload = () => r(im); im.src = src; }); }
+const GRAIN = (() => { const c = off(540, 960), g = c.getContext('2d'), d = g.createImageData(540, 960); seed = 3; for (let i = 0; i < d.data.length; i += 4) { const v = 128 + (rnd() - .5) * 70; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); return c; })();
+const FOG = (() => { const c = off(1600, 900), g = c.getContext('2d'); seed = 9; g.filter = 'blur(40px)'; for (let i = 0; i < 40; i++) { const x = rnd() * 1600, y = 300 + rnd() * 500, r = 80 + rnd() * 200; const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(220,230,240,0.35)'); gr.addColorStop(1, 'rgba(220,230,240,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r); } return c; })();
+function glow(x, y, r, c, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${c},${a})`); g.addColorStop(0.3, `rgba(${c},${a * 0.4})`); g.addColorStop(1, `rgba(${c},0)`); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
+function glint(x, y, s, a) { if (a <= 0.02) return; glow(x, y, s * 4, '255,236,190', a * 0.5); ctx.fillStyle = `rgba(255,250,235,${a})`; ctx.beginPath(); ctx.moveTo(x, y - s * 2.4); ctx.quadraticCurveTo(x, y, x + s * 2.4, y); ctx.quadraticCurveTo(x, y, x, y + s * 2.4); ctx.quadraticCurveTo(x, y, x - s * 2.4, y); ctx.quadraticCurveTo(x, y, x, y - s * 2.4); ctx.fill(); }
+let cur = 0;
+window.setScene = async i => { cur = i; window.ready = false; if (!IMG[i]) IMG[i] = await load(SC[i].img); window.ready = true; };
+window.renderAt = t => {
+  const s = SC[cur], im = IMG[cur], D = s.dur || 7, k = ease(t / D);
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+  // cámara
+  const z = lerp(s.zoom[0], s.zoom[1], k), px = lerp(s.pan[0], s.pan[2], k), py = lerp(s.pan[1], s.pan[3], k);
+  const base = Math.max(W / im.width, H / im.height); const w = im.width * base * z, h = im.height * base * z;
+  ctx.imageSmoothingQuality = 'high'; ctx.drawImage(im, (W - w) / 2 + px, (H - h) / 2 + py, w, h);
+  if (s.tint) { ctx.fillStyle = `rgba(${s.tint[0]},${s.tint[1]},${s.tint[2]},${s.tint[3]})`; ctx.fillRect(0, 0, W, H); }
+  ctx.save(); ctx.globalCompositeOperation = 'lighter';
+  if (s.beam) { const bx = s.beam.x * W, a = s.beam.a * (0.75 + 0.25 * Math.sin(t * 1.4)); ctx.filter = 'blur(30px)'; const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, `rgba(255,235,190,${a})`); g.addColorStop(1, 'rgba(255,235,190,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(bx - 60, -50); ctx.lineTo(bx + 60, -50); ctx.lineTo(bx + 260, H); ctx.lineTo(bx - 260, H); ctx.fill(); ctx.filter = 'none'; }
+  if (s.glowPulse) { const [gx, gy, ga] = s.glowPulse; glow(gx * W, gy * H, 520, '255,225,170', ga * (0.6 + 0.4 * Math.sin(t * 1.8))); }
+  if (s.glowRise) { const [gx, gy, ga] = s.glowRise; glow(gx * W, gy * H, 700, '255,180,130', ga * ease((t - 0.5) / 4)); }
+  if (s.sparkles) { seed = 100 + cur; const sp = s.sparkles; for (let i = 0; i < sp.n; i++) { const x = rnd() * W, y0 = lerp(sp.y[0], sp.y[1], rnd()) * H, sz = 1.5 + rnd() * 3.5, sp2 = 10 + rnd() * 30, ph = rnd() * 6;
+      const y = y0 - ((t * sp2) % 300) + (s.rise ? -t * 25 : 0); glint(x + Math.sin(t * 0.8 + ph) * 12, y, sz, sp.a * Math.max(0, Math.sin(t * 1.7 + ph))); } }
+  ctx.restore();
+  if (s.fog) { ctx.globalAlpha = s.fog; const fx = -((t * 30) % 1600); ctx.drawImage(FOG, fx, H * 0.45, 1600, 900); ctx.drawImage(FOG, fx + 1600, H * 0.45, 1600, 900); ctx.globalAlpha = 1; }
+  if (s.rain) { ctx.strokeStyle = `rgba(200,215,235,${s.rain})`; ctx.lineWidth = 2; seed = 5; for (let i = 0; i < 320; i++) { const x = rnd() * (W + 200) - 100, y = ((rnd() * H + t * 1700 * (0.8 + rnd() * 0.4)) % (H + 100)) - 50; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 9, y + 50); ctx.stroke(); } }
+  if (s.flash && Math.abs(t - s.flash) < 0.07) { ctx.fillStyle = 'rgba(210,220,255,0.35)'; ctx.fillRect(0, 0, W, H); }
+  const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.78); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.5)'); ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+  ctx.save(); ctx.globalAlpha = 0.06; ctx.globalCompositeOperation = 'overlay'; ctx.drawImage(GRAIN, (t * 41) % 40 - 20, 0, W + 40, H); ctx.restore();
+};
+window.ready = true;
+</script></body></html>
