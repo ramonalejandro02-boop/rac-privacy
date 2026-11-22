@@ -1,0 +1,22 @@
+{
+  "titulo": "El perro del vecino y el regalito de todos los días",
+  "lead": 0.3,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "Todos los días, el perro del vecino hace sus necesidades frente a la casa de doña Tere.", "pause": 0.2},
+    {"scene": "cansada", "text": "Y ella ya se cansó.", "pause": 0.2},
+    {"scene": "pleito", "who": "tere", "voice": "ef_dora", "text": "¡Recoja lo de su perro, o se lo tiro en su portón!", "pause": 0.2},
+    {"scene": "pleito", "who": "beto", "voice": "em_santa", "text": "Mi perro es libre. La calle es de todos.", "pause": 0.3},
+    {"scene": "tension", "text": "Ella defiende la limpieza de su frente. Él cree que su perro no le hace daño a nadie.", "pause": 0.3},
+    {"scene": "deber", "text": "Pero tener una mascota trae responsabilidades: recoger sus desechos, y no dejarla suelta en la calle.", "pause": 0.25},
+    {"scene": "danos", "text": "Y si el perro muerde o causa daños, en general, el dueño responde.", "pause": 0.3},
+    {"scene": "mito", "text": "Tirarle la basura al vecino, o envenenar al perro, no es justicia. Es otro problema, y puede ser sancionado.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo que funciona: hablar con calma, y pedir que lo saque con correa y bolsa.", "pause": 0.2},
+    {"scene": "pasos", "text": "Si sigue igual, el patronato puede promover un acuerdo de convivencia para toda la colonia.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y si hay mordidas o riesgo, se reporta a la municipalidad.", "pause": 0.3},
+    {"scene": "final", "text": "Porque un buen dueño, hace buenos vecinos.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}

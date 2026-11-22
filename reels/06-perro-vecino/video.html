@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 06 · El perro del vecino</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0E2A47}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as Z from '../motor/cartoon.js';
+const { K, C, clamp, lerp, ease, easeOut, easeBack, prog, person, POSE, bubble, check, cross, icoMuni, anger, sparkle, sweat, excl } = Z;
+
+await Promise.all(['700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const env = t => ENV[Math.min(ENV.length - 1, Math.max(0, Math.floor(t * 30)))] || 0;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) { const ws = SEG[i].words || [], n = norm(word); const w = ws.find(x => norm(x.w).startsWith(n)); if (w) return end ? w.e : w.s; const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length); return S(i) + (E(i) - S(i)) * Math.max(0, k); }
+const speaking = (i, t) => (SEG[i].words?.length ? SEG[i].words.some(w => t >= w.s - .03 && t <= w.e + .04) : (t > S(i) && t < E(i)));
+const mouth = (i, t) => speaking(i, t) ? clamp(.25 + env(t) * 1.25) : 0;
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .2; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+const LOGO = '../motor/assets/conafeph-logo.png';
+const F = 'font-family="Brand"';
+
+// ---------- estilo "pop sticker" ----------
+const PAL = { navy: '#0E2A47', coral: '#FF6B5B', sun: '#FFC93C', teal: '#1FB5A6', blue: '#3D7BF7', pink: '#FF5FA2', green: '#22B35E', cream: '#FFF6E5', purple: '#7B5CFF' };
+const DEFS = `<defs>
+<filter id="stk" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/><feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="o"/><feDropShadow in="o" dx="0" dy="12" stdDeviation="10" flood-color="#0E2A47" flood-opacity=".35" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="dsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#0E2A47" flood-opacity=".35"/></filter>
+</defs>`;
+function bg(c1, c2, t, o = {}) { // fondo de color con formas suaves
+  let s = `<defs><linearGradient id="g${c1.slice(1)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#g${c1.slice(1)})"/>`;
+  const r = [[180, 520, 260], [900, 760, 340], [300, 1500, 300], [880, 1650, 220]];
+  r.forEach(([x, y, rr], k) => s += `<circle cx="${x + Math.sin(t * .5 + k) * 20}" cy="${y + Math.cos(t * .4 + k) * 20}" r="${rr}" fill="#fff" opacity="${o.op ?? .08}"/>`);
+  if (o.rays) for (let k = 0; k < 12; k++) s += `<path d="M540 ${o.ry ?? 900} L${540 + Math.cos(k * Math.PI / 6 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + t * .2) * 1600} L${540 + Math.cos(k * Math.PI / 6 + .18 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + .18 + t * .2) * 1600}Z" fill="#fff" opacity=".06"/>`;
+  return s;
+}
+const stk = svg => `<g filter="url(#stk)">${svg}</g>`;
+function headline(text, p, y = 520, o = {}) { // título grande con sombra 3D
+  if (p <= 0) return '';
+  const fs = o.fs ?? 104, k = easeBack(p), rot = (o.rot ?? -3) * (1 - p) + (o.rot ?? -3);
+  return `<g transform="translate(540,${y}) rotate(${rot}) scale(${lerp(.4, 1, k)})" opacity="${clamp(p * 2)}">${text.split('\n').map((l, i) => `<text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${PAL.navy}" transform="translate(7,9)">${l}</text><text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.c ?? '#fff'}" stroke="${PAL.navy}" stroke-width="8" paint-order="stroke" stroke-linejoin="round">${l}</text>`).join('')}</g>`;
+}
+function chip(x, y, text, o = {}) { const fs = o.fs ?? 44, w = text.length * fs * .64 + 60, h = fs * 1.6; return `<g filter="url(#dsh)" transform="translate(${x},${y}) rotate(${o.rot ?? 0})"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${o.bg ?? '#fff'}" stroke="${PAL.navy}" stroke-width="6"/><text y="${fs * .36}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.fg ?? PAL.navy}">${text}</text></g>`; }
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})">${svg}</g>`;
+const slideIn = (p, svg, dx) => p <= 0 ? '' : `<g transform="translate(${(1 - easeOut(p)) * dx},0)" opacity="${clamp(p * 1.5)}">${svg}</g>`;
+
+// personajes con cara
+const TERE = { skin: '#D9A27A', shirt: '#FF5FA2', skirt: '#0E2A47', hair: '#2A1E18', style: 'bun', collar: '#fff' };
+const BETO = { skin: '#B9784F', shirt: '#3D7BF7', pants: '#2F3B4A', hair: '#2A2321', style: 'short', mustache: true, cap: '#FFC93C' };
+const blink = (t, o) => ((t + o) % 3.2) < .13;
+const P = (b, t, o, x) => stk(person({ ...b, blink: blink(t, o), bob: Math.sin(t * 2.4 + o) * 3, ...x }));
+// perro
+function dog(x, y, s, t, o = {}) {
+  const wag = Math.sin(t * (o.happy ? 18 : 8)) * (o.happy ? 28 : 14), sq = o.squat ? 1 : 0, bark = o.bark ? Math.max(0, Math.sin(t * 14)) : 0;
+  let g = `<g transform="translate(${x},${y}) scale(${o.flip ? -s : s},${s})">`;
+  g += `<g transform="rotate(${wag} -120 -${110 - sq * 20})"><path d="M-120 -${110 - sq * 20} q-60 -40 -50 -110" stroke="${K}" stroke-width="30" fill="none" stroke-linecap="round"/><path d="M-120 -${110 - sq * 20} q-60 -40 -50 -110" stroke="#E0A060" stroke-width="18" fill="none" stroke-linecap="round"/></g>`;
+  for (const lx of [-90, -50, 60, 100]) g += `<rect x="${lx - 16}" y="${-70 + (lx < 0 ? sq * 30 : 0)}" width="32" height="${70 - (lx < 0 ? sq * 30 : 0)}" rx="14" fill="#E0A060" stroke="${K}" stroke-width="6"/>`;
+  g += `<ellipse cx="0" cy="${-110 + sq * 20}" rx="140" ry="64" fill="#E0A060" stroke="${K}" stroke-width="6" transform="rotate(${sq * -12} 0 -110)"/><ellipse cx="-10" cy="${-96 + sq * 20}" rx="70" ry="30" fill="#FFF0D6"/>`;
+  g += `<g transform="translate(130,-170) rotate(${o.look ?? 0})"><path d="M-30 -60 q-40 30 -20 90" fill="#9C5A2E" stroke="${K}" stroke-width="6"/><circle r="72" fill="#E0A060" stroke="${K}" stroke-width="6"/><ellipse cx="48" cy="22" rx="46" ry="34" fill="#FFF0D6" stroke="${K}" stroke-width="5"/><ellipse cx="78" cy="10" rx="16" ry="12" fill="${K}"/><circle cx="16" cy="-18" r="11" fill="${K}"/><circle cx="20" cy="-22" r="4" fill="#fff"/>`;
+  g += bark > .1 ? `<path d="M40 40 q30 ${20 + bark * 20} 60 0" fill="#8A2A2A" stroke="${K}" stroke-width="5"/>` : `<path d="M44 44 q20 12 40 0" stroke="${K}" stroke-width="5" fill="none"/>`;
+  if (o.tongue) g += `<path d="M60 48 q8 40 24 0" fill="#FF7A8A" stroke="${K}" stroke-width="4"/>`;
+  g += `<path d="M-60 -50 q30 -40 0 -76 q-20 40 0 76" fill="#9C5A2E" stroke="${K}" stroke-width="6"/></g>`;
+  g += `<rect x="70" y="-150" width="70" height="18" rx="8" fill="${PAL.coral}" stroke="${K}" stroke-width="4"/>`;
+  return g + `</g>`;
+}
+function poop(x, y, s, p, t) {
+  if (p <= 0) return '';
+  let g = `<g transform="translate(${x},${y}) scale(${s * easeBack(p)})">`;
+  g += `<ellipse cx="0" cy="0" rx="70" ry="22" fill="#6B3E1F" stroke="${K}" stroke-width="6"/><ellipse cx="0" cy="-30" rx="54" ry="24" fill="#7A4A26" stroke="${K}" stroke-width="6"/><ellipse cx="0" cy="-58" rx="36" ry="20" fill="#8A5530" stroke="${K}" stroke-width="6"/><path d="M0 -76 q14 -10 6 -30" stroke="${K}" stroke-width="6" fill="#8A5530"/>`;
+  for (let k = 0; k < 3; k++) { const a = Math.sin(t * 3 + k) * 10; g += `<path d="M${-40 + k * 40} -110 q${16 + a} -30 0 -60 q${-16 + a} -30 0 -60" stroke="#7AC943" stroke-width="7" fill="none" opacity=".85" stroke-linecap="round"/>`; }
+  for (let k = 0; k < 2; k++) { const fx = Math.cos(t * 7 + k * 3) * 80, fy = -140 + Math.sin(t * 9 + k) * 40; g += `<circle cx="${fx}" cy="${fy}" r="9" fill="${K}"/><ellipse cx="${fx - 8}" cy="${fy - 9}" rx="9" ry="5" fill="#fff" opacity=".8"/>`; }
+  return g + `</g>`;
+}
+function houseFront(x, y, s, o = {}) {
+  return `<g transform="translate(${x},${y}) scale(${s})" filter="url(#dsh)"><rect x="-300" y="-420" width="600" height="420" rx="16" fill="${o.wall ?? PAL.cream}" stroke="${K}" stroke-width="7"/><path d="M-330 -420 L0 -560 L330 -420Z" fill="${o.roof ?? PAL.coral}" stroke="${K}" stroke-width="7" stroke-linejoin="round"/><rect x="-220" y="-260" width="200" height="260" fill="${PAL.teal}" stroke="${K}" stroke-width="7"/>${[1, 2, 3, 4].map(k => `<path d="M${-220 + k * 40} -260 v260" stroke="${K}" stroke-width="5"/>`).join('')}<rect x="60" y="-300" width="170" height="130" fill="#BFE6FF" stroke="${K}" stroke-width="7"/><path d="M145 -300 v130 M60 -235 h170" stroke="${K}" stroke-width="5"/><rect x="-330" y="0" width="660" height="22" rx="8" fill="#C9C2B6" stroke="${K}" stroke-width="6"/></g>`;
+}
+const bag = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M-30 -40 q0 -26 30 -26 q30 0 30 26 l10 70 q0 14 -14 14 h-52 q-14 0 -14 -14z" fill="#22B35E" stroke="${K}" stroke-width="6"/><path d="M-14 -50 q14 -24 28 0" stroke="${K}" stroke-width="6" fill="none"/></g>`;
+const leashIco = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M-40 30 q-20 -70 30 -80 q50 -6 50 40" stroke="${PAL.coral}" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="40" cy="-8" r="16" fill="none" stroke="${K}" stroke-width="7"/></g>`;
+const handshake = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><path d="M-70 10 l40 -30 h40 l20 16 h30 l20 -16" stroke="${K}" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-60 20 l50 30 l40 -20 l40 -10" stroke="${PAL.sun}" stroke-width="22" fill="none" stroke-linecap="round"/></g>`;
+const groundBand = (y, c = '#E9DCC4') => `<rect x="-20" y="${y}" width="1120" height="800" fill="${c}"/><rect x="-20" y="${y}" width="1120" height="18" fill="#fff" opacity=".5"/>`;
+
+// ---------- subtítulos (palabra actual en píldora amarilla) ----------
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (s, fs) => { cv.font = `800 ${fs}px Brand`; return cv.measureText(s).width; };
+const CH = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  const sw = s.text.split(' '), aw = s.words || [], ws = []; let j = 0;
+  sw.forEach(w => { let hit = -1; for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } } if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null }); });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 20 || (/[.?!:,]$/.test(w.w) && len > 8) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .05, e: ws[k + 1] ? ws[k + 1].s - .05 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const fs = 58, gap = 16; let cur = -1; c.words.forEach((w, k) => { if (t >= w.s - .02) cur = k; });
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, fs) }));
+  const total = items.reduce((a, b) => a + b.wd, 0) + gap * (items.length - 1);
+  let x = 540 - total / 2, s = '';
+  items.forEach((it, k) => {
+    if (k === cur) s += `<rect x="${x - 12}" y="${1352 - 52}" width="${it.wd + 24}" height="72" rx="14" fill="${PAL.sun}" stroke="${PAL.navy}" stroke-width="5"/>`;
+    s += `<text x="${x}" y="${1352}" ${F} font-weight="800" font-size="${fs}" fill="${k === cur ? PAL.navy : '#fff'}" ${k === cur ? '' : `stroke="${PAL.navy}" stroke-width="10" paint-order="stroke" stroke-linejoin="round"`} opacity="${k <= cur ? 1 : .55}">${it.w}</text>`;
+    x += it.wd + gap;
+  });
+  return s;
+}
+const brand = `<g filter="url(#dsh)"><rect x="380" y="262" width="320" height="66" rx="33" fill="#fff" stroke="${PAL.navy}" stroke-width="5"/><image href="${LOGO}" x="386" y="265" width="60" height="60"/><text x="566" y="307" ${F} font-weight="900" font-size="32" text-anchor="middle" fill="${PAL.navy}" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas ----------
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene, D = sh.end - sh.start; let s = '', z = 1, zx = 540, zy = 960;
+  if (id === 'hook') {
+    const di = wt(i, 'dias'), ne = wt(i, 'necesidades'), te = wt(i, 'tere');
+    s += bg(PAL.sun, '#FF9F43', t, { rays: true, ry: 1100 }) + groundBand(1150);
+    s += houseFront(540, 1150, 1.05);
+    const dx = lerp(-300, 380, easeOut(prog(u, 0, 1.4)));
+    s += stk(dog(dx, 1260, .9, t, { squat: t > ne - .2 && t < ne + 1.6, happy: t < ne - .2 }));
+    s += poop(250, 1270, 1, prog(t, ne + .3, ne + .6), t);
+    s += headline('TODOS\nLOS DÍAS', prog(t, di - .2, di + .1), 470, { c: '#fff', rot: -4 });
+    s += pop(prog(t, te - .1, te + .2), chip(800, 760, 'Casa de doña Tere', { fs: 38, rot: 4 }), 800, 760);
+    z = lerp(1, 1.1, ease(prog(t, ne, ne + 1))); zy = 1150;
+  }
+  if (id === 'cansada') {
+    s += bg(PAL.coral, '#C2384A', t, { rays: true });
+    s += P(TERE, t, .2, { x: 540, y: 1560, s: 1.4, expr: 'angry', arms: POSE.hips });
+    s += anger(540, 700, t, 1.2);
+    s += headline('¡YA SE\nCANSÓ!', prog(u, .1, .35), 470, { c: PAL.sun, rot: 3 });
+    z = lerp(1.06, 1, ease(u / D));
+  }
+  if (id === 'pleito') {
+    const qt = sh.i0, qb = sh.i1, bT = t >= S(qb) - .15;
+    s += bg(bT ? PAL.blue : PAL.pink, bT ? '#2448B5' : '#C93A7A', t);
+    s += groundBand(1380, '#F4E7CF');
+    s += poop(540, 1440, .7, 1, t);
+    s += P(TERE, t, .2, { x: 270, y: 1520, s: 1.05, expr: 'angry', talk: mouth(qt, t), arms: !bT ? POSE.point : POSE.cross, look: 1 });
+    s += P(BETO, t, 1, { x: 800, y: 1520, s: 1.05, expr: bT ? 'smug' : 'worried', talk: mouth(qb, t), arms: bT ? POSE.shrug : POSE.idle, look: -1 });
+    s += stk(dog(980, 1530, .55, t, { flip: true, happy: bT, tongue: true }));
+    const say = (q, lines, o) => { const ws = SEG[q].words || [], tok = lines.map(l => l.split(' ')), tot = tok.flat().length, said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * tot / ws.length) : tot; let wi = 0; return pop(prog(t, S(q) - .2, S(q) + .05), stk(bubble(540, 700, tok.map(r => r.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : .15}">${w}</tspan>`).join(' ')), { ...o, fs: 54 })), 540, 640); };
+    s += !bT ? say(qt, ['¡Recoja lo de su perro,', 'o se lo tiro en su portón!'], { who: 'DOÑA TERE', tail: -220, w: 920 }) : say(qb, ['Mi perro es libre.', 'La calle es de todos.'], { who: 'DON BETO', tail: 220, tailDx: 260, w: 820, bg: PAL.navy, fg: '#fff' });
+    z = 1.02 + Math.sin(u * .8) * .01;
+  }
+  if (id === 'tension') {
+    const li = wt(i, 'limpieza'), da = wt(i, 'dano');
+    const split = easeOut(prog(u, 0, .5));
+    s += `<rect width="1080" height="1920" fill="${PAL.pink}"/><rect x="${lerp(1080, 540, split)}" y="0" width="560" height="1920" fill="${PAL.teal}"/>`;
+    s += `<path d="M${lerp(1080, 540, split)} 0 V1920" stroke="${PAL.navy}" stroke-width="10"/>`;
+    s += P(TERE, t, .2, { x: 270, y: 1360, s: .8, expr: 'neutral', arms: POSE.hips });
+    s += stk(dog(780, 1380, .55, t, { happy: true, tongue: true }));
+    s += P(BETO, t, 1, { x: 840, y: 1360, s: .8, expr: 'content', arms: POSE.idle });
+    s += pop(prog(t, li - .2, li + .1), chip(270, 600, 'LIMPIEZA', { fs: 52, rot: -4, bg: '#fff' }), 270, 600);
+    s += pop(prog(t, da - .3, da), chip(810, 600, 'LIBERTAD', { fs: 52, rot: 4, bg: '#fff' }), 810, 600);
+  }
+  if (id === 'deber') {
+    const re = wt(i, 'responsabilidades'), de = wt(i, 'desechos'), su = wt(i, 'suelta');
+    s += bg(PAL.green, '#14804A', t, { rays: true });
+    s += headline('RESPONSABILIDAD', prog(t, re - .3, re), 520, { fs: 84, c: PAL.sun });
+    s += slideIn(prog(t, de - .3, de), `<g filter="url(#dsh)"><rect x="120" y="700" width="840" height="170" rx="30" fill="#fff" stroke="${PAL.navy}" stroke-width="7"/>${bag(220, 790, 1.1)}<text x="320" y="810" ${F} font-weight="900" font-size="54" fill="${PAL.navy}">Recoger desechos</text></g>`, -900);
+    const bx = lerp(-200, 330, easeOut(prog(u, .4, 1.8)));
+    s += stk(dog(bx + 230, 1250, .45, t, { happy: true, tongue: true })) + `<g transform="translate(${bx},1255)">${stk(person({ ...BETO, x: 0, y: 0, s: .45, expr: 'content', walk: t * 9, walkAmt: u < 1.8 ? 1 : 0, arms: { r: [8, 4], l: [70, 10] }, hold: { r: (hx, hy) => bag(hx, hy + 40, .6) } }))}</g><path d="M${bx + 100} 1150 Q${bx + 180} 1190 ${bx + 285} 1190" stroke="${PAL.coral}" stroke-width="6" fill="none"/>`;
+    s += slideIn(prog(t, su - .5, su - .1), `<g filter="url(#dsh)"><rect x="120" y="900" width="840" height="170" rx="30" fill="#fff" stroke="${PAL.navy}" stroke-width="7"/>${leashIco(220, 990, 1.1)}<text x="320" y="1010" ${F} font-weight="900" font-size="54" fill="${PAL.navy}">No dejarlo suelto</text></g>`, 900);
+  }
+  if (id === 'danos') {
+    const mu = wt(i, 'muerde'), re = wt(i, 'responde');
+    s += bg('#FF8A3D', '#E0542A', t, { rays: true });
+    s += stk(dog(540, 1250, 1.2, t, { bark: t > mu - .2 && t < re - .4, look: -6 }));
+    if (t > mu - .2) s += pop(prog(t, mu - .2, mu), `<g>${[0, 1, 2].map(k => `<path d="M${820 + k * 30} ${880 - k * 40} l40 -20" stroke="#fff" stroke-width="10" stroke-linecap="round"/>`).join('')}</g>`, 840, 860);
+    s += headline('SI MUERDE…', prog(t, mu - .3, mu), 470, { c: '#fff' });
+    s += pop(prog(t, re - .2, re + .1), chip(540, 1400 - 40, 'El dueño responde', { fs: 52, bg: PAL.sun }), 540, 1360);
+  }
+  if (id === 'mito') {
+    const ba = wt(i, 'basura'), en = wt(i, 'envenenar'), ju = wt(i, 'justicia'), sa = wt(i, 'sancionado');
+    s += bg(PAL.navy, '#1A1238', t, { op: .05 });
+    s += slideIn(prog(t, ba - .3, ba), `<g transform="rotate(-3 540 760)">${chip(540, 760, 'Tirarle la basura', { fs: 54, bg: '#fff' })}</g>`, -900);
+    s += slideIn(prog(t, en - .3, en), `<g transform="rotate(3 540 920)">${chip(540, 920, 'Envenenar al perro', { fs: 54, bg: '#fff' })}</g>`, 900);
+    const xp = prog(t, ju - .3, ju);
+    if (xp > 0) s += `<path d="M160 690 L920 990 M920 690 L160 990" stroke="${PAL.coral}" stroke-width="26" stroke-linecap="round" opacity="${xp}"/>`;
+    s += headline('NO ES\nJUSTICIA', prog(t, ju - .2, ju + .1), 1150, { c: PAL.coral, fs: 110 });
+    s += pop(prog(t, sa - .2, sa + .1), chip(540, 1370 - 30, 'Puede ser sancionado', { fs: 44, bg: PAL.sun }), 540, 1340);
+  }
+  if (id === 'pasos') {
+    const steps = [[sh.i0, 'Hablar con calma', 'Correa y bolsa', PAL.coral], [sh.i0 + 1, 'Patronato', 'Acuerdo de convivencia', PAL.teal], [sh.i0 + 2, 'Municipalidad', 'Si hay mordidas o riesgo', PAL.purple]];
+    const act = steps.findLastIndex(([si]) => t >= S(si) - .2);
+    s += bg(steps[Math.max(0, act)][3], PAL.navy, t, { op: .07 });
+    steps.forEach(([si, a, b, c], k) => {
+      const p = prog(t, S(si) - .2, S(si) + .2), y = 520 + k * 200, on = k === act;
+      s += slideIn(p, `<g filter="url(#dsh)" opacity="${on ? 1 : .7}"><rect x="90" y="${y - 80}" width="900" height="170" rx="34" fill="#fff" stroke="${PAL.navy}" stroke-width="${on ? 9 : 6}"/><circle cx="180" cy="${y + 5}" r="56" fill="${c}" stroke="${PAL.navy}" stroke-width="6"/><text x="180" y="${y + 28}" ${F} font-weight="900" font-size="64" text-anchor="middle" fill="#fff">${k + 1}</text><text x="270" y="${y - 4}" ${F} font-weight="900" font-size="54" fill="${PAL.navy}">${a}</text><text x="270" y="${y + 52}" ${F} font-weight="700" font-size="38" fill="#5A6478">${b}</text></g>`, k % 2 ? 900 : -900);
+    });
+    if (act === 0) s += stk(dog(lerp(-200, 760, prog(t, S(sh.i0) + .4, E(sh.i0))), 1290, .55, t, { happy: true, tongue: true })) + `<g transform="translate(${lerp(-200, 760, prog(t, S(sh.i0) + .4, E(sh.i0))) - 220},1290)">${stk(person({ ...BETO, x: 0, y: 0, s: .45, expr: 'content', walk: t * 9, walkAmt: 1, arms: { r: [8, 4], l: [70, 10] } }))}</g>`;
+    if (act === 1) s += pop(prog(t, S(sh.i0 + 1), S(sh.i0 + 1) + .3), `<g filter="url(#dsh)" transform="translate(540,1170) rotate(-4)"><rect x="-150" y="-90" width="300" height="200" rx="16" fill="#fff" stroke="${PAL.navy}" stroke-width="6"/><rect x="-150" y="-90" width="300" height="50" rx="16" fill="${PAL.teal}" stroke="${PAL.navy}" stroke-width="6"/><text y="-55" ${F} font-weight="900" font-size="28" text-anchor="middle" fill="#fff">ACUERDO</text><path d="M-110 0 h170 M-110 40 h130" stroke="#C9C2B6" stroke-width="10" stroke-linecap="round"/>${check(110, 60, .6)}</g>`, 540, 1170);
+    if (act === 2) s += pop(prog(t, S(sh.i0 + 2), S(sh.i0 + 2) + .3), icoMuni(540, 1240, 1.4), 540, 1240);
+  }
+  if (id === 'final') {
+    s += bg(PAL.sun, '#FF9F43', t, { rays: true, ry: 1100 }) + groundBand(1150);
+    s += houseFront(540, 1150, 1.05);
+    const wx = lerp(1300, 520, easeOut(prog(u, 0, 1.6)));
+    s += stk(dog(wx, 1270, .8, t, { happy: true, tongue: true, flip: true }));
+    s += `<g transform="translate(${wx + 240},1290)">${stk(person({ ...BETO, x: 0, y: 0, s: .55, expr: 'happy', walk: t * 9, walkAmt: u < 1.6 ? 1 : 0, arms: { r: [70, 10], l: [8, 4] }, hold: { l: (hx, hy) => bag(hx, hy + 40, .7) } }))}</g>`;
+    s += `<path d="M${wx + 100} 1150 Q${wx + 160} 1180 ${wx + 190} 1110" stroke="${PAL.coral}" stroke-width="7" fill="none"/>`;
+    s += P(TERE, t, .2, { x: 160, y: 1290, s: .55, expr: 'big', arms: POSE.thumb, thumb: { l: true } });
+    s += headline('UN BUEN DUEÑO\nHACE BUENOS VECINOS', prog(u, .3, .7), 470, { fs: 72, c: '#fff' });
+    [[300, 800], [800, 820], [560, 700]].forEach(([x, y], k) => s += `<g opacity="${.5 + .5 * Math.sin(t * 4 + k)}">${sparkle(x, y, 1)}</g>`);
+  }
+  if (id === 'cierre') {
+    s += bg(PAL.navy, '#14335A', t, { rays: true, ry: 760 });
+    const p = prog(u, .1, .8);
+    s += `<g transform="translate(540,760) scale(${lerp(.3, 1, easeBack(p))}) rotate(${lerp(-40, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="250" fill="#fff" filter="url(#dsh)"/><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    s += headline('CONAFEPH', prog(u, .6, 1), 1130, { fs: 110, c: '#fff', rot: 0 });
+    s += pop(prog(u, 1.1, 1.4), chip(540, 1290, 'Orientación para patronatos', { fs: 44, bg: PAL.sun }), 540, 1290);
+  }
+  return { s, z, zx, zy };
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const { s, z, zx, zy } = scene(sh, t);
+  // transición tipo "punch": zoom rápido al entrar a cada toma
+  const pin = 1 + (1 - easeOut(clamp((t - sh.start) / .28))) * .12;
+  const flash = k > 0 ? clamp(1 - (t - sh.start) / .12) : 0;
+  let out = DEFS + `<rect width="1080" height="1920" fill="#0E2A47"/>`;
+  out += `<g transform="translate(${zx},${zy}) scale(${z * pin}) translate(${-zx},${-zy})">${s}</g>`;
+  if (flash > 0) out += `<rect width="1080" height="1920" fill="#fff" opacity="${flash * .6}"/>`;
+  if (sh.scene !== 'cierre') out += captions(t) + brand;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
