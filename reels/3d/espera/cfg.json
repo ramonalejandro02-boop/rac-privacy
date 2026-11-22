@@ -1,0 +1,8 @@
+[
+ {"img": "espera/escena1.png", "zoom": [1.0, 1.14], "pan": [0, 40, 0, -30], "fog": 0.25, "sparkles": {"n": 30, "y": [0, 0.45], "a": 0.5}},
+ {"img": "espera/escena2.png", "zoom": [1.12, 1.02], "pan": [0, -20, 0, 20], "rain": 0.25, "fog": 0.12},
+ {"img": "espera/escena3.png", "zoom": [1.0, 1.12], "pan": [0, 30, 0, -40], "fog": 0.3, "flash": 3.0},
+ {"img": "espera/escena4.png", "zoom": [1.12, 1.0], "pan": [0, 50, 0, 0], "beam": {"x": 0.5, "a": 0.14}, "sparkles": {"n": 40, "y": [0.1, 0.8], "a": 0.8}, "rise": true},
+ {"img": "espera/escena5.png", "zoom": [1.0, 1.15], "pan": [30, 0, -30, -40], "sparkles": {"n": 30, "y": [0.1, 0.7], "a": 0.7}, "fog": 0.1},
+ {"img": "espera/escena6.png", "zoom": [1.15, 1.0], "pan": [0, -30, 0, 20], "beam": {"x": 0.5, "a": 0.16}, "sparkles": {"n": 45, "y": [0.05, 0.7], "a": 0.9}}
+]

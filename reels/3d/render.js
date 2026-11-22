@@ -7,7 +7,7 @@ const root = __dirname;
 const srv = http.createServer((q, r) => {
   const f = path.join(root, decodeURIComponent(q.url.split('?')[0]));
   if (!fs.existsSync(f)) { r.writeHead(404); return r.end(); }
-  r.writeHead(200, { 'Content-Type': f.endsWith('.js') ? 'text/javascript' : f.endsWith('.png') ? 'image/png' : f.endsWith('.jpg') ? 'image/jpeg' : 'text/html' }); fs.createReadStream(f).pipe(r);
+  r.writeHead(200, { 'Content-Type': f.endsWith('.js') ? 'text/javascript' : f.endsWith('.png') ? 'image/png' : f.endsWith('.jpg') ? 'image/jpeg' : f.endsWith('.json') ? 'application/json' : 'text/html' }); fs.createReadStream(f).pipe(r);
 }).listen(8765);
 (async () => {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });

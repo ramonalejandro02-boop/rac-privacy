@@ -19,7 +19,7 @@ W, H, FPS, SR = 1080, 1920, 30, 44100
 HERE = os.path.dirname(os.path.abspath(__file__))
 F_BLACK = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
 YELLOW, WHITE = (255, 212, 0), (255, 255, 255)
-BRAND = "@Alejandro Curiosidades"
+BRAND = ""  # sin marca de agua (pedido del dueño)
 GOLD = (242, 193, 78)
 ESTILO = os.environ.get("ESTILO", "cine")
 SOBRIO = ESTILO in ("cine", "ilustrado")  # sin whoosh ni golpes, fundidos suaves  # "cine" (elegante, adultos) o "viral" (recuadros amarillos)
@@ -32,6 +32,14 @@ GUIONES = {
         dict(dur=5, texto="Y un día… el cielo se oscureció. Y comenzó a *LLOVER*.", sfx="trueno"),
         dict(dur=9, texto="Hebreos 11:7: Por la fe Noé, cuando fue advertido por Dios acerca de cosas que *AÚN* *NO* *SE* *VEÍAN*… preparó el arca."),
         dict(dur=8, texto="Lo que Dios te prometió, aunque hoy no lo veas… va a *LLEGAR*. Escribe *LO* *CREO* si estás construyendo tu arca."),
+    ],
+    "espera": [
+        dict(texto="Si estás esperando algo de Dios, y sientes que se está tardando, mira esto."),
+        dict(texto="A veces oras, y oras, y parece que nada *CAMBIA*."),
+        dict(texto="Pero el silencio de Dios no significa que se *OLVIDÓ* de ti."),
+        dict(texto="Mientras tú esperas, Él está acomodando cosas que todavía no puedes *VER*."),
+        dict(texto="Isaías 40:31 dice: Los que esperan a Jehová tendrán *NUEVAS* *FUERZAS*. Levantarán alas como las águilas."),
+        dict(texto="No te rindas. Lo que Dios empezó en ti, lo va a *TERMINAR*. Si lo crees, escribe: *AMÉN*."),
     ],
     "soyyo": [
         dict(texto="Este video es para ti, que siempre estás para todos, pero *NADIE* te pregunta cómo estás."),
@@ -162,11 +170,11 @@ F_SEMI = "/usr/share/fonts/opentype/inter/Inter-SemiBold.otf"
 F_BOLD = "/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf"
 def draw_caption_ilus(img, chunk, t):
     """Estilo de referencia: arriba, palabras dichas en gris, palabra actual en blanco y negrita; clave con caja suave."""
-    size = 62; fr, fb = ImageFont.truetype(F_SEMI, size), ImageFont.truetype(F_BOLD, size); sp = 18
+    size = 50; fr, fb = ImageFont.truetype(F_SEMI, size), ImageFont.truetype(F_BOLD, size); sp = 15
     ws = [fb.getlength(w["w"]) for w in chunk]; total = sum(ws) + sp * (len(chunk) - 1)
     lines, cur, cw = [], [], 0
     for w, ww in zip(chunk, ws):
-        if cur and cw + sp + ww > 900: lines.append(cur); cur, cw = [], 0
+        if cur and cw + sp + ww > 820: lines.append(cur); cur, cw = [], 0
         cur.append((w, ww)); cw += (sp if len(cur) > 1 else 0) + ww
     if cur: lines.append(cur)
     lay = Image.new("RGBA", (W, 300), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
@@ -182,7 +190,8 @@ def draw_caption_ilus(img, chunk, t):
             x += ww + sp
     sh = lay.getchannel("A").filter(ImageFilter.GaussianBlur(8)).point(lambda v: int(v * 0.45))
     shadow = Image.new("RGBA", lay.size, (0, 0, 0, 0)); shadow.putalpha(sh)
-    img.alpha_composite(shadow, (0, 300)); img.alpha_composite(lay, (0, 296))
+    yc = int(H * 0.5) - 40 - len(lines) * int(size * 1.25) // 2  # centrado en la pantalla
+    img.alpha_composite(shadow, (0, yc + 4)); img.alpha_composite(lay, (0, yc))
 
 def draw_caption(img, chunk, t):
     size = 92; f = font(size); sp = 26
@@ -313,7 +322,9 @@ def main(name):
             cur = next((c for c in g["chunks"] if c[0]["t0"] - 0.02 <= t < c[-1]["t1"] + 0.25), None)
             if cur: (draw_caption_ilus if ESTILO == "ilustrado" else draw_caption)(img, cur, t)
             d = ImageDraw.Draw(img)
-            if ESTILO == "ilustrado":
+            if not BRAND:
+                pass
+            elif ESTILO == "ilustrado":
                 d.text((W / 2, 112), BRAND, font=ImageFont.truetype(F_SEMI, 30), fill=(255, 255, 255, 150), anchor="mm")
             else:
                 d.rectangle([0, 0, W, 14], fill=(0, 0, 0, 120)); d.rectangle([0, 0, int(W * t / total), 14], fill=(GOLD if ESTILO == "cine" else YELLOW) + (255,))
