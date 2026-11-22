@@ -170,7 +170,7 @@ F_SEMI = "/usr/share/fonts/opentype/inter/Inter-SemiBold.otf"
 F_BOLD = "/usr/share/fonts/opentype/inter/InterDisplay-Bold.otf"
 def draw_caption_ilus(img, chunk, t):
     """Estilo de referencia: arriba, palabras dichas en gris, palabra actual en blanco y negrita; clave con caja suave."""
-    size = 50; fr, fb = ImageFont.truetype(F_SEMI, size), ImageFont.truetype(F_BOLD, size); sp = 15
+    size = 50; fr, fb = ImageFont.truetype(F_SEMI, size), ImageFont.truetype(F_BOLD, size); sp = 22
     ws = [fb.getlength(w["w"]) for w in chunk]; total = sum(ws) + sp * (len(chunk) - 1)
     lines, cur, cw = [], [], 0
     for w, ww in zip(chunk, ws):
