@@ -1,0 +1,74 @@
+{
+ "titulo": "La rampa del vecino que se adueñó de la acera",
+ "lead": 0.3,
+ "tail": 3.4,
+ "music": 0.09,
+ "whoosh": [],
+ "segments": [
+  {
+   "scene": "hook",
+   "text": "Don Fredy construyó una rampa de cemento en la acera, para subir su carro a la cochera.",
+   "pause": 0.2
+  },
+  {
+   "scene": "calle",
+   "text": "Ahora doña Carmen tiene que bajar a la calle con el coche de su bebé, entre los carros.",
+   "pause": 0.25
+  },
+  {
+   "scene": "pleito",
+   "who": "carmen",
+   "voice": "ef_dora",
+   "text": "¡Usted se adueñó de la acera! Me tengo que tirar a la calle con mi niño.",
+   "pause": 0.2
+  },
+  {
+   "scene": "pleito",
+   "who": "fredy",
+   "voice": "em_santa",
+   "text": "Es el frente de mi casa. Sin la rampa, mi carro no sube.",
+   "pause": 0.3
+  },
+  {
+   "scene": "tension",
+   "text": "Él necesita entrar a su casa. Ella necesita caminar segura. Y la acera es de todos.",
+   "pause": 0.3
+  },
+  {
+   "scene": "saber",
+   "text": "Las aceras son espacio público: deben quedar libres, parejas y seguras, sobre todo para niños, adultos mayores, y personas con discapacidad.",
+   "pause": 0.3
+  },
+  {
+   "scene": "mito",
+   "text": "Pero romper la rampa a escondidas, o dañarle el carro, no arregla nada. Convierte un problema en una pelea.",
+   "pause": 0.3
+  },
+  {
+   "scene": "pasos",
+   "text": "Lo que funciona: primero, hablar y buscar opciones, como una rampa que no corte el paso.",
+   "pause": 0.2
+  },
+  {
+   "scene": "pasos",
+   "text": "Segundo, llevar el caso al patronato, para un acuerdo en toda la calle.",
+   "pause": 0.2
+  },
+  {
+   "scene": "pasos",
+   "text": "Y tercero, buscar orientación en CONAFEPH antes de que el conflicto crezca.",
+   "say": "Y tercero, buscar orientación en Conafép antes de que el conflicto crezca.",
+   "pause": 0.3
+  },
+  {
+   "scene": "final",
+   "text": "La acera es de todos, y en ella cabemos todos.",
+   "pause": 0.35
+  },
+  {
+   "scene": "cierre",
+   "text": "CONAFEPH: orientación para patronatos y comunidades.",
+   "say": "Conafép: orientación para patronatos y comunidades."
+  }
+ ]
+}

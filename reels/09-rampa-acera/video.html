@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 09 · La rampa en la acera</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0E2A47}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as Z from '../motor/cartoon.js';
+const { K, C, clamp, lerp, ease, easeOut, easeBack, prog, person, POSE, bubble, check, cross, icoMuni, anger, sparkle, sweat, excl } = Z;
+
+await Promise.all(['700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const env = t => ENV[Math.min(ENV.length - 1, Math.max(0, Math.floor(t * 30)))] || 0;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) { const ws = SEG[i].words || [], n = norm(word); const w = ws.find(x => norm(x.w).startsWith(n)); if (w) return end ? w.e : w.s; const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length); return S(i) + (E(i) - S(i)) * Math.max(0, k); }
+const speaking = (i, t) => (SEG[i].words?.length ? SEG[i].words.some(w => t >= w.s - .03 && t <= w.e + .04) : (t > S(i) && t < E(i)));
+const mouth = (i, t) => speaking(i, t) ? clamp(.25 + env(t) * 1.25) : 0;
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .2; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+const LOGO = '../motor/assets/conafeph-logo.png';
+const F = 'font-family="Brand"';
+
+// ---------- estilo "pop sticker" ----------
+const PAL = { navy: '#0E2A47', coral: '#FF6B5B', sun: '#FFC93C', teal: '#1FB5A6', blue: '#3D7BF7', pink: '#FF5FA2', green: '#22B35E', cream: '#FFF6E5', purple: '#7B5CFF' };
+const DEFS = `<defs>
+<filter id="stk" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/><feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="o"/><feDropShadow in="o" dx="0" dy="12" stdDeviation="10" flood-color="#0E2A47" flood-opacity=".35" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="dsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#0E2A47" flood-opacity=".35"/></filter>
+</defs>`;
+function bg(c1, c2, t, o = {}) { // fondo de color con formas suaves
+  let s = `<defs><linearGradient id="g${c1.slice(1)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#g${c1.slice(1)})"/>`;
+  const r = [[180, 520, 260], [900, 760, 340], [300, 1500, 300], [880, 1650, 220]];
+  r.forEach(([x, y, rr], k) => s += `<circle cx="${x + Math.sin(t * .5 + k) * 20}" cy="${y + Math.cos(t * .4 + k) * 20}" r="${rr}" fill="#fff" opacity="${o.op ?? .08}"/>`);
+  if (o.rays) for (let k = 0; k < 12; k++) s += `<path d="M540 ${o.ry ?? 900} L${540 + Math.cos(k * Math.PI / 6 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + t * .2) * 1600} L${540 + Math.cos(k * Math.PI / 6 + .18 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + .18 + t * .2) * 1600}Z" fill="#fff" opacity=".06"/>`;
+  return s;
+}
+const stk = svg => `<g filter="url(#stk)">${svg}</g>`;
+function headline(text, p, y = 520, o = {}) { // título grande con sombra 3D
+  if (p <= 0) return '';
+  const fs = o.fs ?? 104, k = easeBack(p), rot = (o.rot ?? -3) * (1 - p) + (o.rot ?? -3);
+  return `<g transform="translate(540,${y}) rotate(${rot}) scale(${lerp(.4, 1, k)})" opacity="${clamp(p * 2)}">${text.split('\n').map((l, i) => `<text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${PAL.navy}" transform="translate(7,9)">${l}</text><text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.c ?? '#fff'}" stroke="${PAL.navy}" stroke-width="8" paint-order="stroke" stroke-linejoin="round">${l}</text>`).join('')}</g>`;
+}
+function chip(x, y, text, o = {}) { const fs = o.fs ?? 44, w = text.length * fs * .64 + 60, h = fs * 1.6; return `<g filter="url(#dsh)" transform="translate(${x},${y}) rotate(${o.rot ?? 0})"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${o.bg ?? '#fff'}" stroke="${PAL.navy}" stroke-width="6"/><text y="${fs * .36}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.fg ?? PAL.navy}">${text}</text></g>`; }
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})">${svg}</g>`;
+const slideIn = (p, svg, dx) => p <= 0 ? '' : `<g transform="translate(${(1 - easeOut(p)) * dx},0)" opacity="${clamp(p * 1.5)}">${svg}</g>`;
+
+// personajes nuevos de este video
+const FREDY = { skin: '#C68A60', shirt: '#7B5CFF', pants: '#2F3B4A', hair: '#1A1412', style: 'short', beard: '#2A1E18', collar: '#fff' };
+const CARMEN = { skin: '#D9A27A', shirt: '#1FB5A6', skirt: '#FF6B5B', hair: '#3A2418', style: 'long', collar: '#fff' };
+const ASESOR3 = { skin: '#B9784F', shirt: '#22B35E', pants: '#0E2A47', hair: '#2A1E18', style: 'short', cap: '#22B35E', badge: LOGO, collar: '#fff' };
+const blink = (t, o) => ((t + o) % 3.2) < .13;
+const P = (b, t, o, x) => stk(person({ ...b, blink: blink(t, o), bob: Math.sin(t * 2.4 + o) * 3, ...x }));
+const FEET = 1290;
+const SW = 1180; // nivel de la acera
+function street(o = {}) { // acera y calle de perfil
+  let s = `<rect x="-20" y="${SW}" width="1120" height="40" fill="#D9D2C3" stroke="${K}" stroke-width="5"/><rect x="-20" y="${SW + 40}" width="1120" height="700" fill="#4A4F5C"/>`;
+  for (let x = 0; x < 1100; x += 200) s += `<rect x="${x}" y="${SW + 280}" width="110" height="12" rx="6" fill="#fff" opacity=".8"/>`;
+  return s;
+}
+function bigRamp(x, w, p = 1) { // rampa que tapa toda la acera
+  if (p <= 0) return '';
+  return `<path d="M${x} ${SW} L${x + w} ${SW - 70 * p} L${x + w} ${SW + 40} L${x - 120 * p} ${SW + 40}Z" fill="#B9B1A2" stroke="${K}" stroke-width="6" stroke-linejoin="round"/>` + [0, 1, 2].map(k => `<path d="M${x + 40 + k * 90} ${SW + 10} l40 -20" stroke="#8C8578" stroke-width="5"/>`).join('');
+}
+function goodRamp(x) { return `<path d="M${x - 60} ${SW + 40} L${x} ${SW + 10} L${x + 160} ${SW + 10} L${x + 220} ${SW + 40}Z" fill="#B9D9A0" stroke="${K}" stroke-width="5"/>`; }
+function stroller(x, y, s = 1, t = 0) {
+  return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-90 -120 Q-90 -210 0 -210 L0 -120Z" fill="${PAL.pink}" stroke="${K}" stroke-width="6"/><rect x="-100" y="-130" width="190" height="70" rx="20" fill="${PAL.sun}" stroke="${K}" stroke-width="6"/><path d="M90 -120 L150 -200" stroke="${K}" stroke-width="10" stroke-linecap="round"/>${[-60, 50].map(wx => `<circle cx="${wx}" cy="-30" r="28" fill="#2A2F36" stroke="${K}" stroke-width="5"/><circle cx="${wx}" cy="-30" r="10" fill="#C8CDD4" transform="rotate(${t * 200} ${wx} -30)"/>`).join('')}<circle cx="-40" cy="-150" r="22" fill="#E9B48A" stroke="${K}" stroke-width="4"/></g>`;
+}
+const speed = (x, y, a) => a <= 0 ? '' : [0, 1, 2].map(k => `<path d="M${x - k * 26} ${y - 120 + k * 50} h-${110 + k * 30}" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity="${a * (1 - k * .2)}"/>`).join('');
+const wheelchairIco = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><circle cx="0" cy="-70" r="16" fill="${PAL.navy}"/><path d="M0 -50 v50 h46 l20 40" stroke="${PAL.navy}" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="-6" cy="30" r="40" fill="none" stroke="${PAL.navy}" stroke-width="10"/></g>`;
+const caneIco = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><circle cx="0" cy="-80" r="16" fill="${PAL.navy}"/><path d="M0 -60 q-10 40 0 70 M0 10 l-14 46 M0 10 l14 46 M10 -40 l30 20 v76" stroke="${PAL.navy}" stroke-width="12" fill="none" stroke-linecap="round"/></g>`;
+const kidIco = (x, y, s = 1) => `<g transform="translate(${x},${y}) scale(${s})"><circle cx="0" cy="-50" r="18" fill="${PAL.navy}"/><path d="M0 -30 v40 M-20 -10 h40 M0 10 l-14 36 M0 10 l14 36" stroke="${PAL.navy}" stroke-width="12" fill="none" stroke-linecap="round"/></g>`;
+const hammer = (x, y, s = 1, rot = -30) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s})"><rect x="-10" y="-20" width="20" height="160" rx="8" fill="#8A5A3B" stroke="${PAL.navy}" stroke-width="6"/><rect x="-60" y="-50" width="120" height="44" rx="10" fill="#6B7280" stroke="${PAL.navy}" stroke-width="6"/></g>`;
+function houseSide(x, y, s, c) { return `<g transform="translate(${x},${y}) scale(${s})" filter="url(#dsh)"><rect x="-260" y="-360" width="520" height="360" rx="12" fill="${c}" stroke="${K}" stroke-width="7"/><path d="M-290 -360 L0 -480 L290 -360Z" fill="${PAL.coral}" stroke="${K}" stroke-width="7" stroke-linejoin="round"/><rect x="-200" y="-250" width="240" height="250" fill="#5A6478" stroke="${K}" stroke-width="7"/>${[1, 2, 3, 4, 5].map(k => `<path d="M-200 ${-250 + k * 42} h240" stroke="${K}" stroke-width="4"/>`).join('')}<rect x="90" y="-260" width="120" height="100" fill="#BFE6FF" stroke="${K}" stroke-width="6"/></g>`; }
+// ---------- subtítulos (palabra actual en píldora amarilla) ----------
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (s, fs) => { cv.font = `800 ${fs}px Brand`; return cv.measureText(s).width; };
+const CH = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  const sw = s.text.split(' '), aw = s.words || [], ws = []; let j = 0;
+  sw.forEach(w => { let hit = -1; for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } } if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null }); });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 20 || (/[.?!:,]$/.test(w.w) && len > 8) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .05, e: ws[k + 1] ? ws[k + 1].s - .05 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const fs = 58, gap = 16; let cur = -1; c.words.forEach((w, k) => { if (t >= w.s - .02) cur = k; });
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, fs) }));
+  const total = items.reduce((a, b) => a + b.wd, 0) + gap * (items.length - 1);
+  let x = 540 - total / 2, s = '';
+  items.forEach((it, k) => {
+    if (k === cur) s += `<rect x="${x - 12}" y="${1352 - 52}" width="${it.wd + 24}" height="72" rx="14" fill="${PAL.sun}" stroke="${PAL.navy}" stroke-width="5"/>`;
+    s += `<text x="${x}" y="${1352}" ${F} font-weight="800" font-size="${fs}" fill="${k === cur ? PAL.navy : '#fff'}" ${k === cur ? '' : `stroke="${PAL.navy}" stroke-width="10" paint-order="stroke" stroke-linejoin="round"`} opacity="${k <= cur ? 1 : .55}">${it.w}</text>`;
+    x += it.wd + gap;
+  });
+  return s;
+}
+const brand = `<g filter="url(#dsh)"><rect x="380" y="262" width="320" height="66" rx="33" fill="#fff" stroke="${PAL.navy}" stroke-width="5"/><image href="${LOGO}" x="386" y="265" width="60" height="60"/><text x="566" y="307" ${F} font-weight="900" font-size="32" text-anchor="middle" fill="${PAL.navy}" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas ----------
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene, D = sh.end - sh.start; let s = '', z = 1, zx = 540, zy = 960;
+  if (id === 'hook') {
+    const ra = wt(i, 'rampa'), ac = wt(i, 'acera'), ca = wt(i, 'carro');
+    s += bg('#9AD7FF', '#E9F7FF', t, { op: .14 }) + street();
+    s += houseSide(320, SW, .9, '#FFE8B8');
+    s += bigRamp(170, 330, prog(t, ra - .2, ra + .6));
+    const cx = lerp(1300, 300, easeOut(prog(t, ca - .2, ca + 1.2)));
+    s += stk(Z.car(cx, SW - 40 - (cx < 520 ? 60 : 0), '#FF6B5B', { s: .6, len: 1.4, wheel: cx * 2 }));
+    s += P(FREDY, t, 1, { x: 800, y: FEET - 110, s: .55, expr: 'happy', arms: POSE.thumb, thumb: { l: true } });
+    s += headline('SE ADUEÑÓ\nDE LA ACERA', prog(t, ac - .2, ac + .1), 440, { fs: 90, c: '#fff' });
+    if (t > ra) s += pop(prog(t, ra + .3, ra + .6), chip(330, 760, 'Rampa de cemento', { fs: 38, rot: -4 }), 330, 760);
+    z = lerp(1, 1.05, ease(u / D)); zy = 1000;
+  }
+  if (id === 'calle') {
+    const ba = wt(i, 'bajar'), ca = wt(i, 'carros');
+    s += bg('#9AD7FF', '#E9F7FF', t, { op: .14 }) + street() + bigRamp(170, 330, 1);
+    const onStreet = t > ba;
+    const cx = onStreet ? lerp(820, 640, prog(t, ba, ba + 1.5)) : 820;
+    s += stroller(cx - 170, onStreet ? SW + 150 : SW, .7, t) + P(CARMEN, t, .2, { x: cx, y: onStreet ? SW + 150 : SW, s: .5, expr: onStreet ? 'worried' : 'neutral', arms: { r: [12, 4], l: [70, 10] } });
+    const vx = lerp(-400, 1500, prog(t, ca - .6, ca + 1.4));
+    if (t > ca - .6) s += speed(vx - 250, SW + 260, 1) + stk(Z.car(vx, SW + 290, '#3D7BF7', { s: .6, len: 1.4, wheel: vx * 2, flip: false }));
+    s += headline('¡A LA CALLE!', prog(t, ba - .2, ba + .1), 440, { fs: 100, c: PAL.coral });
+    if (t > ca - .3) s += pop(prog(t, ca - .3, ca), chip(540, 700, 'Entre los carros', { fs: 42, bg: PAL.sun }), 540, 700);
+  }
+  if (id === 'pleito') {
+    const qc = sh.i0, qf = sh.i1, fT = t >= S(qf) - .15;
+    s += bg(fT ? PAL.purple : PAL.teal, fT ? '#4A35B0' : '#0E6E6A', t) + street();
+    s += bigRamp(380, 300, 1);
+    s += stroller(140, FEET - 110, .55, 0);
+    s += P(CARMEN, t, .2, { x: 300, y: FEET, s: .92, expr: 'angry', talk: mouth(qc, t), arms: !fT ? POSE.point : POSE.cross, look: 1 });
+    s += P(FREDY, t, 1, { x: 800, y: FEET, s: .92, expr: fT ? 'smug' : 'worried', talk: mouth(qf, t), arms: fT ? POSE.shrug : POSE.idle, look: -1 });
+    const say = (q, lines, o) => { const ws = SEG[q].words || [], tok = lines.map(l => l.split(' ')), tot = tok.flat().length, said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * tot / ws.length) : tot; let wi = 0; return pop(prog(t, S(q) - .2, S(q) + .05), stk(bubble(540, 640, tok.map(r => r.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : .15}">${w}</tspan>`).join(' ')), { ...o, fs: 50 })), 540, 580); };
+    s += !fT ? say(qc, ['¡Usted se adueñó de la acera!', 'Me tiro a la calle con mi niño.'], { who: 'DOÑA CARMEN', tail: -220, w: 900 }) : say(qf, ['Es el frente de mi casa.', 'Sin la rampa, mi carro no sube.'], { who: 'DON FREDY', tail: 220, tailDx: 260, w: 880, bg: PAL.navy, fg: '#fff' });
+  }
+  if (id === 'tension') {
+    const en = wt(i, 'entrar'), se = wt(i, 'segura'), to = wt(i, 'todos');
+    const split = easeOut(prog(u, 0, .5));
+    s += `<rect width="1080" height="1920" fill="${PAL.purple}"/><rect x="${lerp(1080, 540, split)}" y="0" width="560" height="1920" fill="${PAL.teal}"/><path d="M${lerp(1080, 540, split)} 0 V1920" stroke="${PAL.navy}" stroke-width="10"/>`;
+    s += P(FREDY, t, 1, { x: 280, y: FEET - 50, s: .68, expr: 'neutral', arms: POSE.hips });
+    s += P(CARMEN, t, .2, { x: 800, y: FEET - 50, s: .68, expr: 'neutral', arms: { r: [12, 4], l: [70, 10] } }) + stroller(640, FEET - 50, .5, 0);
+    s += pop(prog(t, en - .2, en + .1), chip(270, 580, 'ENTRAR', { fs: 56, rot: -4 }), 270, 580);
+    s += pop(prog(t, se - .2, se + .1), chip(810, 580, 'CAMINAR', { fs: 56, rot: 4 }), 810, 580);
+    s += pop(prog(t, to - .3, to), chip(540, 1240, 'La acera es de todos', { fs: 48, bg: PAL.sun }), 540, 1240);
+  }
+  if (id === 'saber') {
+    const es = wt(i, 'espacio'), li = wt(i, 'libres'), ni = wt(i, 'ninos'), ad = wt(i, 'adultos'), di = wt(i, 'discapacidad');
+    s += bg(PAL.green, '#14804A', t, { rays: true });
+    s += headline('ESPACIO\nPÚBLICO', prog(t, es - .3, es), 440, { fs: 100, c: PAL.sun });
+    ['Libres', 'Parejas', 'Seguras'].forEach((w, k) => { const p = prog(t, li - .2 + k * .35, li + .1 + k * .35); s += pop(p, chip(240 + k * 300, 740, w, { fs: 44, bg: '#fff', rot: k % 2 ? 3 : -3 }), 240 + k * 300, 740); });
+    s += pop(prog(t, ni - .2, ni + .1), `<g filter="url(#dsh)"><circle cx="260" cy="1010" r="110" fill="#fff" stroke="${PAL.navy}" stroke-width="7"/>${kidIco(260, 1040, 1.4)}</g>`, 260, 1010);
+    s += pop(prog(t, ad - .2, ad + .1), `<g filter="url(#dsh)"><circle cx="540" cy="1010" r="110" fill="#fff" stroke="${PAL.navy}" stroke-width="7"/>${caneIco(540, 1040, 1.3)}</g>`, 540, 1010);
+    s += pop(prog(t, di - .2, di + .1), `<g filter="url(#dsh)"><circle cx="820" cy="1010" r="110" fill="#fff" stroke="${PAL.navy}" stroke-width="7"/>${wheelchairIco(820, 1030, 1.3)}</g>`, 820, 1010);
+  }
+  if (id === 'mito') {
+    const ro = wt(i, 'romper'), da = wt(i, 'danarle'), ar = wt(i, 'arregla'), pl = wt(i, 'pelea');
+    s += bg('#3A1230', '#1A0E2E', t, { op: .05 });
+    s += slideIn(prog(t, ro - .3, ro), `<g transform="rotate(-3 540 640)">${chip(540, 640, 'Romper la rampa a escondidas', { fs: 42 })}</g>`, -900);
+    s += pop(prog(t, ro, ro + .3), hammer(880, 780, 1, -30 + Math.sin(t * 12) * 10), 880, 780);
+    s += slideIn(prog(t, da - .3, da), `<g transform="rotate(3 540 820)">${chip(540, 820, 'Dañarle el carro', { fs: 50 })}</g>`, 900);
+    const xp = prog(t, ar - .3, ar); if (xp > 0) s += `<path d="M150 580 L930 880 M930 580 L150 880" stroke="${PAL.coral}" stroke-width="24" stroke-linecap="round" opacity="${xp}"/>`;
+    s += headline('NO ARREGLA\nNADA', prog(t, ar - .2, ar + .1), 1060, { fs: 100, c: PAL.coral });
+    s += pop(prog(t, pl - .2, pl + .1), chip(540, 1250, 'Se vuelve una pelea', { fs: 44, bg: PAL.sun }), 540, 1250);
+  }
+  if (id === 'pasos') {
+    const steps = [[sh.i0, 'Hablar y buscar opciones', 'Una rampa que no corte el paso', PAL.coral], [sh.i0 + 1, 'Patronato', 'Acuerdo en toda la calle', PAL.blue], [sh.i0 + 2, 'Orientación', 'en CONAFEPH', PAL.green]];
+    const act = steps.findLastIndex(([si]) => t >= S(si) - .2);
+    s += bg(['#FF8A7A', '#7FA8FF', '#5FD08E'][Math.max(0, act)], PAL.navy, t, { op: .08 });
+    steps.forEach(([si, a, b, c], k) => {
+      const p = prog(t, S(si) - .2, S(si) + .2), y = 470 + k * 190, on = k === act;
+      s += slideIn(p, `<g filter="url(#dsh)" opacity="${on ? 1 : .72}"><rect x="90" y="${y - 78}" width="870" height="160" rx="32" fill="#fff" stroke="${PAL.navy}" stroke-width="${on ? 9 : 6}"/><circle cx="176" cy="${y + 2}" r="54" fill="${c}" stroke="${PAL.navy}" stroke-width="6"/><text x="176" y="${y + 24}" ${F} font-weight="900" font-size="60" text-anchor="middle" fill="#fff">${k + 1}</text><text x="260" y="${y - 6}" ${F} font-weight="900" font-size="46" fill="${PAL.navy}">${a}</text><text x="260" y="${y + 46}" ${F} font-weight="700" font-size="34" fill="${k === 2 ? PAL.green : '#5A6478'}">${b}</text>${k === 2 ? `<image href="${LOGO}" x="840" y="${y - 54}" width="104" height="104"/>` : ''}</g>`, k % 2 ? 900 : -900);
+    });
+    s += P(ASESOR3, t, 2, { x: 250, y: FEET, s: .52, expr: 'happy', talk: Math.max(0, Math.sin(t * 10)) * .5, arms: { r: [12, 4], l: [130, 10] } });
+    s += pop(prog(u, .3, .6), chip(470, 1200, 'Asesor CONAFEPH', { fs: 36, bg: PAL.green, fg: '#fff' }), 470, 1200);
+    if (act === 0) s += pop(prog(t, S(sh.i0) + .8, S(sh.i0) + 1.1), `<g transform="translate(0,-120)"><rect x="560" y="${SW - 20}" width="400" height="160" fill="none"/><rect x="560" y="${SW}" width="400" height="30" fill="#D9D2C3" stroke="${K}" stroke-width="4"/>${goodRamp(690)}${check(900, SW - 50, .5)}</g>`, 760, SW - 120);
+  }
+  if (id === 'final') {
+    s += bg('#9AD7FF', '#E9F7FF', t, { op: .14 }) + street();
+    s += houseSide(320, SW, .9, '#FFE8B8') + goodRamp(240);
+    s += stk(Z.car(300, SW - 40, '#FF6B5B', { s: .55, len: 1.4 }));
+    const wx = lerp(1100, 760, easeOut(prog(u, 0, 1.6)));
+    s += stroller(wx - 150, SW, .6, t) + P(CARMEN, t, .2, { x: wx, y: SW, s: .48, expr: 'big', arms: { r: [12, 4], l: [70, 10] }, walk: t * 8, walkAmt: u < 1.6 ? 1 : 0 });
+    s += P(FREDY, t, 1, { x: 560, y: SW, s: .48, expr: 'happy', arms: POSE.wave });
+    s += headline('EN LA ACERA\nCABEMOS TODOS', prog(u, .2, .6), 440, { fs: 80, c: '#fff' });
+    [[300, 760], [760, 740], [540, 680]].forEach(([x, y], k) => s += `<g opacity="${.5 + .5 * Math.sin(t * 4 + k)}">${sparkle(x, y, 1)}</g>`);
+  }
+  if (id === 'cierre') {
+    s += bg(PAL.navy, '#14335A', t, { rays: true, ry: 760 });
+    const p = prog(u, .1, .8);
+    s += `<g transform="translate(540,760) scale(${lerp(.3, 1, easeBack(p))}) rotate(${lerp(-40, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="250" fill="#fff" filter="url(#dsh)"/><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    s += headline('CONAFEPH', prog(u, .6, 1), 1130, { fs: 110, c: '#fff', rot: 0 });
+    s += pop(prog(u, 1.1, 1.4), chip(540, 1280, 'Orientación para patronatos', { fs: 44, bg: PAL.sun }), 540, 1280);
+  }
+  return { s, z, zx, zy };
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const { s, z, zx, zy } = scene(sh, t);
+  // transición tipo "punch": zoom rápido al entrar a cada toma
+  const pin = 1 + (1 - easeOut(clamp((t - sh.start) / .28))) * .12;
+  const flash = k > 0 ? clamp(1 - (t - sh.start) / .12) : 0;
+  let out = DEFS + `<rect width="1080" height="1920" fill="#0E2A47"/>`;
+  out += `<g transform="translate(${zx},${zy}) scale(${z * pin}) translate(${-zx},${-zy})">${s}</g>`;
+  if (flash > 0) out += `<rect width="1080" height="1920" fill="#fff" opacity="${flash * .6}"/>`;
+  if (sh.scene !== 'cierre') out += captions(t) + brand;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
