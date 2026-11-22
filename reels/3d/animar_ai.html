@@ -13,8 +13,8 @@ const SC = CFG || [
   { img: 'ai/escena1.png', zoom: [1.0, 1.14], pan: [0, 40, 0, -40], fog: 0.35, sparkles: { n: 40, y: [0, 0.45], a: 0.7 }, tint: [20, 40, 70, 0.10] },
   { img: 'ai/escena2.png', zoom: [1.14, 1.04], pan: [0, -30, 0, 30], fog: 0.25, rain: 0.55, flash: 2.4, tint: [10, 20, 40, 0.15] },
   { img: 'ai/escena3.png', zoom: [1.02, 1.14], pan: [-30, 0, 30, -20], fog: 0.3, sparkles: { n: 24, y: [0.1, 0.6], a: 0.6 }, glowRise: [0.55, 0.62, 0.45] },
-  { img: 'ai/escena4.png', zoom: [1.12, 1.0], pan: [0, 60, 0, 0], beam: { x: 0.5, a: 0.35 }, sparkles: { n: 60, y: [0.05, 0.9], a: 1 }, rise: true },
-  { img: 'ai/escena5.png', zoom: [1.0, 1.12], pan: [0, 0, 0, -50], sparkles: { n: 55, y: [0.1, 0.8], a: 1 }, glowPulse: [0.5, 0.42, 0.5], fog: 0.2 },
+  { img: 'ai/escena4.png', zoom: [1.12, 1.0], pan: [0, 60, 0, 0], beam: { x: 0.5, a: 0.12 }, sparkles: { n: 60, y: [0.05, 0.9], a: 1 }, rise: true },
+  { img: 'ai/escena5.png', zoom: [1.0, 1.12], pan: [0, 0, 0, -50], sparkles: { n: 55, y: [0.1, 0.8], a: 1 }, glowPulse: [0.58, 0.44, 0.45], fog: 0.2 },
   { img: 'ai/escena6.png', zoom: [1.15, 1.0], pan: [0, -40, 0, 20], sparkles: { n: 45, y: [0.05, 0.7], a: 0.9 }, beam: { x: 0.5, a: 0.18 }, fog: 0.15 },
 ];
 const IMG = [];
@@ -23,7 +23,7 @@ const GRAIN = (() => { const c = off(540, 960), g = c.getContext('2d'), d = g.cr
 const FOG = (() => { const c = off(1600, 900), g = c.getContext('2d'); seed = 9; g.filter = 'blur(40px)'; for (let i = 0; i < 40; i++) { const x = rnd() * 1600, y = 300 + rnd() * 500, r = 80 + rnd() * 200; const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, 'rgba(220,230,240,0.35)'); gr.addColorStop(1, 'rgba(220,230,240,0)'); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r); } return c; })();
 function glow(x, y, r, c, a) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, `rgba(${c},${a})`); g.addColorStop(0.3, `rgba(${c},${a * 0.4})`); g.addColorStop(1, `rgba(${c},0)`); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, 2 * r, 2 * r); }
 function glint(x, y, s, a) { if (a <= 0.02) return; glow(x, y, s * 4, '255,236,190', a * 0.5); ctx.fillStyle = `rgba(255,250,235,${a})`; ctx.beginPath(); ctx.moveTo(x, y - s * 2.4); ctx.quadraticCurveTo(x, y, x + s * 2.4, y); ctx.quadraticCurveTo(x, y, x, y + s * 2.4); ctx.quadraticCurveTo(x, y, x - s * 2.4, y); ctx.quadraticCurveTo(x, y, x, y - s * 2.4); ctx.fill(); }
-let cur = 0;
+let cur = 0; const DQ = (new URLSearchParams(location.search).get('d') || '').split(',').map(Number); SC.forEach((x, i) => { if (DQ[i]) x.dur = DQ[i]; });
 window.setScene = async i => { cur = i; window.ready = false; if (!IMG[i]) IMG[i] = await load(SC[i].img); window.ready = true; };
 window.renderAt = t => {
   const s = SC[cur], im = IMG[cur], D = s.dur || 7, k = ease(t / D);
