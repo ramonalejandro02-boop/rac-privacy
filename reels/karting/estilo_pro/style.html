@@ -1,6 +1,7 @@
 <!doctype html><html><head><meta charset="utf-8"><style>@font-face{font-family:BC;src:url(bc_800.ttf);font-weight:100 900;font-style:italic}@font-face{font-family:BC6;src:url(bc_600.ttf);font-weight:100 900;font-style:italic}body{margin:0;background:#000}canvas{display:block}</style></head><body>
 <canvas id="c" width="3240" height="1920"></canvas><script src="helmet.js"></script><script>
 (async()=>{await document.fonts.load('italic 900 40px BC');await document.fonts.load('italic 600 40px BC6');
+const L=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=s;});const MO=await L('mo_white.png'),MOR=await L('mo_red.png'),PZ=await L('perzav_white.png'),WK=await L('willy_white.png');
 const cv=document.getElementById('c'),g=cv.getContext('2d');const W=1080,H=1920,RED='#E10600',INK='#0B0B0E';
 function carbon(){const c=document.createElement('canvas');c.width=c.height=24;const x=c.getContext('2d');x.fillStyle='#0d0d10';x.fillRect(0,0,24,24);
   for(let i=0;i<2;i++)for(let j=0;j<2;j++){const gr=x.createLinearGradient(i*12,j*12,i*12+12,j*12+12);const a=(i+j)%2;gr.addColorStop(0,a?'#1c1c22':'#121217');gr.addColorStop(1,a?'#121217':'#1c1c22');x.fillStyle=gr;x.fillRect(i*12,j*12,12,12);}return g.createPattern(c,'repeat');}
@@ -10,7 +11,7 @@ function txt(s,x,y,size,c,align,font){g.font=`italic 900 ${size}px ${font||'BC'}
 // FRAME A: hook / title
 g.save();bg();
 for(let i=0;i<9;i++){g.strokeStyle=`rgba(225,6,0,${0.08+i*0.02})`;g.lineWidth=3;g.beginPath();g.moveTo(-200+i*80,H);g.lineTo(700+i*80,0);g.stroke();}
-slash(-40,250,560,14,RED);txt('KARTING · TIP PRO',70,230,44,'#fff');txt('EP. 07',W-70,230,44,'rgba(255,255,255,0.5)','right');
+g.drawImage(MO,70,140,300,300*MO.height/MO.width);slash(-40,330,560,12,RED);txt('KARTING · TIP PRO',70,312,38,'#fff');txt('EP. 07',W-70,312,38,'rgba(255,255,255,0.5)','right');
 g.save();g.translate(540,820);g.scale(1.45,1.45);drawHelmet(g,{mood:'focus',look:{x:0.2,y:0}});g.restore();
 txt('¿CÓMO',80,1280,150,'#fff');txt('ADELANTAR?',80,1420,170,RED);
 slash(80,1460,420,70,'#fff');txt('EN 3 PASOS',110,1513,52,INK);
@@ -42,7 +43,7 @@ g.fillStyle='rgba(0,0,0,0.85)';g.fillRect(70,1640,940,100);slash(70,1640,22,100,
 g.restore();
 // FRAME C: mascot expressions
 g.save();g.translate(2160,0);bg();
-[['focus',300,420],['happy',780,420],['wow',300,1000],['angry',780,1000]].forEach(([m,x,y])=>{g.save();g.translate(x,y);g.scale(0.85,0.85);drawHelmet(g,{mood:m,look:{x:0,y:0}});g.restore();txt(m.toUpperCase(),x,y+260,40,'rgba(255,255,255,0.6)','center');});
-txt('MAURO',540,1560,150,'#fff','center');slash(300,1600,480,90,RED);txt('OSORTO  #2',540,1668,70,'#fff','center');
+[['focus',300,360],['happy',780,360],['wow',300,860],['angry',780,860]].forEach(([m,x,y])=>{g.save();g.translate(x,y);g.scale(0.85,0.85);drawHelmet(g,{mood:m,look:{x:0,y:0}});g.restore();txt(m.toUpperCase(),x,y+230,36,'rgba(255,255,255,0.6)','center');});
+g.drawImage(MO,140,1290,800,800*MO.height/MO.width);slash(250,1640,580,80,RED);txt('SÍGUELO',540,1700,60,'#fff','center');txt('EQUIPO',300,1790,26,'rgba(255,255,255,0.55)','center');g.drawImage(PZ,200,1805,200,200*PZ.height/PZ.width);txt('ACADEMIA',780,1790,26,'rgba(255,255,255,0.55)','center');g.drawImage(WK,700,1800,160,160*WK.height/WK.width);
 g.restore();window.done=true;})();
 </script></body></html>
