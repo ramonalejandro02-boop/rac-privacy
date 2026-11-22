@@ -49,6 +49,7 @@ export function person(o) {
   if (o.skirt) g += `<path d="M-92 ${hip - 10} L-118 ${hip + 120} Q0 ${hip + 140} 118 ${hip + 120} L92 ${hip - 10} Z" fill="${o.skirt}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
   else g += `<rect x="-92" y="${hip - 18}" width="184" height="22" rx="6" fill="${pants}" stroke="${K}" stroke-width="5"/>`;
   if (o.collar !== false) g += `<path d="M-30 ${sh - 2} L0 ${sh + 40} L30 ${sh - 2}" fill="${o.collar ?? '#fff'}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>`;
+  if (o.badge) g += `<circle cx="-46" cy="${sh + 80}" r="30" fill="#fff" stroke="${K}" stroke-width="4"/><image href="${o.badge}" x="-72" y="${sh + 54}" width="52" height="52"/>`;
   if (o.vest) g += `<path d="M-86 ${sh + 30} L-30 ${sh} L-14 ${hip} H-96Z M86 ${sh + 30} L30 ${sh} L14 ${hip} H96Z" fill="${o.vest}" stroke="${K}" stroke-width="4" stroke-linejoin="round"/>`;
   // brazos
   const arms = o.arms ?? {};
@@ -85,6 +86,8 @@ export function person(o) {
 function hairBack(o, x, y) {
   const h = o.hair ?? '#2A1E18';
   if (o.style === 'bun') return `<circle cx="${x}" cy="${y - 108}" r="44" fill="${h}" stroke="${K}" stroke-width="5"/>`;
+  if (o.style === 'ponytail') return `<path d="M${x + 70} ${y - 70} Q${x + 170} ${y - 40} ${x + 150} ${y + 90} Q${x + 120} ${y + 40} ${x + 90} ${y - 10}Z" fill="${h}" stroke="${K}" stroke-width="5"/><circle cx="${x + 84}" cy="${y - 64}" r="16" fill="${o.tie ?? '#FF5FA2'}" stroke="${K}" stroke-width="4"/>`;
+  if (o.style === 'curly') return [[-80, -60], [-40, -100], [10, -112], [60, -96], [92, -56], [-100, -10], [104, -6]].map(([dx, dy]) => `<circle cx="${x + dx}" cy="${y + dy}" r="46" fill="${h}" stroke="${K}" stroke-width="5"/>`).join('');
   if (o.style === 'long') return `<path d="M${x - 104} ${y - 10} Q${x - 120} ${y + 120} ${x - 70} ${y + 130} H${x + 70} Q${x + 120} ${y + 120} ${x + 104} ${y - 10} Z" fill="${h}" stroke="${K}" stroke-width="5"/>`;
   return '';
 }
@@ -93,6 +96,8 @@ function hairFront(o, x, y) {
   let s = '';
   if (o.style === 'bun' || o.style === 'long')
     s += `<path d="M${x - 97} ${y + 10} Q${x - 104} ${y - 104} ${x} ${y - 102} Q${x + 104} ${y - 104} ${x + 97} ${y + 10} Q${x + 70} ${y - 50} ${x + 10} ${y - 62} Q${x - 30} ${y - 40} ${x - 97} ${y + 10}Z" fill="${h}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
+  else if (o.style === 'ponytail') s += `<path d="M${x - 97} ${y + 6} Q${x - 104} ${y - 104} ${x} ${y - 102} Q${x + 104} ${y - 104} ${x + 97} ${y + 6} Q${x + 60} ${y - 70} ${x - 20} ${y - 66} Q${x - 70} ${y - 50} ${x - 97} ${y + 6}Z" fill="${h}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
+  else if (o.style === 'curly') s += [[-70, -70], [-20, -96], [30, -96], [76, -66]].map(([dx, dy]) => `<circle cx="${x + dx}" cy="${y + dy}" r="36" fill="${h}"/>`).join('');
   else if (o.style === 'short') s += `<path d="M${x - 96} ${y - 6} Q${x - 100} ${y - 104} ${x} ${y - 104} Q${x + 100} ${y - 104} ${x + 96} ${y - 6} Q${x + 80} ${y - 56} ${x} ${y - 62} Q${x - 80} ${y - 56} ${x - 96} ${y - 6}Z" fill="${h}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/>`;
   else if (o.style === 'bald') s += `<path d="M${x - 96} ${y + 4} Q${x - 98} ${y - 40} ${x - 80} ${y - 50} L${x - 70} ${y - 10}Z M${x + 96} ${y + 4} Q${x + 98} ${y - 40} ${x + 80} ${y - 50} L${x + 70} ${y - 10}Z" fill="${h}" stroke="${K}" stroke-width="4"/>`;
   if (o.cap) {
@@ -101,6 +106,8 @@ function hairFront(o, x, y) {
     s += `<circle cx="${x}" cy="${y - 118}" r="8" fill="${o.cap}" stroke="${K}" stroke-width="4"/>`;
     if (o.capLogo) s += `<circle cx="${x}" cy="${y - 62}" r="18" fill="#fff" stroke="${K}" stroke-width="3"/><path d="M${x - 8} ${y - 62} l6 6 l10 -12" stroke="${C.green}" stroke-width="5" fill="none"/>`;
   }
+  if (o.beard) s += `<path d="M${x - 86} ${y + 10} Q${x - 80} ${y + 120} ${x} ${y + 128} Q${x + 80} ${y + 120} ${x + 86} ${y + 10} Q${x + 50} ${y + 100} ${x} ${y + 96} Q${x - 50} ${y + 100} ${x - 86} ${y + 10}Z" fill="${o.beard}" stroke="${K}" stroke-width="5"/>`;
+  if (o.cowboy) s += `<ellipse cx="${x}" cy="${y - 56}" rx="170" ry="34" fill="${o.cowboy}" stroke="${K}" stroke-width="5"/><path d="M${x - 80} ${y - 60} Q${x - 86} ${y - 170} ${x - 30} ${y - 160} Q${x} ${y - 140} ${x + 30} ${y - 160} Q${x + 86} ${y - 170} ${x + 80} ${y - 60}Z" fill="${o.cowboy}" stroke="${K}" stroke-width="5" stroke-linejoin="round"/><rect x="${x - 80}" y="${y - 84}" width="160" height="16" fill="#6B3E1F"/>`;
   if (o.glasses) s += `<g fill="none" stroke="${K}" stroke-width="5"><circle cx="${x - 36}" cy="${y - 8}" r="24"/><circle cx="${x + 36}" cy="${y - 8}" r="24"/><path d="M${x - 12} ${y - 10} h24"/></g>`;
   return s;
 }

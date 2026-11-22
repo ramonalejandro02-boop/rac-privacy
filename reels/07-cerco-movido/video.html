@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 07 · Me corrieron el cerco</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0E2A47}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as Z from '../motor/cartoon.js';
+const { K, C, clamp, lerp, ease, easeOut, easeBack, prog, person, POSE, bubble, check, cross, icoMuni, anger, sparkle, sweat, excl } = Z;
+
+await Promise.all(['700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const env = t => ENV[Math.min(ENV.length - 1, Math.max(0, Math.floor(t * 30)))] || 0;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) { const ws = SEG[i].words || [], n = norm(word); const w = ws.find(x => norm(x.w).startsWith(n)); if (w) return end ? w.e : w.s; const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length); return S(i) + (E(i) - S(i)) * Math.max(0, k); }
+const speaking = (i, t) => (SEG[i].words?.length ? SEG[i].words.some(w => t >= w.s - .03 && t <= w.e + .04) : (t > S(i) && t < E(i)));
+const mouth = (i, t) => speaking(i, t) ? clamp(.25 + env(t) * 1.25) : 0;
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .2; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+const LOGO = '../motor/assets/conafeph-logo.png';
+const F = 'font-family="Brand"';
+
+// ---------- estilo "pop sticker" ----------
+const PAL = { navy: '#0E2A47', coral: '#FF6B5B', sun: '#FFC93C', teal: '#1FB5A6', blue: '#3D7BF7', pink: '#FF5FA2', green: '#22B35E', cream: '#FFF6E5', purple: '#7B5CFF' };
+const DEFS = `<defs>
+<filter id="stk" x="-25%" y="-25%" width="150%" height="150%"><feMorphology in="SourceAlpha" operator="dilate" radius="7" result="d"/><feFlood flood-color="#fff"/><feComposite in2="d" operator="in" result="o"/><feDropShadow in="o" dx="0" dy="12" stdDeviation="10" flood-color="#0E2A47" flood-opacity=".35" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="o"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="dsh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="12" flood-color="#0E2A47" flood-opacity=".35"/></filter>
+</defs>`;
+function bg(c1, c2, t, o = {}) { // fondo de color con formas suaves
+  let s = `<defs><linearGradient id="g${c1.slice(1)}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="1080" height="1920" fill="url(#g${c1.slice(1)})"/>`;
+  const r = [[180, 520, 260], [900, 760, 340], [300, 1500, 300], [880, 1650, 220]];
+  r.forEach(([x, y, rr], k) => s += `<circle cx="${x + Math.sin(t * .5 + k) * 20}" cy="${y + Math.cos(t * .4 + k) * 20}" r="${rr}" fill="#fff" opacity="${o.op ?? .08}"/>`);
+  if (o.rays) for (let k = 0; k < 12; k++) s += `<path d="M540 ${o.ry ?? 900} L${540 + Math.cos(k * Math.PI / 6 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + t * .2) * 1600} L${540 + Math.cos(k * Math.PI / 6 + .18 + t * .2) * 1600} ${(o.ry ?? 900) + Math.sin(k * Math.PI / 6 + .18 + t * .2) * 1600}Z" fill="#fff" opacity=".06"/>`;
+  return s;
+}
+const stk = svg => `<g filter="url(#stk)">${svg}</g>`;
+function headline(text, p, y = 520, o = {}) { // título grande con sombra 3D
+  if (p <= 0) return '';
+  const fs = o.fs ?? 104, k = easeBack(p), rot = (o.rot ?? -3) * (1 - p) + (o.rot ?? -3);
+  return `<g transform="translate(540,${y}) rotate(${rot}) scale(${lerp(.4, 1, k)})" opacity="${clamp(p * 2)}">${text.split('\n').map((l, i) => `<text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${PAL.navy}" transform="translate(7,9)">${l}</text><text x="0" y="${i * fs * .95}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.c ?? '#fff'}" stroke="${PAL.navy}" stroke-width="8" paint-order="stroke" stroke-linejoin="round">${l}</text>`).join('')}</g>`;
+}
+function chip(x, y, text, o = {}) { const fs = o.fs ?? 44, w = text.length * fs * .64 + 60, h = fs * 1.6; return `<g filter="url(#dsh)" transform="translate(${x},${y}) rotate(${o.rot ?? 0})"><rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${h / 2}" fill="${o.bg ?? '#fff'}" stroke="${PAL.navy}" stroke-width="6"/><text y="${fs * .36}" ${F} font-weight="900" font-size="${fs}" text-anchor="middle" fill="${o.fg ?? PAL.navy}">${text}</text></g>`; }
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})">${svg}</g>`;
+const slideIn = (p, svg, dx) => p <= 0 ? '' : `<g transform="translate(${(1 - easeOut(p)) * dx},0)" opacity="${clamp(p * 1.5)}">${svg}</g>`;
+
+// personajes nuevos (no repetidos)
+const LORENA = { skin: '#C98B62', shirt: '#FFC93C', pants: '#2F5AA8', hair: '#1E1612', style: 'ponytail', tie: '#FF5FA2', collar: '#fff' };
+const CHEMA = { skin: '#A86B45', shirt: '#F4F1E8', sleeve: '#F4F1E8', pants: '#6B4A2E', hair: '#DADADA', style: 'bald', beard: '#ECECEC', cowboy: '#C8A06A', collar: '#C8A06A' };
+const ASESOR = { skin: '#E0AE85', shirt: '#22B35E', pants: '#0E2A47', hair: '#2A1E18', style: 'curly', glasses: true, badge: LOGO, collar: '#fff' };
+const blink = (t, o) => ((t + o) % 3.2) < .13;
+const P = (b, t, o, x) => stk(person({ ...b, blink: blink(t, o), bob: Math.sin(t * 2.4 + o) * 3, ...x }));
+// zonas seguras: título 340-620, acción 620-1290, subtítulos 1300-1380, nada debajo de 1430; x 90-960
+const FEET = 1290;
+// utilería
+function fence(x, y, o = {}) {
+  let s = `<g opacity="${o.ghost ? .45 : 1}" ${o.ghost ? 'stroke-dasharray="14 10"' : ''}>`;
+  for (let k = 0; k < 3; k++) { const py = y - k * 160; s += ''; }
+  s += `<rect x="${x - 18}" y="${y - 330}" width="36" height="330" rx="6" fill="${o.ghost ? 'none' : '#8A5A3B'}" stroke="${o.ghost ? '#fff' : K}" stroke-width="6"/>`;
+  [90, 170, 250].forEach(h => s += `<path d="M${x - 260} ${y - h} L${x + 260} ${y - h}" stroke="${o.ghost ? '#fff' : '#5A6478'}" stroke-width="5"/>` + (o.ghost ? '' : [-200, -100, 0, 100, 200].map(dx => `<path d="M${x + dx - 8} ${y - h - 8} l16 16 M${x + dx + 8} ${y - h - 8} l-16 16" stroke="#5A6478" stroke-width="4"/>`).join('')));
+  [-240, 240].forEach(dx => s += `<rect x="${x + dx - 14}" y="${y - 300}" width="28" height="300" rx="6" fill="${o.ghost ? 'none' : '#8A5A3B'}" stroke="${o.ghost ? '#fff' : K}" stroke-width="5"/>`);
+  return s + '</g>';
+}
+function tape(x0, x1, y, p, label = '1 METRO') {
+  if (p <= 0) return '';
+  const xe = lerp(x0, x1, easeOut(p));
+  let s = `<g filter="url(#dsh)"><rect x="${x0 - 40}" y="${y - 40}" width="80" height="80" rx="18" fill="${PAL.sun}" stroke="${PAL.navy}" stroke-width="6"/><circle cx="${x0}" cy="${y}" r="14" fill="${PAL.navy}"/><rect x="${x0 + 30}" y="${y - 14}" width="${Math.max(0, xe - x0 - 30)}" height="28" fill="#FFE27A" stroke="${PAL.navy}" stroke-width="4"/>`;
+  for (let xx = x0 + 50; xx < xe; xx += 25) s += `<path d="M${xx} ${y - 14} v${(xx - x0) % 100 < 25 ? 16 : 9}" stroke="${PAL.navy}" stroke-width="3"/>`;
+  s += `<rect x="${xe - 6}" y="${y - 24}" width="12" height="48" fill="${PAL.navy}"/></g>`;
+  if (p > .8) s += pop((p - .8) * 5, chip((x0 + x1) / 2, y - 80, label, { fs: 40, bg: PAL.coral, fg: '#fff' }), (x0 + x1) / 2, y - 80);
+  return s;
+}
+const deed = (x, y, s = 1, rot = -4) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s})" filter="url(#dsh)"><rect x="-90" y="-120" width="180" height="240" rx="10" fill="#FFF6E5" stroke="${PAL.navy}" stroke-width="6"/><text y="-74" ${F} font-weight="900" font-size="26" text-anchor="middle" fill="${PAL.navy}">ESCRITURA</text>${[-40, -10, 20, 50].map(yy => `<path d="M-60 ${yy} h120" stroke="#C9C2B6" stroke-width="8" stroke-linecap="round"/>`).join('')}<circle cx="44" cy="88" r="22" fill="${PAL.coral}" stroke="${PAL.navy}" stroke-width="4"/></g>`;
+const plan = (x, y, s = 1, rot = 4, p = 1) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s})" filter="url(#dsh)"><rect x="-120" y="-100" width="240" height="200" rx="10" fill="#2557A7" stroke="${PAL.navy}" stroke-width="6"/>${[-80, -40, 0, 40, 80].map(g => `<path d="M${g} -100 v200" stroke="#4A7CC0" stroke-width="2"/>`).join('')}<path d="M-80 60 V-60 H80 V60Z" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - p}" stroke="#fff" stroke-width="6" fill="none"/><text y="88" ${F} font-weight="900" font-size="22" text-anchor="middle" fill="#fff">PLANO</text></g>`;
+const machete = (x, y, s = 1, rot = 30) => `<g transform="translate(${x},${y}) rotate(${rot}) scale(${s})"><path d="M-20 0 L180 -30 Q220 -10 180 20 L-20 20Z" fill="#D7DCE3" stroke="${PAL.navy}" stroke-width="6"/><rect x="-90" y="-6" width="80" height="32" rx="10" fill="#6B3E1F" stroke="${PAL.navy}" stroke-width="6"/></g>`;
+const mug = (hx, hy) => `<g transform="translate(${hx - 4},${hy - 30})"><rect x="-26" y="-30" width="52" height="56" rx="10" fill="#fff" stroke="${K}" stroke-width="5"/><path d="M26 -16 q22 0 22 16 q0 16 -22 16" stroke="${K}" stroke-width="5" fill="none"/></g>`;
+const postHold = (hx, hy) => `<rect x="${hx - 16}" y="${hy - 220}" width="32" height="300" rx="6" fill="#8A5A3B" stroke="${K}" stroke-width="5" transform="rotate(-20 ${hx} ${hy})"/>`;
+const deedHold = (hx, hy) => deed(hx + 10, hy - 70, .5, -8);
+function stars(t) { let s = ''; for (let k = 0; k < 40; k++) { const x = (k * 197) % 1080, y = 300 + (k * 131) % 700; s += `<circle cx="${x}" cy="${y}" r="${2 + k % 3}" fill="#fff" opacity="${.4 + .4 * Math.sin(t * 3 + k)}"/>`; } return s; }
+function groundYard(y, c = '#9BD16B') { return `<rect x="-20" y="${y}" width="1120" height="800" fill="${c}"/><rect x="-20" y="${y}" width="1120" height="16" fill="#fff" opacity=".35"/>` + [120, 300, 760, 900].map(x => `<path d="M${x} ${y + 40} l8 -26 l8 20 l8 -30 l8 26" stroke="#5C9A3A" stroke-width="5" fill="none"/>`).join(''); }
+// ---------- subtítulos (palabra actual en píldora amarilla) ----------
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (s, fs) => { cv.font = `800 ${fs}px Brand`; return cv.measureText(s).width; };
+const CH = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  const sw = s.text.split(' '), aw = s.words || [], ws = []; let j = 0;
+  sw.forEach(w => { let hit = -1; for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } } if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null }); });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 20 || (/[.?!:,]$/.test(w.w) && len > 8) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .05, e: ws[k + 1] ? ws[k + 1].s - .05 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const fs = 58, gap = 16; let cur = -1; c.words.forEach((w, k) => { if (t >= w.s - .02) cur = k; });
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, fs) }));
+  const total = items.reduce((a, b) => a + b.wd, 0) + gap * (items.length - 1);
+  let x = 540 - total / 2, s = '';
+  items.forEach((it, k) => {
+    if (k === cur) s += `<rect x="${x - 12}" y="${1352 - 52}" width="${it.wd + 24}" height="72" rx="14" fill="${PAL.sun}" stroke="${PAL.navy}" stroke-width="5"/>`;
+    s += `<text x="${x}" y="${1352}" ${F} font-weight="800" font-size="${fs}" fill="${k === cur ? PAL.navy : '#fff'}" ${k === cur ? '' : `stroke="${PAL.navy}" stroke-width="10" paint-order="stroke" stroke-linejoin="round"`} opacity="${k <= cur ? 1 : .55}">${it.w}</text>`;
+    x += it.wd + gap;
+  });
+  return s;
+}
+const brand = `<g filter="url(#dsh)"><rect x="380" y="262" width="320" height="66" rx="33" fill="#fff" stroke="${PAL.navy}" stroke-width="5"/><image href="${LOGO}" x="386" y="265" width="60" height="60"/><text x="566" y="307" ${F} font-weight="900" font-size="32" text-anchor="middle" fill="${PAL.navy}" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas ----------
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene, D = sh.end - sh.start; let s = '', z = 1, zx = 540, zy = 960;
+  if (id === 'hook') {
+    const ce = wt(i, 'cerco'), me = wt(i, 'metro'), te = wt(i, 'terreno');
+    s += bg('#7FD3FF', '#FFF1C9', t, { op: .14 }) + `<circle cx="820" cy="560" r="90" fill="#FFE27A" opacity=".9"/>` + groundYard(1080);
+    s += fence(620, 1080, { ghost: true });
+    const mv = easeOut(prog(t, me - .4, me + .4));
+    s += fence(lerp(620, 470, mv), 1080);
+    s += P(LORENA, t, .2, { x: 800, y: FEET, s: .62, expr: t > ce ? 'shock' : 'content', arms: t > ce ? POSE.head : { r: [30, -150], l: [12, 4] }, hold: t > ce ? {} : { r: mug } });
+    s += tape(470, 620, 1150, prog(t, me, me + .6));
+    s += headline('¡LE CORRIERON\nEL CERCO!', prog(t, ce - .2, ce + .1), 440, { fs: 84, c: '#fff' });
+    if (t > te) s += pop(prog(t, te, te + .3), chip(800, 700, 'Su terreno', { fs: 36, bg: PAL.sun, rot: 4 }), 800, 700);
+    z = lerp(1, 1.06, ease(u / D)); zy = 1000;
+  }
+  if (id === 'noche') {
+    s += bg('#0E1A3A', '#23305E', t, { op: .05 }) + stars(t) + `<circle cx="820" cy="520" r="70" fill="#F4EBC8"/><circle cx="848" cy="504" r="64" fill="#1A2550"/>` + groundYard(1080, '#2E5A3A');
+    s += fence(620, 1080, { ghost: true });
+    const wx = lerp(780, 470, easeOut(prog(u, .2, D - .4)));
+    const beam = `<path d="M${wx - 60} ${FEET - 300} L${wx - 420} ${FEET - 40} L${wx - 220} ${FEET + 10}Z" fill="#FFF3A8" opacity="${.22 + .05 * Math.sin(t * 9)}"/>`;
+    s += beam + P(CHEMA, t, 1, { x: wx, y: FEET, s: .6, expr: 'smug', walk: t * 5, walkAmt: .6, arms: { r: [60, 60], l: [30, -40] }, hold: { r: postHold }, look: -1 });
+    s += headline('DE NOCHE…', prog(u, .1, .4), 440, { fs: 96, c: PAL.sun });
+    s += pop(prog(u, .5, .8), chip(780, 700, 'Don Chema', { fs: 38, bg: '#fff', rot: -4 }), 780, 700);
+  }
+  if (id === 'pleito') {
+    const ql = sh.i0, qc = sh.i1, cT = t >= S(qc) - .15;
+    s += bg(cT ? '#C8A06A' : PAL.sun, cT ? '#8A6A3E' : '#FF9F43', t) + groundYard(1180, cT ? '#B7C98A' : '#9BD16B');
+    s += fence(540, 1180);
+    s += P(LORENA, t, .2, { x: 270, y: FEET, s: .95, expr: 'angry', talk: mouth(ql, t), arms: !cT ? POSE.point : POSE.cross, hold: !cT ? { r: deedHold } : {}, look: 1 });
+    s += P(CHEMA, t, 1, { x: 800, y: FEET, s: .95, expr: cT ? 'smug' : 'worried', talk: mouth(qc, t), arms: cT ? POSE.cross : POSE.idle, look: -1 });
+    const say = (q, lines, o) => { const ws = SEG[q].words || [], tok = lines.map(l => l.split(' ')), tot = tok.flat().length, said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * tot / ws.length) : tot; let wi = 0; return pop(prog(t, S(q) - .2, S(q) + .05), stk(bubble(540, 640, tok.map(r => r.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : .15}">${w}</tspan>`).join(' ')), { ...o, fs: 52 })), 540, 580); };
+    s += !cT ? say(ql, ['¡Ese metro es mío!', 'Así lo dicen mis escrituras.'], { who: 'LORENA', tail: -220, w: 860 }) : say(qc, ['Este cerco siempre debió', 'ir aquí. Mi papá me lo dijo.'], { who: 'DON CHEMA', tail: 220, tailDx: 260, w: 860, bg: PAL.navy, fg: '#fff' });
+    z = 1 + Math.sin(u * 6) * .004 * (speaking(ql, t) || speaking(qc, t) ? 1 : 0);
+  }
+  if (id === 'tension') {
+    const pa = wt(i, 'papeles'), pl = wt(i, 'palabra'), an = wt(i, 'anos');
+    const split = easeOut(prog(u, 0, .5));
+    s += `<rect width="1080" height="1920" fill="${PAL.sun}"/><rect x="${lerp(1080, 540, split)}" y="0" width="560" height="1920" fill="#C8A06A"/><path d="M${lerp(1080, 540, split)} 0 V1920" stroke="${PAL.navy}" stroke-width="10"/>`;
+    s += P(LORENA, t, .2, { x: 280, y: FEET - 60, s: .7, expr: 'neutral', arms: { r: [30, -60], l: [12, 4] }, hold: { r: deedHold } });
+    s += P(CHEMA, t, 1, { x: 810, y: FEET - 60, s: .7, expr: 'content', arms: { r: [12, 4], l: [40, -130] } });
+    s += pop(prog(t, pa - .2, pa + .1), chip(280, 560, 'PAPELES', { fs: 54, rot: -4 }), 280, 560);
+    s += pop(prog(t, pl - .2, pl + .1), chip(810, 560, 'PALABRA', { fs: 54, rot: 4 }), 810, 560);
+    s += pop(prog(t, an - .3, an), chip(540, 1250 - 10, '1 metro = años de pleito', { fs: 44, bg: PAL.coral, fg: '#fff' }), 540, 1240);
+  }
+  if (id === 'saber') {
+    const co = wt(i, 'costumbre'), fu = wt(i, 'fuerza'), es = wt(i, 'escrituras'), pl = wt(i, 'planos'), me = wt(i, 'medidas');
+    s += bg(PAL.teal, '#0E6E6A', t, { rays: true });
+    s += headline('LINDEROS', prog(u, .05, .35), 440, { fs: 110, c: PAL.sun, rot: -2 });
+    s += slideIn(prog(t, co - .3, co), chip(320, 640, 'Costumbre', { fs: 44, bg: '#fff' }), -600) + slideIn(prog(t, fu - .3, fu), chip(760, 640, 'Fuerza', { fs: 44, bg: '#fff' }), 600);
+    const xp = prog(t, fu + .2, fu + .5); if (xp > 0) s += `<path d="M160 640 h330 M620 640 h280" stroke="${PAL.coral}" stroke-width="16" stroke-linecap="round" opacity="${xp}"/>`;
+    s += pop(prog(t, es - .2, es + .1), deed(250, 960, 1.15), 250, 960);
+    s += pop(prog(t, pl - .2, pl + .1), plan(540, 980, 1.15, 3, prog(t, pl, pl + 1)), 540, 980);
+    s += pop(prog(t, me - .2, me + .1), `<g transform="translate(830,980) rotate(-6)">${tape(-110, 110, 0, 1, 'MEDIDAS')}</g>`, 830, 980);
+  }
+  if (id === 'mito') {
+    const no = wt(i, 'noche'), ma = wt(i, 'machetazos'), de = wt(i, 'derecho'), co = wt(i, 'complica');
+    s += bg('#3A1230', '#1A0E2E', t, { op: .05 });
+    s += slideIn(prog(t, no - .3, no), `<g transform="rotate(-3 540 640)">${chip(540, 640, 'Moverlo de noche', { fs: 52 })}</g>`, -900);
+    s += slideIn(prog(t, ma - .3, ma), `<g transform="rotate(3 540 800)">${chip(540, 800, 'Arrancarlo a machetazos', { fs: 46 })}</g>`, 900);
+    s += pop(prog(t, ma, ma + .3), machete(830, 950, 1.1, 20), 830, 950);
+    const xp = prog(t, de - .3, de); if (xp > 0) s += `<path d="M150 580 L930 860 M930 580 L150 860" stroke="${PAL.coral}" stroke-width="24" stroke-linecap="round" opacity="${xp}"/>`;
+    s += headline('NO DA\nDERECHOS', prog(t, de - .2, de + .1), 1060, { fs: 104, c: PAL.coral });
+    s += pop(prog(t, co - .2, co + .1), chip(540, 1250, 'Solo complica el caso', { fs: 42, bg: PAL.sun }), 540, 1250);
+  }
+  if (id === 'pasos') {
+    const steps = [[sh.i0, 'Reunir pruebas', 'Escrituras, planos y fotos', PAL.coral], [sh.i0 + 1, 'Hablar con calma', 'Sin amenazas', PAL.blue], [sh.i0 + 2, 'Orientación', 'en CONAFEPH', PAL.green]];
+    const act = steps.findLastIndex(([si]) => t >= S(si) - .2);
+    s += bg(['#FF8A7A', '#7FA8FF', '#5FD08E'][Math.max(0, act)], PAL.navy, t, { op: .08 });
+    steps.forEach(([si, a, b, c], k) => {
+      const p = prog(t, S(si) - .2, S(si) + .2), y = 470 + k * 190, on = k === act;
+      s += slideIn(p, `<g filter="url(#dsh)" opacity="${on ? 1 : .72}"><rect x="90" y="${y - 78}" width="870" height="160" rx="32" fill="#fff" stroke="${PAL.navy}" stroke-width="${on ? 9 : 6}"/><circle cx="176" cy="${y + 2}" r="54" fill="${c}" stroke="${PAL.navy}" stroke-width="6"/><text x="176" y="${y + 24}" ${F} font-weight="900" font-size="60" text-anchor="middle" fill="#fff">${k + 1}</text><text x="260" y="${y - 6}" ${F} font-weight="900" font-size="50" fill="${PAL.navy}">${a}</text><text x="260" y="${y + 46}" ${F} font-weight="700" font-size="36" fill="${k === 2 ? PAL.green : '#5A6478'}">${b}</text>${k === 2 ? `<image href="${LOGO}" x="840" y="${y - 54}" width="104" height="104"/>` : ''}</g>`, k % 2 ? 900 : -900);
+    });
+    s += P(ASESOR, t, 2, { x: 260, y: FEET, s: .52, expr: 'happy', talk: Math.max(0, Math.sin(t * 10)) * .5, arms: { r: [12, 4], l: [130, 10] } });
+    s += pop(prog(u, .3, .6), chip(470, 1200, 'Asesor CONAFEPH', { fs: 36, bg: PAL.green, fg: '#fff' }), 470, 1200);
+    if (act === 0) s += pop(prog(t, S(sh.i0) + .8, S(sh.i0) + 1.1), deed(740, 1040, .6, 8) + plan(880, 1060, .5, -6), 810, 1050);
+  }
+  if (id === 'final') {
+    s += bg('#7FD3FF', '#FFF1C9', t, { op: .14 }) + `<circle cx="840" cy="560" r="90" fill="#FFE27A"/>` + groundYard(1080);
+    s += fence(620, 1080);
+    s += P(LORENA, t, .2, { x: 420, y: FEET, s: .62, expr: 'big', arms: { r: [12, 4], l: [70, 10] } });
+    s += P(CHEMA, t, 1, { x: 820, y: FEET, s: .62, expr: 'happy', arms: { r: [70, 10], l: [12, 4] } });
+    s += tape(450, 800, 1200, prog(u, .3, 1.2), 'MEDIDO');
+    s += headline('GANA EL QUE\nSE INFORMA PRIMERO', prog(u, .2, .6), 440, { fs: 72, c: '#fff' });
+    [[300, 760], [760, 740], [540, 680]].forEach(([x, y], k) => s += `<g opacity="${.5 + .5 * Math.sin(t * 4 + k)}">${sparkle(x, y, 1)}</g>`);
+  }
+  if (id === 'cierre') {
+    s += bg(PAL.navy, '#14335A', t, { rays: true, ry: 760 });
+    const p = prog(u, .1, .8);
+    s += `<g transform="translate(540,760) scale(${lerp(.3, 1, easeBack(p))}) rotate(${lerp(-40, 0, easeOut(p))})" opacity="${clamp(p * 2)}"><circle r="250" fill="#fff" filter="url(#dsh)"/><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    s += headline('CONAFEPH', prog(u, .6, 1), 1130, { fs: 110, c: '#fff', rot: 0 });
+    s += pop(prog(u, 1.1, 1.4), chip(540, 1280, 'Orientación para patronatos', { fs: 44, bg: PAL.sun }), 540, 1280);
+  }
+  return { s, z, zx, zy };
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const { s, z, zx, zy } = scene(sh, t);
+  // transición tipo "punch": zoom rápido al entrar a cada toma
+  const pin = 1 + (1 - easeOut(clamp((t - sh.start) / .28))) * .12;
+  const flash = k > 0 ? clamp(1 - (t - sh.start) / .12) : 0;
+  let out = DEFS + `<rect width="1080" height="1920" fill="#0E2A47"/>`;
+  out += `<g transform="translate(${zx},${zy}) scale(${z * pin}) translate(${-zx},${-zy})">${s}</g>`;
+  if (flash > 0) out += `<rect width="1080" height="1920" fill="#fff" opacity="${flash * .6}"/>`;
+  if (sh.scene !== 'cierre') out += captions(t) + brand;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>

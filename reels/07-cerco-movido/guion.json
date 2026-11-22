@@ -1,0 +1,21 @@
+{
+  "titulo": "Me corrieron el cerco: el vecino movió el lindero un metro",
+  "lead": 0.3,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "Una mañana, Lorena despertó, y el cerco del vecino estaba un metro más adentro de su terreno.", "pause": 0.2},
+    {"scene": "noche", "text": "Don Chema lo había movido durante la noche.", "pause": 0.25},
+    {"scene": "pleito", "who": "lorena", "voice": "ef_dora", "text": "¡Ese metro es mío! Así lo dicen mis escrituras.", "pause": 0.2},
+    {"scene": "pleito", "who": "chema", "voice": "em_santa", "text": "Este cerco siempre debió ir aquí. Mi papá me lo dijo.", "pause": 0.3},
+    {"scene": "tension", "text": "Ella tiene papeles. Él tiene la palabra de su familia. Y un metro de tierra puede costar años de pleito.", "pause": 0.3},
+    {"scene": "saber", "text": "Los linderos no se definen por costumbre ni por la fuerza: se definen con escrituras, planos y medidas.", "pause": 0.3},
+    {"scene": "mito", "text": "Mover el cerco de noche, o arrancarlo a machetazos, no da ningún derecho. Solo complica el caso.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo correcto: primero, reunir escrituras, planos, y fotos del cerco anterior.", "pause": 0.2},
+    {"scene": "pasos", "text": "Segundo, hablar con el vecino con calma, sin amenazas.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y tercero, buscar orientación en CONAFEPH antes de dar cualquier otro paso.", "say": "Y tercero, buscar orientación en Conafép antes de dar cualquier otro paso.", "pause": 0.3},
+    {"scene": "final", "text": "En un pleito de tierra, gana el que se informa primero.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}
