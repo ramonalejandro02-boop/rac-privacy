@@ -1,0 +1,21 @@
+{
+  "titulo": "El vecino quema basura y el humo entra a mi casa",
+  "lead": 0.3,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "Cada tarde, don Rigo quema la basura en su patio. Y el humo se mete en la casa de doña Mirna.", "pause": 0.2},
+    {"scene": "nieto", "text": "Su nieto tiene asma, y esa tarde casi no pudo respirar.", "pause": 0.25},
+    {"scene": "pleito", "who": "mirna", "voice": "ef_dora", "text": "¡Ese humo nos está enfermando! ¡Deje de quemar!", "pause": 0.2},
+    {"scene": "pleito", "who": "rigo", "voice": "em_santa", "text": "Aquí el camión casi nunca pasa. Algo tengo que hacer con la basura.", "pause": 0.3},
+    {"scene": "tension", "text": "Él tiene un problema real: la basura se acumula. Ella también: el humo enferma a su familia.", "pause": 0.3},
+    {"scene": "saber", "text": "Quemar basura suelta humo tóxico que daña los pulmones, sobre todo de niños y adultos mayores. Y en muchos lugares, está prohibido.", "pause": 0.3},
+    {"scene": "mito", "text": "Pero tirar la basura al río, o al predio de la esquina, no es la salida. Se cambia un problema por otro.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo que funciona: primero, separar y reducir la basura en casa.", "pause": 0.2},
+    {"scene": "pasos", "text": "Segundo, organizarse con el patronato para gestionar la recolección de toda la colonia.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y tercero, buscar orientación en CONAFEPH para dar el paso como comunidad.", "say": "Y tercero, buscar orientación en Conafép para dar el paso como comunidad.", "pause": 0.3},
+    {"scene": "final", "text": "Cuando la colonia se organiza, el humo se va.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}
