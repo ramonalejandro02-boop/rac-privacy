@@ -1,0 +1,22 @@
+[
+ {
+  "prompt": "a lonely grassy hilltop at night under a huge full moon and the milky way, deep blue sky, soft mist over distant hills, empty landscape with no people, open flat ground in the lower third of the image, cinematic film still, realistic photography, volumetric light, atmospheric haze, moody color grading, highly detailed, vertical composition",
+  "seed": 111
+ },
+ {
+  "prompt": "an open field at night during heavy rain, dark storm clouds, a faint distant street lamp glow on the horizon, wet ground reflecting light, empty landscape with no people, open flat ground in the lower third of the image, cinematic film still, realistic photography, volumetric light, atmospheric haze, moody color grading, highly detailed, vertical composition",
+  "seed": 222
+ },
+ {
+  "prompt": "a long empty country road stretching to the horizon at dusk under dark storm clouds, last orange light on the horizon, empty landscape with no people, open flat ground in the lower third of the image, cinematic film still, realistic photography, volumetric light, atmospheric haze, moody color grading, highly detailed, vertical composition",
+  "seed": 333
+ },
+ {
+  "prompt": "a wide golden wheat field as the first golden rays of dawn break through dark clouds, dramatic god rays from the sky, sunrise on the horizon, empty landscape with no people, open flat ground in the lower third of the image, cinematic film still, realistic photography, volumetric light, atmospheric haze, moody color grading, highly detailed, vertical composition",
+  "seed": 444
+ },
+ {
+  "prompt": "a rocky mountain summit above a sea of clouds at golden sunrise, the sun rising on the horizon, warm rays of light, flat rock ledge in the foreground, empty landscape with no people, open flat ground in the lower third of the image, cinematic film still, realistic photography, volumetric light, atmospheric haze, moody color grading, highly detailed, vertical composition",
+  "seed": 666
+ }
+]
