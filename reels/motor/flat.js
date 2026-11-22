@@ -18,6 +18,7 @@ export const SKY = {
   green: ['#0D2E26', '#14463A', '#1D5A49', '#246B55'],
   purple: ['#1A1238', '#2F1F5E', '#4A2E86', '#5E3A9C'],
   warm: ['#3A1E2E', '#8A3B3B', '#E07B4A', '#F7C873'],
+  golden: ['#2C3E70', '#6A6FA8', '#E7A38A', '#F7D9A0'],
 };
 export function defs() {
   let s = '<defs>';

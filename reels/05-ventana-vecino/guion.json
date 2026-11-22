@@ -1,0 +1,83 @@
+{
+ "titulo": "El segundo piso del vecino y la ventana que da a mi patio",
+ "lead": 0.4,
+ "tail": 3.8,
+ "music": 0.08,
+ "whoosh": [],
+ "segments": [
+  {
+   "scene": "hook",
+   "text": "Don Julio levantó un segundo piso. Y la ventana nueva da directo al patio de doña Elena.",
+   "pause": 0.3
+  },
+  {
+   "scene": "elena",
+   "text": "Ahí ella lava, tiende la ropa y juega con sus nietos. Ahora se siente vigilada.",
+   "pause": 0.3
+  },
+  {
+   "scene": "julio",
+   "text": "Para él es diferente: es su terreno, su dinero, y su familia necesitaba espacio.",
+   "pause": 0.3
+  },
+  {
+   "scene": "dialogo",
+   "who": "elena",
+   "voice": "ef_dora",
+   "text": "Esa ventana me quitó la privacidad de mi casa.",
+   "pause": 0.25
+  },
+  {
+   "scene": "dialogo",
+   "who": "julio",
+   "voice": "em_santa",
+   "text": "Yo construyo en lo mío. Nadie me puede decir nada.",
+   "pause": 0.35
+  },
+  {
+   "scene": "tension",
+   "text": "Los dos defienden algo legítimo: el derecho a construir, y el derecho a la privacidad.",
+   "pause": 0.3
+  },
+  {
+   "scene": "permiso",
+   "text": "Lo que muchos no saben: construir requiere permiso municipal, y la obra debe respetar las normas de construcción.",
+   "pause": 0.25
+  },
+  {
+   "scene": "vistas",
+   "text": "Además, la ley establece reglas sobre ventanas y vistas hacia el terreno vecino, como distancias mínimas desde el lindero.",
+   "pause": 0.35
+  },
+  {
+   "scene": "mito",
+   "text": "Tapar la ventana a pedradas, o levantar un muro sin permiso para vengarse, solo agrava el conflicto.",
+   "pause": 0.35
+  },
+  {
+   "scene": "paso1",
+   "text": "Lo recomendable: primero, conversar y buscar soluciones, como un vidrio opaco o una celosía.",
+   "pause": 0.2
+  },
+  {
+   "scene": "paso2",
+   "text": "Segundo, consultar en la municipalidad si la obra tiene permiso.",
+   "pause": 0.2
+  },
+  {
+   "scene": "paso3",
+   "text": "Y tercero, pedir la mediación del patronato antes de llegar a un juicio.",
+   "pause": 0.35
+  },
+  {
+   "scene": "final",
+   "text": "Construir es un derecho. Convivir, también.",
+   "pause": 0.4
+  },
+  {
+   "scene": "cierre",
+   "text": "Para orientación en conflictos vecinales, CONAFEPH está para servirle.",
+   "say": "Para orientación en conflictos vecinales, Conafép está para servirle."
+  }
+ ]
+}

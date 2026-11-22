@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Reel 05 · La ventana del vecino</title>
+<style>
+@font-face{font-family:'Brand';src:url('../motor/fonts/Montserrat.woff2') format('woff2');font-weight:100 900}
+*{margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#1A1238}
+svg{display:block}
+</style>
+</head>
+<body>
+<svg id="s" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+<script type="module">
+import * as F from '../motor/flat.js';
+const { clamp, lerp, ease, easeOut, easeBack, prog, FONT, defs, sky, glow, hill, particles, figure, ARMS, flatHouse, flatTree, paper, badge, bigNum, shade } = F;
+
+await Promise.all(['600', '700', '800', '900'].map(w => document.fonts.load(`${w} 60px Brand`, 'ÁÉÍÓÚáéíóúñÑ¿?¡!abc')));
+const TL = await (await fetch('timeline.json')).json();
+const SEG = TL.segments, ENV = TL.env;
+const S = i => SEG[i].start, E = i => SEG[i].end;
+const norm = w => w.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-zñ0-9]/g, '');
+function wt(i, word, end = false) {
+  const ws = SEG[i].words || [], n = norm(word);
+  const w = ws.find(x => norm(x.w).startsWith(n));
+  if (w) return end ? w.e : w.s;
+  const k = norm(SEG[i].text).indexOf(n) / Math.max(1, norm(SEG[i].text).length);
+  return S(i) + (E(i) - S(i)) * Math.max(0, k);
+}
+const SHOTS = [];
+SEG.forEach((s, i) => { if (!SHOTS.length || SHOTS.at(-1).scene !== s.scene) SHOTS.push({ scene: s.scene, i0: i, i1: i }); else SHOTS.at(-1).i1 = i; });
+SHOTS.forEach((sh, k) => { sh.start = k === 0 ? 0 : S(sh.i0) - .25; });
+SHOTS.forEach((sh, k) => { sh.end = k < SHOTS.length - 1 ? SHOTS[k + 1].start : TL.duration; });
+
+const DEFS = defs();
+const LOGO = '../motor/assets/conafeph-logo.png';
+const LUCIA = { c: '#C64A8A', bun: true, skirt: '#7A2E5C' };
+const RAFAEL = { c: '#3E56B0', hat: '#D8B26A' };
+const NEI = [{ c: '#2FA58C' }, { c: '#E07B3A', long: true }, { c: '#8E6FD8', cap: '#3A2E6B' }, { c: '#D94F4F', bun: true }];
+const fig = (b, t, o, x) => figure({ ...b, bob: Math.sin(t * 2.2 + o) * 3, ...x });
+const pop = (p, svg, x, y) => p <= 0 ? '' : `<g transform="translate(${x},${y}) scale(${Math.max(.001, easeBack(p))}) translate(${-x},${-y})" opacity="${clamp(p * 2)}">${svg}</g>`;
+const fly = (p, svg, dy = 80, rot = 0) => p <= 0 ? '' : `<g transform="translate(0,${(1 - easeOut(p)) * dy}) rotate(${(1 - easeOut(p)) * rot} 540 900)" opacity="${clamp(p * 1.5)}">${svg}</g>`;
+const txt = (x, y, s, fs, o = {}) => `<text x="${x}" y="${y}" ${FONT} font-weight="${o.w ?? 800}" font-size="${fs}" fill="${o.c ?? '#1E2A4A'}" text-anchor="${o.a ?? 'start'}" ${o.ls ? `letter-spacing="${o.ls}"` : ''}>${s}</text>`;
+
+// ---------- fondos ----------
+function colonia(t, k = 'dusk', o = {}) {
+  let s = sky(k);
+  s += glow(o.sunX ?? 760, o.sunY ?? 640, 420, 'glowW', o.sun ?? .55);
+  s += hill(11, 560, 1300, shade(F.SKY[k][1], -.15), { houses: 200, size: 18, lit: k === 'night' || k === 'dusk' ? .5 : 0, amp: 80, op: .8 });
+  s += hill(23, 760, 1400, shade(F.SKY[k][1], -.3), { houses: 160, size: 26, lit: k === 'night' || k === 'dusk' ? .45 : 0, amp: 60 });
+  s += particles(t, 22, { y0: 500, h: 900, op: .5 });
+  return s;
+}
+const GY = 1260;
+function ground(o = {}) {
+  let s = `<rect x="-20" y="${GY}" width="1120" height="700" fill="url(#soil)"/><rect x="-20" y="${GY - 6}" width="1120" height="26" fill="url(#grassG)"/>`;
+  if (o.cut) s += `<rect x="-20" y="${GY + 20}" width="1120" height="700" fill="#2A1A10" opacity=".25"/>`;
+  return s;
+}
+function roots(p, x0 = 330, x1 = 640) {
+  if (p <= 0) return '';
+  const d = `M${x0} ${GY + 20} C${x0 + 80} ${GY + 90} ${(x0 + x1) / 2} ${GY + 40} ${x1} ${GY + 110} M${x0} ${GY + 30} C${x0 + 60} ${GY + 160} ${(x0 + x1) / 2} ${GY + 150} ${x1 - 30} ${GY + 190}`;
+  return `<path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#F2A93B" stroke-width="22" fill="none" stroke-linecap="round" opacity=".35" filter="url(#soft)"/><path d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#C98A55" stroke-width="12" fill="none" stroke-linecap="round"/>`;
+}
+function crack(x, y, p, t) {
+  if (p <= 0) return '';
+  const d = 'M0 0 l-14 -40 l18 -30 l-20 -46 l14 -36 l-10 -40 M-12 -76 l-30 -10 M4 -110 l26 -14';
+  return glow(x - 6, y - 110, 110 + 10 * Math.sin(t * 6), 'glowR', .8 * p) + `<path transform="translate(${x},${y}) scale(1.3)" d="${d}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="${1 - clamp(p)}" stroke="#FF5A4E" stroke-width="6" fill="none" stroke-linejoin="round" stroke-linecap="round"/>`;
+}
+const leaf = (x, y, r, s = 1) => `<path transform="translate(${x},${y}) rotate(${r}) scale(${s})" d="M0 -18 Q16 -4 0 18 Q-16 -4 0 -18Z" fill="#4CA35A"/>`;
+function yard(t, o = {}) {
+  let s = colonia(t, o.sky ?? 'dusk', o);
+  s += ground();
+  s += flatHouse(560, GY, 470, 380, { wall: '#3FA7A0', door: '#C93A5C', filter: true });
+  s += `<rect x="520" y="${GY - 200}" width="34" height="200" fill="#B9AFA0"/>`;
+  s += roots(o.roots ?? 0);
+  s += crack(640, GY - 4, o.crack ?? 0, t);
+  s += flatTree(290, GY, 1.05, t, { over: 340 });
+  if (o.falling) for (let k = 0; k < 7; k++) { const p = (t * .32 + k / 7) % 1; s += leaf(600 + Math.sin(t * 2 + k) * 40 + k * 30, 640 + p * 600, t * 90 + k * 50, 1); }
+  if (o.pile) for (let k = 0; k < 7; k++) s += leaf(560 + k * 12, GY - 392 - (k % 2) * 8, k * 30, clamp(o.pile * 7 - k));
+  return s;
+}
+// tarjeta de diálogo
+function speech(x, y, who, lines, p, o = {}) {
+  if (p <= 0) return '';
+  const w = 800, h = 104 + lines.length * 62;
+  const body = `<text x="${-w / 2 + 40}" y="${-h / 2 + 112}" ${FONT} font-weight="800" font-size="48" fill="${o.fg ?? '#1E2A4A'}">${lines.map((l, k) => `<tspan x="${-w / 2 + 40}" dy="${k ? 62 : 0}">${l}</tspan>`).join('')}</text>`;
+  return pop(p, paper(x, y, w, h, { rot: o.rot ?? -2, bg: o.bg, body }) + badge(x - w / 2 + 40, y - h / 2 - 6, who, { anchor: 'start', fs: 30, bg: o.badge ?? '#C93A5C' }), x, y);
+}
+function revealLines(q, t, lines) {
+  const ws = SEG[q].words || [], tokens = lines.map(l => l.split(' ')), total = tokens.flat().length;
+  const said = ws.length ? Math.round(ws.filter(w => t >= w.s - .05).length * total / ws.length) : Math.round(total * prog(t, S(q), E(q)));
+  let wi = 0; return tokens.map(row => row.map(w => `<tspan fill-opacity="${wi++ < Math.max(1, said) ? 1 : .15}">${w}</tspan>`).join(' '));
+}
+function scaleGold(x, y, tilt, p, l, r) {
+  if (p <= 0) return '';
+  const a = tilt * 13 * Math.PI / 180, L = 260;
+  const lx = x - L * Math.cos(a), ly = y - L * Math.sin(a), rx = x + L * Math.cos(a), ry = y + L * Math.sin(a);
+  const pan = (px, py, lab) => `<path d="M${px - 100} ${py + 150} L${px} ${py} L${px + 100} ${py + 150}" stroke="#E3C14B" stroke-width="5" fill="none"/><path d="M${px - 120} ${py + 150} h240 q-14 50 -120 50 q-106 0 -120 -50z" fill="#E3B23C"/>${lab ? paper(px, py + 100, 250, 96, { rot: -4, body: txt(0, 12, lab, 30, { a: 'middle', w: 900 }) }) : ''}`;
+  return pop(p, `<g filter="url(#sh)"><rect x="${x - 14}" y="${y}" width="28" height="440" fill="#D4A437"/><rect x="${x - 120}" y="${y + 430}" width="240" height="34" rx="10" fill="#B88A2A"/><path d="M${lx} ${ly} L${rx} ${ry}" stroke="#E3C14B" stroke-width="20" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="24" fill="#F7D774"/>${pan(lx, ly, l)}${pan(rx, ry, r)}</g>`, x, y + 200);
+}
+function island(t, inner) { // corte de terreno flotante
+  let s = `<g filter="url(#sh)"><path d="M120 1180 Q540 1150 960 1180 L900 1400 Q540 1440 180 1400Z" fill="url(#soil)"/><path d="M110 1150 Q540 1120 970 1150 L970 1190 Q540 1160 110 1190Z" fill="url(#grassG)"/></g>`;
+  return s + inner;
+}
+
+// ---------- subtítulos arriba (palabra actual enmarcada) ----------
+const cv = document.createElement('canvas').getContext('2d');
+const tw = (s, fs, w = 700) => { cv.font = `${w} ${fs}px Brand`; return cv.measureText(s).width; };
+const CH = [];
+SEG.forEach((s, i) => {
+  if (s.scene === 'cierre') return;
+  const sw = s.text.split(' '), aw = s.words || [], ws = []; let j = 0;
+  sw.forEach(w => { let hit = -1; for (let d = 0; d < 3 && j + d < aw.length; d++) { const a = norm(aw[j + d].w), b = norm(w); if (a && b && (a.startsWith(b.slice(0, 3)) || b.startsWith(a.slice(0, 3)))) { hit = j + d; break; } } if (hit >= 0) { ws.push({ w, s: aw[hit].s, e: aw[hit].e }); j = hit + 1; } else ws.push({ w, s: null, e: null }); });
+  ws.forEach((x, k) => { if (x.s === null) { const pv = ws.slice(0, k).reverse().find(y => y.s !== null), nx = ws.slice(k + 1).find(y => y.s !== null); const a = pv ? pv.e : S(i), b = nx ? nx.s : E(i); x.s = a; x.e = Math.max(a + .05, b); } });
+  let cur = [];
+  ws.forEach((w, k) => { cur.push(w); const len = cur.map(x => x.w).join(' ').length; if (len > 26 || (/[.?!:,…]$/.test(w.w) && len > 12) || k === ws.length - 1) { CH.push({ words: cur, s: cur[0].s - .06, e: ws[k + 1] ? ws[k + 1].s - .06 : E(i) + .05 }); cur = []; } });
+});
+function captions(t) {
+  const c = CH.find(x => t >= x.s && t < x.e); if (!c) return '';
+  const fs = 56, gap = 16, maxW = 860;
+  const items = c.words.map(w => ({ ...w, wd: tw(w.w, fs, 700) }));
+  const lines = [[]]; let lw = 0;
+  items.forEach(it => { if (lw + it.wd > maxW && lines.at(-1).length) { lines.push([]); lw = 0; } lines.at(-1).push(it); lw += it.wd + gap; });
+  let s = ''; let curI = -1; c.words.forEach((w, k) => { if (t >= w.s - .02) curI = k; });
+  let wi = 0;
+  lines.forEach((ln, li) => {
+    const total = ln.reduce((a, b) => a + b.wd, 0) + gap * (ln.length - 1); let x = 540 - total / 2; const y = 400 + li * 70;
+    ln.forEach(it => {
+      const idx = wi++, said = idx <= curI, now = idx === curI;
+      if (now) { const x0 = x - 10, x1 = x + it.wd + 10, y0 = y - 50, y1 = y + 16, L = 14; s += `<path d="M${x0} ${y0 + L} V${y0} H${x0 + L} M${x1 - L} ${y0} H${x1} V${y0 + L} M${x1} ${y1 - L} V${y1} H${x1 - L} M${x0 + L} ${y1} H${x0} V${y1 - L}" stroke="#fff" stroke-width="4" fill="none"/>`; }
+      s += `<text x="${x}" y="${y}" ${FONT} font-weight="${now ? 800 : 700}" font-size="${fs}" fill="#fff" fill-opacity="${said ? 1 : .45}" style="paint-order:stroke" stroke="#000" stroke-opacity=".25" stroke-width="6">${it.w.replace(/&/g, '&amp;')}</text>`;
+      x += it.wd + gap;
+    });
+  });
+  return s;
+}
+const brand = `<g filter="url(#sh)"><rect x="390" y="262" width="300" height="62" rx="31" fill="#141A2E" opacity=".85"/><image href="${LOGO}" x="396" y="265" width="56" height="56"/><text x="572" y="304" ${FONT} font-weight="800" font-size="30" text-anchor="middle" fill="#fff" letter-spacing="2">CONAFEPH</text></g>`;
+
+// ---------- escenas: un solo mundo coherente ----------
+const ELENA = { c: '#C64A8A', bun: true, skirt: '#7A2E5C' };
+const JULIO = { c: '#3E56B0', cap: '#E3B23C' };
+const MEDI = { c: '#22B35E' };
+const WG = 1300; // suelo del mundo
+const WIN = { x: 430, y: 720, w: 100, h: 130 };
+function brickLines(x, y, w, h, c, step = 26) { let s = ''; for (let yy = y + step; yy < y + h; yy += step) s += `<path d="M${x} ${yy} h${w}" stroke="${c}" stroke-width="2" opacity=".35"/>`; for (let yy = y, r = 0; yy < y + h; yy += step, r++) for (let xx = x + (r % 2) * 30; xx < x + w; xx += 60) s += `<path d="M${xx} ${yy} v${step}" stroke="${c}" stroke-width="2" opacity=".25"/>`; return s; }
+function clothes(x0, y0, x1, y1, t) {
+  let s = `<path d="M${x0} ${y0} Q${(x0 + x1) / 2} ${(y0 + y1) / 2 + 30} ${x1} ${y1}" stroke="#E8E2D6" stroke-width="4" fill="none"/>`;
+  const items = [[.18, '#4FB0C6', 'shirt'], [.42, '#F2A93B', 'towel'], [.64, '#8E6FD8', 'pants'], [.84, '#F06C4B', 'shirt']];
+  items.forEach(([p, c, k], i) => {
+    const x = lerp(x0, x1, p), y = lerp(y0, y1, p) + Math.sin(p * Math.PI) * 30, a = Math.sin(t * 2.2 + i) * 6;
+    let g = `<g transform="translate(${x},${y}) rotate(${a})">`;
+    if (k === 'shirt') g += `<path d="M-34 0 L-50 22 L-38 32 L-30 24 V80 H30 V24 L38 32 L50 22 L34 0 Q0 12 -34 0Z" fill="${c}"/>`;
+    if (k === 'towel') g += `<rect x="-26" y="0" width="52" height="86" fill="${c}"/><rect x="-26" y="66" width="52" height="8" fill="#fff" opacity=".6"/>`;
+    if (k === 'pants') g += `<path d="M-28 0 H28 L32 90 H8 L0 30 L-8 90 H-32Z" fill="${c}"/>`;
+    s += g + `<rect x="-4" y="-6" width="8" height="12" fill="#C79B66"/></g>`;
+  });
+  return s;
+}
+function plant(x, y, s = 1) { return `<g transform="translate(${x},${y}) scale(${s})"><path d="M-30 0 L-24 -46 H24 L30 0Z" fill="#C46A3A"/><path d="M0 -46 Q-40 -90 -30 -120 M0 -46 Q10 -110 0 -140 M0 -46 Q40 -90 34 -118" stroke="#3E8E3A" stroke-width="14" fill="none" stroke-linecap="round"/></g>`; }
+function birds(t) { let s = ''; for (let k = 0; k < 4; k++) { const x = ((t * 40 + k * 260) % 1400) - 160, y = 520 + k * 34 + Math.sin(t + k) * 10, w = Math.sin(t * 8 + k) * 6; s += `<path d="M${x - 16} ${y - w} Q${x - 8} ${y - 8} ${x} ${y} Q${x + 8} ${y - 8} ${x + 16} ${y - w}" stroke="#2A2240" stroke-width="4" fill="none" stroke-linecap="round"/>`; } return s; }
+function world(t, o = {}) {
+  const dusk = o.dusk ?? 0;
+  let s = sky('golden') + glow(900, 780, 520, 'glowW', .7 - dusk * .3) + `<circle cx="900" cy="780" r="70" fill="#FFE2A6" opacity="${1 - dusk * .5}"/>`;
+  s += hill(31, 640, 1320, '#5B5C8E', { houses: 200, size: 18, lit: .2 + dusk * .4, amp: 70, op: .75 });
+  s += hill(47, 860, 1340, '#46477A', { houses: 150, size: 24, lit: .15 + dusk * .4, amp: 50 });
+  s += birds(t);
+  // suelo
+  s += `<rect x="-200" y="${WG}" width="1500" height="700" fill="#7A5A44"/><rect x="-200" y="${WG}" width="1500" height="700" fill="url(#fog)" opacity=".3"/>`;
+  for (let x = 560; x < 1200; x += 70) s += `<path d="M${x} ${WG} l-30 120" stroke="#A88C70" stroke-width="3" opacity=".6"/>`;
+  s += `<rect x="560" y="${WG}" width="700" height="10" fill="#C9B79C"/>`;
+  // casa de don Julio (2 pisos, segundo piso nuevo en obra)
+  s += `<g filter="url(#sh)"><rect x="40" y="970" width="490" height="330" fill="#E9C46A"/>${brickLines(40, 970, 490, 330, '#B88A2A')}<rect x="110" y="1100" width="100" height="200" fill="#8A4B2E"/><rect x="300" y="1060" width="150" height="110" fill="#2A2240" opacity=".85"/>${[1, 2, 3, 4].map(k => `<path d="M${300 + k * 30} 1060 v110" stroke="#E3C14B" stroke-width="5"/>`).join('')}</g>`;
+  s += `<g filter="url(#sh)"><rect x="80" y="660" width="450" height="310" fill="#A7A9B4"/>${brickLines(80, 660, 450, 310, '#6E7080', 40)}<rect x="66" y="646" width="478" height="20" fill="#8C8E9A"/></g>`;
+  for (let k = 0; k < 5; k++) s += `<path d="M${110 + k * 100} 646 v-60" stroke="#7A5A44" stroke-width="5"/>`;
+  s += `<path d="M380 646 v-110 q0 -20 60 -20 q60 0 60 20 v110z" fill="#22262E"/><ellipse cx="440" cy="516" rx="60" ry="12" fill="#3A3F4A"/>`;
+  // andamio
+  s += `<g stroke="#D9A441" stroke-width="7" opacity=".95"><path d="M50 1300 V640 M170 1300 V640 M50 980 H170 M50 820 H170 M50 980 L170 820 M50 820 L170 660"/></g><rect x="40" y="976" width="140" height="10" fill="#C79B66"/>`;
+  // ventana nueva hacia el patio
+  const op = o.opaque ?? 0;
+  s += `<rect x="${WIN.x - 8}" y="${WIN.y - 8}" width="${WIN.w + 16}" height="${WIN.h + 16}" fill="#E8E2D6"/>`;
+  s += `<rect x="${WIN.x}" y="${WIN.y}" width="${WIN.w}" height="${WIN.h}" fill="${o.lightOn ? '#FFE9A8' : '#2A3550'}"/>`;
+  if (o.julioWin) s += `<circle cx="${WIN.x + 50}" cy="${WIN.y + 62}" r="24" fill="#2A3B7A"/><rect x="${WIN.x + 18}" y="${WIN.y + 88}" width="64" height="42" rx="20" fill="#2A3B7A"/>`;
+  if (op > 0) { s += `<rect x="${WIN.x}" y="${WIN.y}" width="${WIN.w}" height="${WIN.h}" fill="#E9EEF5" opacity="${.92 * op}"/>`; for (let k = 1; k < 7; k++) s += `<path d="M${WIN.x} ${WIN.y + k * WIN.h / 7} h${WIN.w}" stroke="#B9C2D0" stroke-width="5" opacity="${op}"/>`; }
+  s += `<path d="M${WIN.x + WIN.w / 2} ${WIN.y} v${WIN.h} M${WIN.x} ${WIN.y + WIN.h / 2} h${WIN.w}" stroke="#E8E2D6" stroke-width="6"/>`;
+  // materiales
+  s += `<g>${[0, 1, 2].map(r => [0, 1, 2, 3].map(c => `<rect x="${200 + c * 46 - r * 0}" y="${WG - 30 - r * 30}" width="44" height="28" fill="#9C9EA8" stroke="#6E7080" stroke-width="2"/>`).join('')).join('')}<path d="M380 ${WG} q60 -90 130 0z" fill="#D9B77A"/><path d="M342 ${WG} l8 -60 h44 l8 60z" fill="#3E56B0"/></g>`;
+  // muro lindero
+  s += `<rect x="530" y="${WG - 250}" width="34" height="250" fill="#C9C2B6"/><rect x="524" y="${WG - 260}" width="46" height="14" fill="#E8E2D6"/>`;
+  // casa y patio de doña Elena
+  s += `<g filter="url(#sh)"><rect x="830" y="980" width="320" height="320" fill="#E39BB3"/>${brickLines(830, 980, 320, 320, '#B0607E')}<path d="M810 990 L1170 960 L1170 984 L810 1014Z" fill="#C9C2B6"/><rect x="870" y="1110" width="90" height="190" fill="#2FA58C"/></g>`;
+  s += `<rect x="604" y="1020" width="12" height="280" fill="#6E4430"/>`;
+  s += clothes(610, 1030, 830, 1050, t);
+  s += plant(650, WG, .9) + plant(800, WG, 1.1);
+  if (o.kids !== false) { const by = WG - 40 - Math.abs(Math.sin(t * 3.4)) * 120; s += figure({ x: 700, y: WG + 4, s: .28, c: '#F2A93B', bob: Math.sin(t * 6) * 4, arms: ARMS.upBoth }) + figure({ x: 780, y: WG + 4, s: .26, c: '#4FB0C6', long: true, bob: Math.sin(t * 6 + 1) * 4, arms: ARMS.up }) + `<circle cx="740" cy="${by}" r="16" fill="#E5484D"/>`; }
+  // líneas de vista
+  const v = o.sight ?? 0;
+  if (v > 0) [[640, 1180], [720, 1240], [780, 1100]].forEach(([x, y], k) => s += `<path d="M${WIN.x + WIN.w} ${WIN.y + 60} L${lerp(WIN.x + WIN.w, x, clamp(v * 1.3 - k * .15))} ${lerp(WIN.y + 60, y, clamp(v * 1.3 - k * .15))}" stroke="#F7C948" stroke-width="5" stroke-dasharray="14 10" opacity=".95"/>`);
+  s += `<rect x="-200" y="1420" width="1500" height="30" fill="#BDB3A3"/><rect x="-200" y="1450" width="1500" height="560" fill="#3E3A4E"/>`;
+  for (let x = -100; x < 1300; x += 220) s += `<rect x="${x}" y="1640" width="120" height="12" rx="6" fill="#CFC8BA" opacity=".7"/>`;
+  for (let k = 0; k < 9; k++) { const x = 30 + k * 130; s += `<path d="M${x} 1420 l6 -26 l6 20 l6 -30 l6 28 l6 -18 l6 26" stroke="#5C8A3A" stroke-width="4" fill="none"/>`; }
+  const tail = Math.sin(t * 6) * 8;
+  s += `<g transform="translate(900,1416)"><ellipse cx="0" cy="0" rx="70" ry="10" fill="#000" opacity=".2"/><ellipse cx="0" cy="-22" rx="56" ry="24" fill="#C98A55"/><circle cx="50" cy="-34" r="20" fill="#C98A55"/><path d="M60 -48 l10 -16 l6 18z" fill="#8A5A3B"/><path d="M-54 -26 q-26 ${-10 + tail} -36 ${-26 + tail}" stroke="#C98A55" stroke-width="9" fill="none" stroke-linecap="round"/><path d="M44 -36 q4 -3 8 0" stroke="#2A1E18" stroke-width="3" fill="none"/></g>`;
+  if (dusk > 0) s += `<rect x="-200" y="0" width="1500" height="2000" fill="#1A1238" opacity="${dusk * .35}"/>`;
+  return s;
+}
+function camT(c) { const x = clamp(c.x, 540 / c.z, 1080 - 540 / c.z), y = Math.max(c.y, 960 / c.z); return `translate(540,960) scale(${c.z}) translate(${-x},${-y})`; }
+const CAM = { wide: { x: 540, y: 1010, z: 1.0 }, window: { x: 470, y: 840, z: 1.55 }, patio: { x: 740, y: 1150, z: 1.5 }, julio: { x: 290, y: 1000, z: 1.4 }, mid: { x: 540, y: 1080, z: 1.15 }, lindero: { x: 520, y: 960, z: 1.55 } };
+const camLerp = (a, b, k) => ({ x: lerp(a.x, b.x, k), y: lerp(a.y, b.y, k), z: lerp(a.z, b.z, k) });
+const dim = a => `<rect x="0" y="0" width="1080" height="1920" fill="#120C26" opacity="${a}"/>`;
+const stepChip = (n, p) => p <= 0 ? '' : pop(p, badge(540, 560, `PASO ${n}`, { fs: 34, bg: '#F7C948', fg: '#1E2A4A' }), 540, 560);
+function guideCard(t, active) {
+  const p0 = SHOTS.find(x => x.scene === 'paso1').i0;
+  const lines = [['Conversar: vidrio opaco o celosía', p0], ['Consultar el permiso municipal', p0 + 1], ['Mediación del patronato', p0 + 2]];
+  let body = '';
+  lines.forEach(([l, si], k) => { const y = -40 + k * 80, p = prog(t, S(si) + .2, S(si) + 1.2); body += `<circle cx="-300" cy="${y - 12}" r="22" fill="${p > 0 ? '#22B35E' : '#C9C2B6'}"/>` + txt(-300, y - 2, `${k + 1}`, 26, { a: 'middle', c: '#fff', w: 900 }); if (p > 0) body += `<clipPath id="g${k}"><rect x="-266" y="${y - 44}" width="${p * 600}" height="60"/></clipPath><text x="-266" y="${y}" clip-path="url(#g${k})" ${FONT} font-weight="800" font-size="34" fill="#1E2A4A">${l}</text>`; });
+  return paper(540, 790, 760, 300, { rot: -1, head: 'LO RECOMENDABLE', headBg: '#22B35E', headH: 64, headFs: 34, body });
+}
+
+function scene(sh, t) {
+  const u = t - sh.start, i = sh.i0, id = sh.scene, D = sh.end - sh.start, k = ease(u / D);
+  let w = {}, cam = CAM.wide, over = '';
+  if (id === 'hook') {
+    const ve = wt(i, 'ventana');
+    w = { sight: prog(t, ve, ve + 1.2), lightOn: true, julioWin: t > ve };
+    cam = camLerp(CAM.wide, CAM.window, ease(prog(u, .3, D - .3)));
+    over += pop(prog(t, ve + .2, ve + .5), badge(700, 760, 'Ventana nueva', { fs: 38, bg: '#141A2E' }), 700, 760);
+  }
+  if (id === 'elena') {
+    const ti = wt(i, 'tiende'), vi = wt(i, 'vigilada');
+    w = { sight: prog(t, vi - .4, vi + .6), lightOn: true, julioWin: true };
+    cam = camLerp(CAM.window, CAM.patio, ease(prog(u, 0, 1.2)));
+    over += `<g transform="${camT(cam)}">${figure({ x: 690, y: WG + 6, s: .5, ...ELENA, bob: Math.sin(t * 2) * 3, arms: t > ti ? { r: [8, 4], l: [150, 20] } : ARMS.idle })}</g>`;
+    over += pop(prog(t, vi - .1, vi + .2), badge(540, 1360, 'Se siente vigilada', { fs: 40, bg: '#C93A5C' }), 540, 1360);
+  }
+  if (id === 'julio') {
+    const te = wt(i, 'terreno'), di = wt(i, 'dinero'), es = wt(i, 'espacio');
+    w = { lightOn: true };
+    cam = camLerp(CAM.patio, CAM.julio, ease(prog(u, 0, 1.2)));
+    over += `<g transform="${camT(cam)}">${figure({ x: 300, y: WG + 6, s: .5, ...JULIO, bob: Math.sin(t * 2) * 3, arms: ARMS.hips })}</g>`;
+    over += pop(prog(t, te - .1, te + .2), badge(300, 620, 'Su terreno', { fs: 38, bg: '#3E56B0' }), 300, 620);
+    over += pop(prog(t, di - .1, di + .2), badge(560, 700, 'Su dinero', { fs: 38, bg: '#3E56B0' }), 560, 700);
+    over += pop(prog(t, es - .1, es + .2), badge(780, 620, 'Más espacio', { fs: 38, bg: '#3E56B0' }), 780, 620);
+  }
+  if (id === 'dialogo') {
+    const qe = sh.i0, qj = sh.i1;
+    w = { lightOn: true, sight: t < S(qj) ? .9 : 0 };
+    cam = camLerp(CAM.julio, CAM.mid, ease(prog(u, 0, 1.0)));
+    over += `<g transform="${camT(cam)}">${figure({ x: 700, y: WG + 6, s: .55, ...ELENA, arms: t < S(qj) ? ARMS.pointL : ARMS.cross })}${figure({ x: 380, y: WG + 6, s: .55, ...JULIO, arms: t >= S(qj) ? ARMS.shrug : ARMS.idle })}</g>`;
+    if (t < S(qj) - .1) over += speech(540, 700, 'DOÑA ELENA', revealLines(qe, t, ['Esa ventana me quitó', 'la privacidad de mi casa.']), prog(t, S(qe) - .3, S(qe)), { rot: -2, badge: '#C64A8A' });
+    else over += speech(540, 700, 'DON JULIO', revealLines(qj, t, ['Yo construyo en lo mío.', 'Nadie me puede decir nada.']), prog(t, S(qj) - .2, S(qj) + .1), { rot: 2, badge: '#3E56B0' });
+  }
+  if (id === 'tension') {
+    w = { lightOn: true, dusk: .15 };
+    cam = camLerp(CAM.mid, CAM.wide, ease(prog(u, 0, 1)));
+    over += dim(.35 * prog(u, 0, .5));
+    const co = wt(i, 'construir'), pr = wt(i, 'privacidad');
+    over += pop(prog(t, co - .2, co + .1), paper(300, 760, 400, 200, { rot: -4, head: 'DERECHO', headBg: '#3E56B0', headH: 60, headFs: 32, body: txt(0, 50, 'a construir', 46, { a: 'middle', w: 900 }) }), 300, 760);
+    over += pop(prog(t, pr - .2, pr + .1), paper(780, 760, 400, 200, { rot: 4, head: 'DERECHO', headBg: '#C64A8A', headH: 60, headFs: 32, body: txt(0, 50, 'a la privacidad', 42, { a: 'middle', w: 900 }) }), 780, 760);
+    const zz = prog(t, pr, pr + .3);
+    if (zz > 0) { let d = 'M500 760'; for (let x = 520; x <= 580; x += 12) d += ` L${x} ${760 + ((x / 12) % 2 ? -22 : 22) * Math.sin(t * 20)}`; over += `<path d="${d}" stroke="#F7C948" stroke-width="7" fill="none" opacity="${zz}" stroke-linejoin="round"/>`; }
+  }
+  if (id === 'permiso') {
+    w = { lightOn: true, dusk: .2 };
+    cam = CAM.wide;
+    over += dim(.55 * prog(u, 0, .4));
+    const pe = wt(i, 'permiso'), no = wt(i, 'normas');
+    let bp = `<rect x="-230" y="-150" width="460" height="300" fill="#1E4E8C"/>`; for (let g = -220; g < 230; g += 30) bp += `<path d="M${g} -150 v300" stroke="#4A7CC0" stroke-width="1.5"/>`; for (let g = -140; g < 150; g += 30) bp += `<path d="M-230 ${g} h460" stroke="#4A7CC0" stroke-width="1.5"/>`;
+    bp += `<path d="M-160 100 V-60 H60 V-110 H160 V100Z M-100 100 V20 H-40 V100" stroke="#fff" stroke-width="5" fill="none"/>` + txt(0, 140, 'PLANOS', 28, { a: 'middle', c: '#fff', w: 900, ls: 4 });
+    over += fly(prog(t, no - .5, no), `<g transform="translate(760,1120) rotate(6)" filter="url(#sh)">${bp}</g>`, 100, 4);
+    const body = txt(-280, 10, 'Municipalidad de', 34, { c: '#5A6478', w: 700 }) + txt(-280, 60, 'su localidad', 34, { c: '#5A6478', w: 700 }) + `<g transform="translate(150,90) rotate(-12)"><rect x="-130" y="-38" width="260" height="76" rx="10" fill="none" stroke="#C93A5C" stroke-width="7"/>${txt(0, 14, 'REQUERIDO', 40, { a: 'middle', c: '#C93A5C', w: 900 })}</g>`;
+    over += fly(prog(t, pe - .4, pe), paper(460, 840, 640, 340, { rot: -3, head: 'PERMISO DE CONSTRUCCIÓN', headBg: '#1E2A4A', headFs: 34, body }), 120, -6);
+  }
+  if (id === 'vistas') {
+    w = { lightOn: true, dusk: .25, sight: .6 };
+    cam = camLerp(CAM.wide, CAM.lindero, ease(prog(u, 0, 1.2)));
+    const di = wt(i, 'distancias');
+    const m = prog(t, di - .4, di + .6);
+    let ov = '';
+    if (m > 0) ov += `<path d="M${WIN.x + WIN.w} 900 H${lerp(WIN.x + WIN.w, 547, m)}" stroke="#F7C948" stroke-width="6"/><path d="M${WIN.x + WIN.w} 880 v40 M547 880 v40" stroke="#F7C948" stroke-width="6" opacity="${m}"/><path d="M547 640 V${WG}" stroke="#fff" stroke-width="4" stroke-dasharray="16 12" opacity="${m}"/>`;
+    over += `<g transform="${camT(cam)}">${ov}</g>`;
+    over += pop(prog(t, di, di + .3), badge(540, 1200, 'Distancia mínima al lindero', { fs: 38, bg: '#141A2E', stroke: '#F7C948' }), 540, 1200);
+    over += pop(prog(t, di + .3, di + .6), badge(540, 1300, 'Según ley y normas municipales', { fs: 30, bg: '#F7C948', fg: '#1E2A4A' }), 540, 1300);
+  }
+  if (id === 'mito') {
+    w = { lightOn: true, dusk: .3 };
+    cam = CAM.wide;
+    over += dim(.6 * prog(u, 0, .4));
+    const pe = wt(i, 'pedradas'), ag = wt(i, 'agrava');
+    over += pop(prog(t, pe - .3, pe), paper(380, 820, 460, 300, { rot: -6, head: 'NO SE VALE', headBg: '#C93A5C', body: txt(0, 10, 'Pedradas', 42, { a: 'middle' }) + txt(0, 70, 'Muro por venganza', 38, { a: 'middle' }) }), 380, 820);
+    const ap = prog(t, ag - .5, ag - .1);
+    if (ap > 0) over += `<g transform="translate(790,1080) scale(${easeBack(ap) * .8})" filter="url(#sh)"><polygon points="-78,-188 78,-188 188,-78 188,78 78,188 -78,188 -188,78 -188,-78" fill="#D63A3A"/><polygon points="-70,-170 70,-170 170,-70 170,70 70,170 -70,170 -170,70 -170,-70" fill="none" stroke="#fff" stroke-width="10"/><text y="34" ${FONT} font-weight="900" font-size="96" text-anchor="middle" fill="#fff">ALTO</text></g>`;
+  }
+  if (['paso1', 'paso2', 'paso3'].includes(id)) {
+    const n = +id.slice(-1);
+    if (id === 'paso1') {
+      const op = wt(i, 'opaco');
+      w = { lightOn: true, dusk: .3, opaque: prog(t, op - .3, op + .8) };
+      cam = camLerp(CAM.wide, CAM.window, ease(prog(u, 0, 1.2)));
+      over += pop(prog(t, op, op + .3), badge(540, 1240, 'Vidrio opaco o celosía', { fs: 38, bg: '#22B35E' }), 540, 1240);
+    }
+    if (id === 'paso2') {
+      w = { lightOn: true, dusk: .35, opaque: 1 };
+      cam = camLerp(CAM.window, CAM.wide, ease(prog(u, 0, 1)));
+      over += dim(.45 * prog(u, 0, .4));
+      over += pop(prog(u, .3, .6), badge(540, 1240, 'Consulta en la municipalidad', { fs: 38, bg: '#3E56B0' }), 540, 1240);
+    }
+    if (id === 'paso3') {
+      w = { lightOn: true, dusk: .4, opaque: 1, kids: false };
+      cam = CAM.mid;
+      over += `<g transform="${camT(cam)}">${figure({ x: 380, y: WG + 6, s: .55, ...JULIO, arms: ARMS.idle })}${figure({ x: 547, y: WG + 6, s: .58, ...MEDI, arms: { r: [80, 4], l: [80, 4] } })}${figure({ x: 720, y: WG + 6, s: .55, ...ELENA, arms: ARMS.idle })}</g>`;
+      over += pop(prog(u, .3, .6), badge(540, 1360, 'Mediación del patronato', { fs: 36, bg: '#22B35E' }), 540, 1360);
+    }
+    over += stepChip(n, prog(u, 0, .3));
+    over += guideCard(t, n);
+  }
+  if (id === 'final') {
+    w = { lightOn: true, dusk: .45, opaque: 1 };
+    cam = camLerp(CAM.mid, CAM.wide, ease(prog(u, 0, 1.5)));
+    over += `<g transform="${camT(cam)}">${figure({ x: 380, y: WG + 6, s: .5, ...JULIO, arms: ARMS.wave })}${figure({ x: 700, y: WG + 6, s: .5, ...ELENA, arms: ARMS.wave })}</g>`;
+    over += pop(prog(u, .2, .6), paper(540, 700, 640, 190, { rot: -2, body: txt(0, -6, 'Construir es un derecho.', 40, { a: 'middle', w: 900 }) + txt(0, 50, 'Convivir, también.', 40, { a: 'middle', w: 900, c: '#22B35E' }) }), 540, 700);
+  }
+  if (id === 'cierre') {
+    w = { lightOn: true, dusk: .6, opaque: 1 };
+    cam = CAM.wide;
+    over += dim(.7) + glow(540, 700, lerp(200, 560, easeOut(prog(u, 0, 1))), 'glowG', .9);
+    const p = prog(u, .1, .9);
+    over += `<g transform="translate(540,700) scale(${lerp(.4, 1, easeBack(p))})" opacity="${clamp(p * 2)}" filter="url(#sh)"><image href="${LOGO}" x="-220" y="-220" width="440" height="440"/></g>`;
+    over += `<g opacity="${prog(u, .6, 1)}">${txt(540, 1020, 'CONAFEPH', 100, { a: 'middle', c: '#fff', w: 900, ls: 6 })}${txt(540, 1070, 'Orientación en conflictos vecinales', 38, { a: 'middle', c: '#CFD6E4', w: 700 })}</g>`;
+    over += pop(prog(u, 1.2, 1.6), badge(540, 1180, 'Busque orientación con CONAFEPH', { fs: 42, bg: '#22B35E' }), 540, 1180);
+    over += `<g opacity="${prog(u, 1.8, 2.2)}">${txt(540, 1290, 'WhatsApp · Facebook · Oficinas', 38, { a: 'middle', c: '#CFD6E4', w: 600 })}</g>`;
+  }
+  return { s: `<g transform="${camT(cam)}">${world(t, w)}</g>` + over, cam: { x: 0, z: 1 } };
+}
+
+const svg = document.getElementById('s');
+window.seek = function (t) {
+  let k = 0; while (k < SHOTS.length - 1 && t >= SHOTS[k + 1].start) k++;
+  const sh = SHOTS[k];
+  const { s, cam } = scene(sh, t);
+  const fin = 1, fout = 1; // un solo mundo: cámara continua, sin cortes a negro
+  let out = DEFS + `<rect width="1080" height="1920" fill="#000"/>`;
+  out += `<g opacity="${Math.min(fin, fout) * .999 + .001}"><g transform="translate(${540 + cam.x},${cam.y ?? 960}) scale(${cam.z}) translate(-540,${-(cam.y ?? 960)})">${s}</g></g>`;
+  if (sh.scene !== 'cierre') out += captions(t) + brand;
+  svg.innerHTML = out;
+};
+window.DURATION = TL.duration;
+seek(0);
+window.READY = true;
+</script>
+</body>
+</html>
