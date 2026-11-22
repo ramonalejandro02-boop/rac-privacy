@@ -3,7 +3,7 @@ const {chromium}=require('playwright');const fs=require('fs');const {spawn}=requ
  const mode=process.argv[2]; const tim=JSON.parse(fs.readFileSync('timing.json'));
  const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1080,height:1920}});
  p.on('pageerror',e=>console.log('ERR',e.message));
- await p.goto('http://127.0.0.1:8765/anim.html'); await p.evaluate(t=>setup(t),tim);
+ await p.goto('http://127.0.0.1:8765/'+(process.env.PAGE||'anim.html')); await p.evaluate(t=>setup(t),tim);
  if(mode==='stills'){ for(const t of process.argv.slice(3).map(Number)){const d=await p.evaluate(t=>frame(t),t);
    fs.writeFileSync(`still_${t}.jpg`,Buffer.from(d.split(',')[1],'base64'));} }
  else { const fps=30,N=Math.ceil(tim.total*fps);
