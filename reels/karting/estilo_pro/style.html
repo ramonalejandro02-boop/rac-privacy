@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><style>@font-face{font-family:BC;src:url(bc_800.ttf);font-weight:100 900;font-style:italic}@font-face{font-family:BC6;src:url(bc_600.ttf);font-weight:100 900;font-style:italic}body{margin:0;background:#000}canvas{display:block}</style></head><body>
+<canvas id="c" width="3240" height="1920"></canvas><script src="helmet.js"></script><script>
+(async()=>{await document.fonts.load('italic 900 40px BC');await document.fonts.load('italic 600 40px BC6');
+const cv=document.getElementById('c'),g=cv.getContext('2d');const W=1080,H=1920,RED='#E10600',INK='#0B0B0E';
+function carbon(){const c=document.createElement('canvas');c.width=c.height=24;const x=c.getContext('2d');x.fillStyle='#0d0d10';x.fillRect(0,0,24,24);
+  for(let i=0;i<2;i++)for(let j=0;j<2;j++){const gr=x.createLinearGradient(i*12,j*12,i*12+12,j*12+12);const a=(i+j)%2;gr.addColorStop(0,a?'#1c1c22':'#121217');gr.addColorStop(1,a?'#121217':'#1c1c22');x.fillStyle=gr;x.fillRect(i*12,j*12,12,12);}return g.createPattern(c,'repeat');}
+function bg(){g.fillStyle=carbon();g.fillRect(0,0,W,H);const v=g.createRadialGradient(W/2,H*0.42,100,W/2,H*0.5,1200);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,0.85)');g.fillStyle=v;g.fillRect(0,0,W,H);}
+function slash(x,y,w,h,c){g.fillStyle=c;g.beginPath();g.moveTo(x+h*0.35,y);g.lineTo(x+w+h*0.35,y);g.lineTo(x+w,y+h);g.lineTo(x,y+h);g.closePath();g.fill();}
+function txt(s,x,y,size,c,align,font){g.font=`italic 900 ${size}px ${font||'BC'}`;g.fillStyle=c;g.textAlign=align||'left';g.textBaseline='alphabetic';g.fillText(s,x,y);}
+// FRAME A: hook / title
+g.save();bg();
+for(let i=0;i<9;i++){g.strokeStyle=`rgba(225,6,0,${0.08+i*0.02})`;g.lineWidth=3;g.beginPath();g.moveTo(-200+i*80,H);g.lineTo(700+i*80,0);g.stroke();}
+slash(-40,250,560,14,RED);txt('KARTING · TIP PRO',70,230,44,'#fff');txt('EP. 07',W-70,230,44,'rgba(255,255,255,0.5)','right');
+g.save();g.translate(540,820);g.scale(1.45,1.45);drawHelmet(g,{mood:'focus',look:{x:0.2,y:0}});g.restore();
+txt('¿CÓMO',80,1280,150,'#fff');txt('ADELANTAR?',80,1420,170,RED);
+slash(80,1460,420,70,'#fff');txt('EN 3 PASOS',110,1513,52,INK);
+g.restore();
+// FRAME B: step diagram
+g.save();g.translate(1080,0);bg();
+// track (dark, telemetry style)
+g.save();g.strokeStyle='#2A2A31';g.lineWidth=380;g.lineCap='butt';g.beginPath();g.moveTo(420,2000);g.lineTo(420,900);g.arc(820,900,400,Math.PI,1.5*Math.PI);g.lineTo(1200,500);g.stroke();
+g.strokeStyle='rgba(255,255,255,0.85)';g.lineWidth=4;g.setLineDash([]);g.beginPath();g.moveTo(230,2000);g.lineTo(230,900);g.arc(820,900,590,Math.PI,1.5*Math.PI);g.lineTo(1200,310);g.stroke();g.beginPath();g.moveTo(610,2000);g.lineTo(610,900);g.arc(820,900,210,Math.PI,1.5*Math.PI);g.lineTo(1200,690);g.stroke();
+// kerbs
+g.lineWidth=18;g.setLineDash([26,26]);g.strokeStyle=RED;g.beginPath();g.arc(820,900,222,Math.PI,1.5*Math.PI);g.stroke();
+// racing line glow
+g.setLineDash([]);g.shadowColor=RED;g.shadowBlur=30;g.strokeStyle=RED;g.lineWidth=10;g.beginPath();g.moveTo(300,1900);g.lineTo(300,1100);g.bezierCurveTo(300,850,520,700,640,700);g.bezierCurveTo(800,700,900,560,1200,400);g.stroke();g.shadowBlur=0;g.restore();
+// karts minimal
+function kart(x,y,a,body,hl){g.save();g.translate(x,y);g.rotate(a);g.fillStyle='#000';[[-34,-38],[34,-38],[-38,34],[38,34]].forEach(([wx,wy])=>{g.fillRect(wx-11,wy-16,22,32);});g.fillStyle=body;g.beginPath();g.moveTo(0,-70);g.lineTo(24,-40);g.lineTo(26,50);g.lineTo(-26,50);g.lineTo(-24,-40);g.closePath();g.fill();g.fillStyle=hl;g.beginPath();g.arc(0,8,17,0,7);g.fill();g.restore();}
+kart(300,1250,0,'#5A5A63','#2A2A30');kart(300,1520,0,'#FFFFFF',RED);
+// slipstream wedge
+g.fillStyle='rgba(225,6,0,0.18)';g.beginPath();g.moveTo(255,1310);g.lineTo(345,1310);g.lineTo(390,1460);g.lineTo(210,1460);g.closePath();g.fill();
+// HUD
+txt('01',70,330,240,'rgba(255,255,255,0.08)');slash(70,250,16,120,RED);txt('PASO 01',110,300,48,RED);txt('EL REBUFO',110,380,96,'#fff');
+// callout
+g.strokeStyle='#fff';g.lineWidth=3;g.beginPath();g.moveTo(350,1390);g.lineTo(520,1300);g.lineTo(760,1300);g.stroke();txt('+ VELOCIDAD',530,1285,52,'#fff');txt('MENOS AIRE EN CONTRA',530,1345,30,'rgba(255,255,255,0.6)','left','BC6');
+// telemetry bar
+g.fillStyle='rgba(255,255,255,0.08)';g.fillRect(70,1560,500,14);g.fillStyle=RED;g.fillRect(70,1560,380,14);txt('VELOCIDAD',70,1545,30,'rgba(255,255,255,0.7)');txt('98 KM/H',570,1545,30,'#fff','right');
+// mascot badge
+g.save();g.translate(900,560);g.scale(0.5,0.5);drawHelmet(g,{mood:'focus',look:{x:-0.6,y:0.3}});g.restore();
+// caption lower third
+g.fillStyle='rgba(0,0,0,0.85)';g.fillRect(70,1640,940,100);slash(70,1640,22,100,RED);txt('PÉGATE ATRÁS EN LA RECTA',120,1708,56,'#fff');
+g.restore();
+// FRAME C: mascot expressions
+g.save();g.translate(2160,0);bg();
+[['focus',300,420],['happy',780,420],['wow',300,1000],['angry',780,1000]].forEach(([m,x,y])=>{g.save();g.translate(x,y);g.scale(0.85,0.85);drawHelmet(g,{mood:m,look:{x:0,y:0}});g.restore();txt(m.toUpperCase(),x,y+260,40,'rgba(255,255,255,0.6)','center');});
+txt('MAURO',540,1560,150,'#fff','center');slash(300,1600,480,90,RED);txt('OSORTO  #2',540,1668,70,'#fff','center');
+g.restore();window.done=true;})();
+</script></body></html>
