@@ -1,6 +1,6 @@
 import asyncio, ssl, os, sys, edge_tts, edge_tts.communicate as c
 c._SSL_CTX = ssl.create_default_context(cafile="/root/.ccr/ca-bundle.crt")
-async def main(text, out, voice="es-ES-AlvaroNeural"):
+async def main(text, out, voice="es-MX-JorgeNeural"):
     comm = edge_tts.Communicate(text, voice, rate="+8%", proxy=os.environ.get("HTTPS_PROXY"), boundary="WordBoundary")
     sub = []
     with open(out, "wb") as f:

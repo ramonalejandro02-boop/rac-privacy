@@ -20,6 +20,7 @@ Si no hay código de estilo, propón 3 estilos de `estilos.md` que encajen con l
 - Estilo (código), idea, público, CTA (seguir, comentar palabra clave, link en bio, guardar).
 - Personaje: imagen del usuario o personaje genérico del estilo.
 - Voz: clonada (ElevenLabs) o voz de catálogo. Idioma del vídeo.
+- **Por defecto: español latino** (voz es-MX, p. ej. `es-MX-JorgeNeural` / `es-MX-DaliaNeural`), montos en dólares con formato `$70,000`, vocabulario neutro latino ("tú", "video", "rendimiento", "asesoría"). Nunca voz de España salvo que se pida.
 
 ## Paso 2 — Guion + fotogramas (PARAR y pedir aprobación)
 Entrega en este formato y espera un "ok" antes de producir:
