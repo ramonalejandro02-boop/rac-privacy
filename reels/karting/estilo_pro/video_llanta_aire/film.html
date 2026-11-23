@@ -20,9 +20,9 @@ function tw(s,sz,w){g.font=F(sz,w);return g.measureText(s).width;}
 function slash(x,y,w,h,c,k){k=k==null?0.35:k;g.fillStyle=c;g.beginPath();g.moveTo(x+h*k,y);g.lineTo(x+w+h*k,y);g.lineTo(x+w,y+h);g.lineTo(x,y+h);g.closePath();g.fill();}
 function makeCarbon(){const c=document.createElement('canvas');c.width=c.height=24;const x=c.getContext('2d');x.fillStyle='#0d0d10';x.fillRect(0,0,24,24);
   for(let i=0;i<2;i++)for(let j=0;j<2;j++){const gr=x.createLinearGradient(i*12,j*12,i*12+12,j*12+12);const a=(i+j)%2;gr.addColorStop(0,a?'#1d1d23':'#121217');gr.addColorStop(1,a?'#121217':'#1d1d23');x.fillStyle=gr;x.fillRect(i*12,j*12,12,12);}return g.createPattern(c,'repeat');}
-function bg(t,tint){g.fillStyle=CARB;g.fillRect(0,0,W,H);
+function bg(t,tint){g.fillStyle='#000';g.fillRect(0,0,W,H);
   if(tint){g.fillStyle=tint;g.fillRect(0,0,W,H);}
-  g.save();for(let i=0;i<10;i++){const o=((t*60+i*90)%900);g.strokeStyle=`rgba(225,6,0,${0.05+0.03*(i%3)})`;g.lineWidth=3;g.beginPath();g.moveTo(-300+o,H);g.lineTo(600+o,0);g.stroke();}g.restore();
+  g.save();for(let i=0;i<10;i++){const o=((t*60+i*90)%900);g.strokeStyle=`rgba(225,6,0,${0.025+0.015*(i%3)})`;g.lineWidth=3;g.beginPath();g.moveTo(-300+o,H);g.lineTo(600+o,0);g.stroke();}g.restore();
   const v=g.createRadialGradient(W/2,H*0.45,150,W/2,H*0.5,1250);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,0.88)');g.fillStyle=v;g.fillRect(0,0,W,H);}
 function glow(x,y,r,a){const rg=g.createRadialGradient(x,y,10,x,y,r);rg.addColorStop(0,`rgba(225,6,0,${0.55*a})`);rg.addColorStop(1,'rgba(225,6,0,0)');g.fillStyle=rg;g.fillRect(x-r,y-r,2*r,2*r);}
 function logoTop(t){g.drawImage(IM.mo,64,150,250,250*IM.mo.height/IM.mo.width);}
@@ -78,16 +78,16 @@ function spriteRear(x,y,s,lift){const im=IM.sr,k=s;g.save();g.translate(x,y);
   g.restore();}
 
 // ---------- karting world ----------
-function asphalt(){g.fillStyle='#24252B';g.fillRect(-2000,-2000,6000,6000);g.save();g.globalAlpha=0.06;for(let i=0;i<900;i++){g.fillStyle=rnd(i)>0.5?'#fff':'#000';g.fillRect(-600+rnd(i+1)*2400,-600+rnd(i+2)*3200,3,3);}g.restore();}
+function asphalt(){g.fillStyle='#000';g.fillRect(-2000,-2000,6000,6000);g.save();g.globalAlpha=0.0;for(let i=0;i<900;i++){g.fillStyle=rnd(i)>0.5?'#fff':'#000';g.fillRect(-600+rnd(i+1)*2400,-600+rnd(i+2)*3200,3,3);}g.restore();}
 function kerbArc(cx,cy,r,a0,a1,lw){g.save();g.lineWidth=lw||26;g.strokeStyle=WH;g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();g.setLineDash([30,30]);g.strokeStyle=RED;g.beginPath();g.arc(cx,cy,r,a0,a1);g.stroke();g.restore();}
 function grassBand(){g.fillStyle='#1F3B22';}
 // a big track corner (world): centre (0,0), inner r 260, outer r 760, the kart drives anticlockwise (left turn) on screen
 const TC={x:0,y:0,ri:260,ro:760};
 function cornerWorld(t){
-  const gr=g.createRadialGradient(0,0,200,0,0,2200);gr.addColorStop(0,'#2f6b3b');gr.addColorStop(1,'#12301b');g.fillStyle=gr;g.fillRect(-3000,-3000,6000,6000);
-  g.save();g.globalAlpha=0.06;g.fillStyle='#fff';for(let i=0;i<30;i++){g.beginPath();g.arc(0,0,TC.ro+120+i*90,0,7);g.arc(0,0,TC.ro+160+i*90,0,7,true);g.fill();}g.restore();
+  g.fillStyle='#000';g.fillRect(-3000,-3000,6000,6000);
+  g.save();g.globalAlpha=0.0;g.fillStyle='#fff';for(let i=0;i<0;i++){g.beginPath();g.arc(0,0,TC.ro+120+i*90,0,7);g.arc(0,0,TC.ro+160+i*90,0,7,true);g.fill();}g.restore();
   // track with soft shadow
-  g.save();g.shadowColor='rgba(0,0,0,0.6)';g.shadowBlur=60;const ag=g.createRadialGradient(0,0,TC.ri,0,0,TC.ro);ag.addColorStop(0,'#3a3c44');ag.addColorStop(0.5,'#2e3037');ag.addColorStop(1,'#25272d');g.fillStyle=ag;g.beginPath();g.arc(0,0,TC.ro,0,7);g.arc(0,0,TC.ri,0,7,true);g.fill();g.restore();
+  g.save();g.shadowColor='rgba(0,0,0,0.6)';g.shadowBlur=60;const ag=g.createRadialGradient(0,0,TC.ri,0,0,TC.ro);ag.addColorStop(0,'#2a2b30');ag.addColorStop(0.5,'#202125');ag.addColorStop(1,'#18191c');g.fillStyle=ag;g.beginPath();g.arc(0,0,TC.ro,0,7);g.arc(0,0,TC.ri,0,7,true);g.fill();g.restore();
   // rubbered racing line
   g.save();g.globalAlpha=0.25;g.strokeStyle='#15161a';g.lineWidth=150;g.filter='blur(14px)';g.beginPath();g.arc(0,0,(TC.ri+TC.ro)/2-40,0,7);g.stroke();g.restore();
   g.strokeStyle='rgba(255,255,255,0.75)';g.lineWidth=7;g.beginPath();g.arc(0,0,TC.ro-26,0,7);g.stroke();g.beginPath();g.arc(0,0,TC.ri+30,0,7);g.stroke();
@@ -149,7 +149,7 @@ function sceneDist(t){const s0=S(2).start,s1=S(2).end;const arr=wT(2,'arrastra')
 function sceneLift(t){const s0=S(3).start,flexT=wT(3,'flexiona')-0.2,liftT=wT(3,'levanta')-0.2,dobla=wT(3,'dobla')-0.3;
   bg(t);const lift=eio(prog(t,liftT,liftT+0.8))*150,flex=eio(prog(t,flexT,flexT+0.6));
   stamp('EL SECRETO',W/2,330,110,WH,t,s0-0.1,-0.03,RED);
-  if(t<dobla){g.save();g.fillStyle='#1b1c21';g.fillRect(0,1240,W,300);spriteRear(W/2+20,1250,1.45,lift);g.restore();
+  if(t<dobla){g.save();g.fillStyle='#000';g.fillRect(0,1240,W,300);g.fillStyle='rgba(225,6,0,0.6)';g.fillRect(60,1248,W-120,3);spriteRear(W/2+20,1250,1.45,lift);g.restore();
     if(lift>20){g.save();g.strokeStyle=RED;g.lineWidth=8;g.setLineDash([16,12]);g.beginPath();g.moveTo(W/2-330,1250);g.lineTo(W/2-330,1250-lift);g.stroke();g.restore();
       callout(W/2-330,1250-lift-200,330,620,'LLANTA DE ADENTRO','¡ARRIBA!',t,liftT+0.5,RED);}
     if(flex>0.1)callout(W/2+60,1060,760,820,'CHASÍS','SE FLEXIONA',t,flexT,WH);}

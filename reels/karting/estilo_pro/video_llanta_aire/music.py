@@ -30,13 +30,13 @@ t=np.arange(N)/SR;eng=np.zeros(N)
 for a,b_ in [(0,4.4),(wT(3,'dobla')-0.3,wT(3,'dobla')+2.5),(S[5]['start']-0.3,S[5]['start']+3)]:
     msk=(t>=a)&(t<b_);f=190+40*np.sin(2*np.pi*0.7*(t-a));ph=2*np.pi*np.cumsum(np.where(msk,f,0))/SR;eng+=np.where(msk,0.07*np.sign(np.sin(ph))*np.minimum(1,(t-a)/0.2)*np.minimum(1,(b_-t)/0.3),0)
 eng=np.convolve(eng,np.ones(8)/8,'same')
-hit(0.0,0.55);screech(0.3,1.2)
-for i in range(1,6):c=S[i]['start']-0.3;whoosh(c-0.35);hit(c,0.45)
+hit(0.0,0.45)
+for i in range(1,6):c=S[i]['start']-0.3;whoosh(c-0.3,0.3,0.45);hit(c,0.3)
 for k_,p in [(0,'diferencial'),(0,'suspensión'),(1,'eje'),(1,'llantas'),(1,'velocidad'),(2,'afuera'),(2,'adentro'),(3,'flexiona'),(3,'levanta'),(4,'suspensión'),(4,'rígido'),(5,'sigue')]:
     v=wT(k_,p)
-    if v:tick(v-0.12)
-hit(wT(0,'cómo')-0.1,0.8);v=wT(2,'arrastra');screech(v-0.3,1.5,0.15);v=wT(3,'dobla');hit(v-0.3,0.7)
-out=np.clip(mus*0.6+sfx+eng,-1,1)
+    pass
+hit(wT(0,'cómo')-0.1,0.5)
+out=np.clip(mus*0.6+sfx,-1,1)
 with wave.open('/tmp/k12/bed.wav','wb') as w:w.setnchannels(1);w.setsampwidth(2);w.setframerate(SR);w.writeframes((out*32767).astype(np.int16).tobytes())
 subprocess.run(['ffmpeg','-v','error','-y','-i','/tmp/k12/out.mp4','-i','/tmp/k12/voz.wav','-i','/tmp/k12/bed.wav','-filter_complex','[2:a]aformat=channel_layouts=stereo,volume=0.8[b];[1:a][b]amix=inputs=2:normalize=0,alimiter=limit=0.95[o]','-map','0:v','-map','[o]','-c:v','copy','-c:a','aac','-b:a','192k','-shortest','-movflags','+faststart','/tmp/k12/final3.mp4'],check=True)
 print('ok')
