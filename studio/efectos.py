@@ -525,8 +525,7 @@ def main():
     ph = int(sh * pw / sw)
     ph_max = int(plan.get("panel_abajo", 0.72) * H) - int(plan.get("panel_y", 0.225 * H))
     if ph > ph_max:
-        ph = ph_max
-        pw = int(sw * ph / sh)
+        ph = ph_max            # se mantiene el ancho completo: se recorta arriba/abajo siguiendo el zoom
     px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
     radio = 38
     mask = np.zeros((ph, pw), np.uint8)
@@ -571,7 +570,8 @@ def main():
         cv += glow * glow_col * (0.55 + 0.6 * e)
         # panel con zoom virtual
         zx, zy, zs = evs.zoom(t)
-        cw, chh = sw / zs, sh / zs
+        base_w = min(sw, sh * pw / ph)          # ventana con la misma forma que el panel
+        cw, chh = base_w / zs, base_w * ph / pw / zs
         x0 = min(max(zx * sw - cw / 2, 0), sw - cw)
         y0 = min(max(zy * sh - chh / 2, 0), sh - chh)
         M = np.float32([[pw / cw, 0, -x0 * pw / cw], [0, ph / chh, -y0 * ph / chh]])
