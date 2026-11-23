@@ -1,0 +1,14 @@
+¿Cuánto tarda una computadora en adivinar tu contraseña? 💻🔓
+
+123456 → menos de 1 segundo
+8 letras minúsculas → ~21 segundos
+12 caracteres mezclados → ~1.5 millones de años (pero nadie lo recuerda)
+6 palabras al azar → ~700,000 años (y fácil de recordar ✅)
+
+Y activa la verificación en dos pasos: aunque adivinen tu clave, no entran.
+
+Guárdalo y revisa tus contraseñas hoy 🔐
+
+Estimación con 10 mil millones de intentos por segundo (ataque fuera de línea). Las palabras deben elegirse al azar de una lista de 7,776, no inventarse.
+
+#ciberseguridad #contraseñas #seguridaddigital #tecnologia #tips
