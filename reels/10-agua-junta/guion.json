@@ -1,0 +1,21 @@
+{
+  "titulo": "Todos pagan el agua… menos uno",
+  "lead": 0.4,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "En la colonia, todos pagan la cuota de la junta de agua. Todos, menos don Toño.", "pause": 0.2},
+    {"scene": "noche", "text": "Él se conectó directo a la tubería, de noche, y sin permiso.", "pause": 0.25},
+    {"scene": "pleito", "who": "silvia", "voice": "ef_dora", "text": "Si usted no paga, el agua que se lleva la pagamos los demás.", "pause": 0.2},
+    {"scene": "pleito", "who": "tono", "voice": "em_santa", "text": "El agua es un derecho. Nadie me la puede negar.", "say": "El agua es un derecho. Nadie me la puede negar.", "pause": 0.3},
+    {"scene": "tension", "text": "Tiene razón en algo: el agua es un derecho. Pero la bomba, los tubos y la luz que la traen, se pagan con la cuota de todos.", "pause": 0.3},
+    {"scene": "presion", "text": "Una conexión sin permiso le baja la presión a los vecinos, y puede dañar la red de la colonia.", "pause": 0.3},
+    {"scene": "mito", "text": "Pero cortarle el tubo a escondidas, o quitarle el agua por venganza, tampoco es la salida.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo que funciona: primero, hablar con él, y ofrecerle un arreglo de pago.", "pause": 0.2},
+    {"scene": "pasos", "text": "Segundo, llevar el caso a la asamblea, con reglas claras para todos.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y tercero, buscar orientación en CONAFEPH, para resolverlo como comunidad.", "say": "Y tercero, buscar orientación en Conafép, para resolverlo como comunidad.", "pause": 0.3},
+    {"scene": "final", "text": "El agua es de todos. Y cuidarla, también.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}
