@@ -171,11 +171,11 @@ def aplicar(video_in, video_out, pres, tramos, fps=30):
                 u = t - tr["a"]
                 entra = ease_back(u / 0.3) if tr.get("anima", True) else 1.0
                 if tr["modo"] == "grande":
-                    sc = 1.3 * entra
-                    cx, by = W * 0.5, H
+                    sc = 1.0 * entra
+                    cx, by = W * 0.5, H * 0.80
                 else:
-                    sc = 0.62 * entra
-                    cx, by = W * 0.2, H
+                    sc = 0.5 * entra
+                    cx, by = W * 0.2, H * 0.80
                 h, w = img.shape[:2]
                 cy = by - h * sc / 2 + 4 + 6 * math.sin(t * 2.5)
                 superponer(fr, img, cx, cy, sc, 1.5 * math.sin(t * 1.7))

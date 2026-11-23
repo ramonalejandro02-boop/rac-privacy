@@ -38,6 +38,19 @@ EMOJI_FONT = "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf"
 W, H = 1080, 1920
 SR = 44100
 
+# Zona segura de Facebook/Instagram Reels (medida en capturas reales):
+# arriba: hora + flecha + lupa + menú; derecha: 👍 💬 ↗ 🔖 (desde ~56% de alto);
+# abajo: nombre de la página, fecha y descripción (desde ~80%).
+ZONA = dict(arriba=0.115, abajo=0.79, derecha=0.87, iconos_desde=0.56)
+
+
+def seguro(x, y, ymin=0.27, ymax=0.62):
+    """Ajusta una posición relativa (x, y) para que no caiga bajo la interfaz de Reels."""
+    y = min(max(y, ymin), ymax)
+    if y > ZONA["iconos_desde"] - 0.04:
+        x = min(x, ZONA["derecha"] - 0.08)
+    return min(max(x, 0.12), 0.88), y
+
 # --------------------------------------------------------------------------
 # Diccionario automático: palabra clave -> (emojis, sonido)
 # --------------------------------------------------------------------------
@@ -353,14 +366,15 @@ class Eventos:
                 im = self.img(("e", e["emoji"], px), lambda: a_bgra(texto_pil(e["emoji"], px, stroke=None, sw=0)))
                 sc = ease_back(u / 0.28) * (1 - fin)
                 rot = e.get("rot", 0) + 9 * math.sin(u * 6 + e["_i"])
-                y = e["y"] * H - 14 * math.sin(u * 3.2)
-                superponer(cv, im, e["x"] * W, y, sc, rot)
+                ex, ey = seguro(e["x"], e["y"], ymax=0.55)
+                y = ey * H - 14 * math.sin(u * 3.2)
+                superponer(cv, im, ex * W, y, sc, rot)
             elif tipo == "sticker":
                 px = e.get("size", 80)
                 im = self.img(("s", e["_i"]), lambda: a_bgra(sticker_pil(
                     e["texto"], px, e.get("fondo", "#FFE600"), e.get("color", "#111111"), e.get("rot", -4))))
                 sc = ease_back(u / 0.3) * (1 - fin) * (1 + 0.025 * math.sin(u * 5))
-                superponer(cv, im, e.get("x", 0.5) * W, e.get("y", 0.24) * H, sc)
+                superponer(cv, im, e.get("x", 0.5) * W, max(e.get("y", 0.28), 0.275) * H, sc)
             elif tipo == "lluvia":
                 for p in e["_p"]:
                     px = int(90 + 80 * p["s"])
@@ -369,7 +383,7 @@ class Eventos:
                     x = p["x"] * W + 40 * math.sin(u * 2 + p["a"])
                     superponer(cv, im, x, y, 1.0, (p["r"] - 0.5) * 60 + 90 * u * (p["v"] - .5), 1 - fin)
             elif tipo == "rafaga":
-                ox, oy = e.get("x", 0.5) * W, e.get("y", 0.5) * H
+                ox, oy = [v * k for v, k in zip(seguro(e.get("x", 0.5), e.get("y", 0.5)), (W, H))]
                 for p in e["_p"]:
                     px = int(110 + 70 * p["s"])
                     im = self.img(("e", p["e"], px), lambda: a_bgra(texto_pil(p["e"], px, stroke=None, sw=0)))
@@ -389,6 +403,10 @@ class Subs:
         self.claves = [c.lower() for c in claves]
         self.act = tuple(int(c) for c in color_activo[::-1])
         self.cla = hex2rgb(color_clave)
+        y = min(y, 0.75)                                   # encima del nombre de la página
+        if x + ancho / 2 > ZONA["derecha"] - 0.01:          # antes de la columna de íconos
+            ancho = max(0.42, 2 * (ZONA["derecha"] - 0.01 - x))
+            x = min(x, ZONA["derecha"] - 0.01 - ancho / 2)
         self.px, self.y, self.x, self.ancho = px, y, x, ancho
         self.cache = {}
         self.i = 0
@@ -505,10 +523,11 @@ def main():
     # Panel del video
     pw = plan.get("panel_ancho", 1000)
     ph = int(sh * pw / sw)
-    if ph > 1250:
-        ph = 1250
+    ph_max = int(plan.get("panel_abajo", 0.72) * H) - int(plan.get("panel_y", 0.225 * H))
+    if ph > ph_max:
+        ph = ph_max
         pw = int(sw * ph / sh)
-    px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 330))
+    px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
     radio = 38
     mask = np.zeros((ph, pw), np.uint8)
     cv2.rectangle(mask, (radio, 0), (pw - radio, ph), 255, -1)
@@ -563,7 +582,7 @@ def main():
         cv = np.clip(cv, 0, 255).astype(np.uint8)
         if titulo_img is not None:
             sc = ease_back(t / 0.35) if t < 0.35 else 1 + 0.015 * math.sin(t * 3)
-            superponer(cv, titulo_img, W / 2, py0 / 2 + 10, sc)
+            superponer(cv, titulo_img, W / 2, plan.get("titulo_y", 0.163) * H, sc)
         evs.dibujar(cv, t)
         if subs:
             subs.dibujar(cv, t)

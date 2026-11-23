@@ -30,7 +30,7 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, AQUI)
 from transformar import ESTILOS, MODELOS, FondoAnimado, log  # noqa: E402
 from efectos import (H, SR, W, Eventos, Subs, a_bgra, ease_back, ease_io,  # noqa: E402
-                     sintetizar, sticker_pil, superponer, texto_pil)
+                     seguro, sintetizar, sticker_pil, superponer, texto_pil)
 
 VOZ = os.environ.get("STUDIO_VOZ", os.path.join(MODELOS, "piper", "es_MX-claude-high.onnx"))
 FPS = 30
@@ -277,7 +277,8 @@ def dibujar_prop(cv, p, u, d, cache):
     if key not in cache:
         cache[key] = a_bgra(texto_pil(p["emoji"], px, stroke=None, sw=0))
     im = cache[key]
-    tx, ty = p.get("x", 0.5) * W, p.get("y", 0.5) * H
+    sx_, sy_ = seguro(p.get("x", 0.5), p.get("y", 0.5), ymin=0.26, ymax=0.64)
+    tx, ty = sx_ * W, sy_ * H
     anim = p.get("anim", "pulso")
     sal = max(0.0, 1 - (d - p.get("t", 0) - u) / 0.15)
     sc, rot, x, y = 1.0, 0.0, tx, ty
@@ -318,11 +319,11 @@ def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.9
     n = int(d * FPS)
     est = ESTILOS[esc.get("estilo", "neon")]
     fondo = FondoAnimado(W, H, est, seed=idx)
-    corte = recorte_sticker(src, esc["congelar"], esc["caja"], esc.get("alto", 1000))
+    corte = recorte_sticker(src, esc["congelar"], esc["caja"], esc.get("alto", 760))
     texto = a_bgra(sticker_pil(esc["texto"], esc.get("tam_texto", 86), esc.get("fondo", "#FFE600"),
                                esc.get("color", "#111111"), rot=esc.get("rot", -3), max_w=1000))
     subs = Subs(palabras_vo(esc["voz"], vo, t_vo), claves + esc.get("claves", []), est["palabra"], px=88,
-                y=esc.get("subs_y", 0.885), x=esc.get("subs_x", subs_x), ancho=esc.get("subs_ancho", subs_ancho))
+                y=esc.get("subs_y", 0.745), x=esc.get("subs_x", subs_x), ancho=esc.get("subs_ancho", subs_ancho))
     evs = Eventos(esc.get("eventos", []), None)
     cache = {}
     # energía de la voz para animar el fondo
@@ -331,7 +332,7 @@ def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.9
                         for i in range(n)])
     energia = np.nan_to_num(energia)
     energia = np.clip(energia / (energia.max() + 1e-6), 0, 1)
-    cx, cy = esc.get("x", 0.5) * W, esc.get("y", 0.56) * H
+    cx, cy = esc.get("x", 0.5) * W, esc.get("y", 0.45) * H
 
     enc = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}",
                             "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "19",
@@ -349,7 +350,7 @@ def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.9
         for p in esc.get("props", []):
             dibujar_prop(cv, p, u, d, cache)
         evs.dibujar(cv, u)
-        superponer(cv, texto, W / 2, esc.get("texto_y", 0.15) * H, ease_back((u - 0.1) / 0.3) * (1 + 0.02 * math.sin(u * 5)))
+        superponer(cv, texto, W / 2, max(esc.get("texto_y", 0.19), 0.17) * H, ease_back((u - 0.1) / 0.3) * (1 + 0.02 * math.sin(u * 5)))
         subs.dibujar(cv, u)
         fa = max(0.9 * (1 - u / 0.18), 0.8 * (1 - (d - u) / 0.12), 0)
         if fa > 0:
