@@ -175,7 +175,7 @@ function s6(t){CUR={c:'#FF2A2A',rgb:'255,42,42',d:'#6b0000'};stage(t,CUR);const 
   const a=eo5(prog(t,st,st+0.7));g.save();g.globalAlpha=a;const lw=820;g.drawImage(IM.mo,W/2-lw/2,520+(1-a)*40,lw,lw*IM.mo.height/IM.mo.width);g.restore();
   const m=IM.m,mh=560;const b=eo5(prog(t,st+0.3,st+1));g.save();g.globalAlpha=b;g.drawImage(m,W/2-mh*m.width/m.height/2,1420-mh+(1-b)*50,mh*m.width/m.height,mh);g.restore();
   ribbon(W/2,1490,420,90,'#FF2A2A',eo5(prog(t,st+0.6,st+1.1)),-0.03);title('SÍGUELO',W/2,1520,84,{c:'#FF2A2A',d:'#6b0000'},t,st+0.6);
-  const sp=eo5(prog(t,st+1,st+1.5));g.save();g.globalAlpha=sp;g.font=F(24,600);g.fillStyle='rgba(255,255,255,0.5)';g.textAlign='center';g.fillText('EQUIPO',330,1620);g.drawImage(IM.pz,250,1635,160,160*IM.pz.height/IM.pz.width);g.fillText('ACADEMIA',750,1620);g.drawImage(IM.wk,660,1630,180,180*IM.wk.height/IM.wk.width);g.restore();}
+  const sp=eo5(prog(t,st+1,st+1.5));g.save();g.globalAlpha=sp;g.font=F(24,600);g.fillStyle='rgba(255,255,255,0.5)';g.textAlign='center';g.fillText('EQUIPO',330,1620);g.drawImage(IM.pz,205,1730-125*IM.pz.height/IM.pz.width,250,250*IM.pz.height/IM.pz.width);g.fillText('ACADEMIA',750,1620);g.drawImage(IM.wk,750-92*IM.wk.width/IM.wk.height,1638,185*IM.wk.width/IM.wk.height,185);g.restore();}
 const SC=[s0,s1,s2,s3,s4,s5,s6];
 function sceneIdx(t){let k=0;TIM.scenes.forEach((s,i)=>{if(t>=s.start-0.35)k=i;});return k;}
 // transition: a wavy band of the next flag colour sweeps across
