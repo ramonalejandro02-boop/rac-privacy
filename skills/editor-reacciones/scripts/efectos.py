@@ -75,6 +75,23 @@ CLAVES_AUTO = [
 # --------------------------------------------------------------------------
 _EF = None
 _cache_emoji = {}
+# Groserías: se tapan con "piii" en el audio y con asteriscos en los subtítulos.
+GROSERIAS = re.compile(
+    r"^(put[oa]s?|hijueputa|hdp|mierdas?|coño|carajos?|vergas?|pingas?|mamag[uü]e?vo|mamahuevo|"
+    r"cabr[oó]n(es|a|as)?|pendej[oa]s?|joder|jodid[oa]s?|culos?|ching\w*|maric[oó]n|marica|cojones|coj[oó]n|"
+    r"sing[aá]\w*|singao|g[uü]evos?|fuck\w*|shit|bitch\w*|motherfucker)$")
+
+
+def es_groseria(palabra):
+    w = re.sub(r"[^\wáéíóúñü]", "", palabra.lower())
+    return bool(w) and bool(GROSERIAS.match(w))
+
+
+def tapar_palabra(p):
+    letras = re.sub(r"[^\wáéíóúñüÁÉÍÓÚÑÜ]", "", p)
+    return (letras[:1] + "***") if letras else p
+
+
 _cache_font = {}
 INTER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "InterDisplay-{}.otf")
 FUENTE_STICKER = INTER.format("Bold")        # títulos y stickers: moderna, no tan gruesa
@@ -351,6 +368,10 @@ def sintetizar(nombre):
         saw = 2 * ((ph / (2 * np.pi)) % 1) - 1
         n = np.random.default_rng(3).standard_normal(len(t)) * 0.25
         y = (saw * 0.7 + n) * np.exp(-t * 3) * np.minimum(1, t * 200)
+    elif nombre == "beep":       # pitido de censura (1 kHz)
+        t = tt(0.4)
+        y = np.sin(2 * np.pi * 1000 * t) * np.minimum(1, t * 300) * np.minimum(1, (t[-1] - t) * 300)
+        return (y * 0.55).astype(np.float32)
     elif nombre == "boom":
         t = tt(1.3)
         y = np.tanh(3 * np.sin(_fase(65 * np.exp(-t * 1.8) + 32))) * np.exp(-t * 3.2)
@@ -497,7 +518,7 @@ class Subs:
         px = int(self.px * 0.92)
         f = font(px, FUENTE_SUBS)
         sw = max(2, px // 26)                                  # borde fino, no grueso
-        palabras = [w["t"].upper() for w in g]
+        palabras = [(tapar_palabra(w["t"]) if (es_groseria(w["t"]) or w.get("censura")) else w["t"]).upper() for w in g]
         imgs = []
         for i, p in enumerate(palabras):
             clave = self.es_clave(p)
@@ -602,6 +623,17 @@ def main():
             palabras = json.load(open(args.palabras or plan["palabras"]))
         else:
             palabras = transcribir(wav, "es", args.whisper)
+    # censura: groserías detectadas + rangos manuales del plan ("censura": [[a, b], ...])
+    censuras = [tuple(c) for c in plan.get("censura", [])]
+    for w in palabras:
+        manual = any(a <= (w["a"] + w["b"]) / 2 <= b for a, b in censuras)
+        if es_groseria(w["t"]) or manual:
+            w["censura"] = True
+            if not manual:
+                censuras.append((w["a"], w["b"]))
+    censuras = sorted((max(0.0, a - 0.03), b + 0.05) for a, b in censuras)
+    if censuras:
+        log(f"censura con pitido en: {[(round(a, 2), round(b, 2)) for a, b in censuras]}")
     eventos = list(plan.get("eventos", []))
     if args.auto:
         eventos += plan_auto(palabras)
@@ -653,6 +685,15 @@ def main():
             cap.grab()
         if not ok:
             break
+        for tx0, ty0, tx1, ty1 in plan.get("tapar", []):
+            hh, ww = fr.shape[:2]
+            a0, b0, a1, b1 = int(tx0 * ww), int(ty0 * hh), int(tx1 * ww), int(ty1 * hh)
+            zona = fr[b0:b1, a0:a1]
+            if zona.size:
+                peq = cv2.resize(zona, (max(1, zona.shape[1] // 14), max(1, zona.shape[0] // 14)),
+                                 interpolation=cv2.INTER_AREA)
+                fr[b0:b1, a0:a1] = cv2.GaussianBlur(cv2.resize(peq, (zona.shape[1], zona.shape[0]),
+                                                               interpolation=cv2.INTER_LINEAR), (0, 0), 6)
         if rf:
             fr = fr[ry0:ry1, rx0:rx1]
         t = i / fps
@@ -702,6 +743,13 @@ def main():
             a = int(ev["t"] * SR)
             b = min(len(pista), a + len(y))
             pista[a:b] += y[:b - a]
+    for ca, cb in censuras:                         # pitido del largo exacto de la palabra
+        n = int((cb - ca) * SR)
+        tt = np.arange(n) / SR
+        y = np.sin(2 * np.pi * 1000 * tt) * np.minimum(1, tt * 300) * np.minimum(1, (tt[-1] - tt) * 300 if n else 1)
+        a = int(ca * SR)
+        b = min(len(pista), a + n)
+        pista[a:b] += (y[:b - a] * 0.45 / max(args.vol_sfx, 0.05)).astype(np.float32)
     pista = np.clip(pista, -1, 1)
     sfx_wav = os.path.join(tmp, "sfx.wav")
     import wave
@@ -711,10 +759,14 @@ def main():
         wv.setframerate(SR)
         wv.writeframes((pista * 32767).astype(np.int16).tobytes())
 
+    silenciar = ""
+    if censuras:
+        cond = "+".join(f"between(t,{a:.3f},{b:.3f})" for a, b in censuras)
+        silenciar = f"volume=volume=0:enable='{cond}',"
     cmd = ["ffmpeg", "-y", "-v", "error", "-i", out_v]
     if audio:
         cmd += ["-i", src, "-i", sfx_wav, "-filter_complex",
-                f"[1:a]aresample={SR},loudnorm=I=-15:TP=-2,aresample={SR}[v];[2:a]volume={args.vol_sfx}[s];"
+                f"[1:a]aresample={SR},{silenciar}loudnorm=I=-15:TP=-2,aresample={SR}[v];[2:a]volume={args.vol_sfx}[s];"
                 "[v][s]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.95[m]",
                 "-map", "0:v", "-map", "[m]"]
     else:

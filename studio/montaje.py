@@ -201,6 +201,7 @@ def palabras_vo(texto, x, t0):
 # Recorte de persona como sticker (borde blanco + sombra)
 # --------------------------------------------------------------------------
 _seg = None
+TAPAR = []
 
 
 def recorte_sticker(src, t, caja, alto_obj=1000, ancho_max=980):
@@ -213,6 +214,12 @@ def recorte_sticker(src, t, caja, alto_obj=1000, ancho_max=980):
     ok, fr = cap.read()
     cap.release()
     h, w = fr.shape[:2]
+    for tx0, ty0, tx1, ty1 in TAPAR:            # difuminar textos pegados también en las escenas
+        a0, b0, a1, b1 = int(tx0 * w), int(ty0 * h), int(tx1 * w), int(ty1 * h)
+        zona = fr[b0:b1, a0:a1]
+        if zona.size:
+            peq = cv2.resize(zona, (max(1, zona.shape[1] // 14), max(1, zona.shape[0] // 14)), interpolation=cv2.INTER_AREA)
+            fr[b0:b1, a0:a1] = cv2.GaussianBlur(cv2.resize(peq, (zona.shape[1], zona.shape[0])), (0, 0), 6)
     x0, y0, x1, y1 = [int(v) for v in (caja[0] * w, caja[1] * h, caja[2] * w, caja[3] * h)]
     crop = fr[y0:y1, x0:x1]
     esc = min(alto_obj / crop.shape[0], ancho_max / crop.shape[1])
@@ -432,6 +439,7 @@ def main():
     log(f"carpeta temporal (partes para verificar): {tmp}")
     tema = usar_tema(plan.get("tema", "auto"), os.path.basename(args.entrada))
     plan["base"]["tema"] = tema
+    TAPAR[:] = plan["base"].get("tapar", [])
     log(f"tema de diseño: {tema}")
     if args.mi_voz:
         ref = os.path.join(tmp, "ref.wav")

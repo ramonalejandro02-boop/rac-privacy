@@ -1,0 +1,273 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "tapar": [
+   [
+    0.07,
+    0.583,
+    0.92,
+    0.7
+   ]
+  ],
+  "censura": [
+   [
+    2.9,
+    3.17
+   ]
+  ],
+  "titulo": "\"SALMA, TÚ NO SABES\nNI COCINAR\" 🔪😂",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "claves": [
+   "salma",
+   "cocina",
+   "despensa",
+   "bro"
+  ],
+  "eventos": [
+   {
+    "t": 1.8,
+    "tipo": "zoom",
+    "dur": 2.5,
+    "x": 0.45,
+    "y": 0.42,
+    "s": 1.2
+   },
+   {
+    "t": 2.9,
+    "tipo": "emoji",
+    "emoji": "🤬",
+    "x": 0.16,
+    "y": 0.4,
+    "size": 200,
+    "dur": 0.9
+   },
+   {
+    "t": 3.5,
+    "tipo": "zoom",
+    "dur": 1.0,
+    "x": 0.7,
+    "y": 0.33,
+    "s": 1.9,
+    "rampa": 0.1
+   },
+   {
+    "t": 3.7,
+    "tipo": "sticker",
+    "texto": "CON UN CUCHILLO EN LA MANO 🔪",
+    "fondo": "#FFE600",
+    "dur": 1.1,
+    "y": 0.29,
+    "rot": -3
+   },
+   {
+    "t": 6.3,
+    "tipo": "zoom",
+    "dur": 1.8,
+    "x": 0.7,
+    "y": 0.33,
+    "s": 1.7
+   },
+   {
+    "t": 6.7,
+    "tipo": "emoji",
+    "emoji": "🛒",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.2
+   },
+   {
+    "t": 8.1,
+    "tipo": "zoom",
+    "dur": 1.4,
+    "x": 0.35,
+    "y": 0.42,
+    "s": 1.3
+   },
+   {
+    "t": 8.6,
+    "tipo": "emoji",
+    "emoji": "🙊",
+    "x": 0.16,
+    "y": 0.4,
+    "size": 200,
+    "dur": 0.9
+   },
+   {
+    "t": 9.5,
+    "tipo": "zoom",
+    "dur": 3.4,
+    "x": 0.55,
+    "y": 0.4,
+    "s": 1.25
+   },
+   {
+    "t": 10.0,
+    "tipo": "sticker",
+    "texto": "EL SUPERVISOR DE COCINA 👀",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.6,
+    "y": 0.29,
+    "rot": 3
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    1.8,
+    4.3
+   ]
+  },
+  {
+   "congelar": 4.5,
+   "caja": [
+    0.55,
+    0.24,
+    0.9,
+    0.52
+   ],
+   "texto": "¡CUIDADO, QUE\nTIENE CUCHILLO! 🔪😳",
+   "fondo": "#FFE600",
+   "voz": "Mi loco, eso no se le dice a una mujer que tiene un cuchillo en la mano. Ahora tu plato va a venir con sorpresa.",
+   "claves": [
+    "cuchillo",
+    "sorpresa"
+   ],
+   "props": [
+    {
+     "emoji": "🔪",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 210
+    },
+    {
+     "emoji": "😬",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.0,
+     "size": 190
+    },
+    {
+     "emoji": "🏃",
+     "anim": "cruza",
+     "y": 0.62,
+     "t": 4.4,
+     "size": 190,
+     "dur_cruce": 1.6,
+     "sfx": "whoosh",
+     "vol": 0.4
+    }
+   ]
+  },
+  {
+   "orig": [
+    6.3,
+    9.5
+   ]
+  },
+  {
+   "congelar": 2.5,
+   "caja": [
+    0.03,
+    0.27,
+    0.48,
+    0.575
+   ],
+   "texto": "EL CHEF\nROCKERO 🎸👨‍🍳",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Ella cocinando, y él con la chaqueta de clavos, criticando sin pelar ni un plátano. El supervisor de cocina más rockero de la casa.",
+   "claves": [
+    "clavos",
+    "plátano",
+    "supervisor",
+    "rockero"
+   ],
+   "props": [
+    {
+     "emoji": "👨‍🍳",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🍌",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.6,
+     "size": 190
+    },
+    {
+     "emoji": "🎸",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.62,
+     "t": 4.4,
+     "size": 190
+    }
+   ]
+  },
+  {
+   "orig": [
+    9.5,
+    12.9
+   ]
+  },
+  {
+   "congelar": 4.0,
+   "caja": [
+    0.55,
+    0.24,
+    0.9,
+    0.52
+   ],
+   "texto": "¿TÚ TE LA\nCOMERÍAS? 🍽️👇",
+   "fondo": "#00E5FF",
+   "voz": "Y tú, ¿te comerías esa comida después de lo que le dijo? Yo por si acaso pido un pica pollo. Déjalo en los comentarios.",
+   "claves": [
+    "comida",
+    "pica",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🍽️",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🍗",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 3.2,
+     "size": 190,
+     "sfx": "pop",
+     "vol": 0.45
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.62,
+     "t": 5.0,
+     "size": 180
+    }
+   ]
+  }
+ ]
+}
