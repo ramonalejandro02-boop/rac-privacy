@@ -29,7 +29,11 @@ Leé `TRABAJO/transcripcion.txt` y `info.json` y **mirá** `TRABAJO/hoja.png`. D
 ```
 PY $ESTUDIO/analizar.py CLIP.mp4 TRABAJO/ --cuadros 2 9.5 16 --sin-transcribir
 ```
-y miralos (`TRABAJO/cuadros.png`). Averiguá:
+y miralos (`TRABAJO/cuadros.png`). Confirmá **quién dice cada frase** (no lo supongas):
+```
+PY $ESTUDIO/hablantes.py CLIP.mp4 TRABAJO/palabras.json TRABAJO/hablantes.png [--recorte x0,y0,x1,y1]
+```
+Marca la cara cuya boca se mueve en cada frase; "nadie visible" = quien habla está de espaldas o fuera de cuadro. Puede confundir objetos con caras: confirmalo mirando la imagen. Averiguá:
 - **De qué va** y cuál es el chiste natural (la contradicción, la reacción, lo absurdo).
 - **Quién habla** y dónde está en cada toma (x, y de 0 a 1 según la cuadrícula; cabeza y pecho).
 - **Cortes de toma** (`info.json`) y **texto pegado** de la página que subió el clip (arriba o abajo): hay que recortarlo con `recorte_fuente`. También los bordes negros (`contenido_y`).
@@ -43,6 +47,9 @@ Copiá `scripts/planes/ejemplo.json` y adaptalo (formato completo en `referencia
 - **Pocos sonidos**: 2–3 efectos en todo el video. `"sfx_transiciones": false`.
 - `"quitar_silencios": true`. En las reacciones donde la pausa es el chiste, `"silencios": false` en ese tramo.
 - Chistes en **jerga dominicana**, pícaros pero **sin difamar** (nunca afirmes hechos de personas reales) y **sin burlarse del cuerpo, la salud o una discapacidad** de nadie.
+- **Groserías:** se censuran solas con "piii" y asteriscos en subtítulos. Si una se corta o la transcripción no la reconoce ("ni pi..."), agregá su rango en `"censura": [[a, b]]` dentro de `base`.
+- **Textos pegados en medio del video** (que no se pueden recortar): difuminalos con `"tapar": [[x0, y0, x1, y1]]` en `base`.
+- **Más humor:** remates fuertes en cada intervención, stickers-chiste durante el original (2–5 palabras) y emojis que reaccionan.
 - `"tema": "auto"` (cambia los colores en cada video) o uno de `caribe`, `atardecer`, `menta`, `noche`.
 
 ## 3. Revisar recortes de las escenas (antes de renderizar)
