@@ -70,3 +70,10 @@ python3 studio/montaje.py entrada.mp4 salida.mp4 --plan studio/planes/montaje_pr
     --presentador mi_video.mov --presentador-espejo --mi-voz mi_voz.m4a
 ```
 Te recorta de tu video (fondo negro o normal) y te pone en grande en la intro (`"presentador": "grande"` en la escena) y en la esquina durante el resto. Detecta cuándo movés la boca: con voz en off usa tus cuadros "hablando" y mientras hablan otros, tus cuadros "escuchando". Descarta solo los cuadros con objetos encima de tu cabeza.
+
+## Temas de diseño (`"tema"` en el plan)
+
+`caribe`, `atardecer`, `menta`, `noche`, o `auto` (por defecto: elige uno distinto según el video).
+Cada tema trae su paleta de stickers, el color de la pastilla de los subtítulos y fondos animados
+con patrones distintos (`ondas`, `burbujas`, `puntos`, `rayos`) para la base y para cada escena.
+Letras: Inter Display Bold (stickers y títulos) y ExtraBold con borde fino y sombra suave (subtítulos).

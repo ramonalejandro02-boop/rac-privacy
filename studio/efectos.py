@@ -76,12 +76,56 @@ CLAVES_AUTO = [
 _EF = None
 _cache_emoji = {}
 _cache_font = {}
+INTER = "/usr/share/fonts/opentype/inter/InterDisplay-{}.otf"
+FUENTE_STICKER = INTER.format("Bold")        # títulos y stickers: moderna, no tan gruesa
+FUENTE_SUBS = INTER.format("ExtraBold")      # subtítulos: legible sin ser pesada
+
+# Temas: paleta de stickers, acento de subtítulos y fondos (base + escenas).
+# Las parejas son (fondo, texto). Los colores de los planes viejos se remapean al tema.
+TEMAS = {
+    "caribe": dict(base="caribe", escenas=["caribe2", "caribe3", "caribe"],
+                   stickers=[("#FFFFFF", "#023E8A"), ("#FFD166", "#1D3557"), ("#EF476F", "#FFFFFF")],
+                   titulo=("#FFFFFF", "#023E8A"), acento=("#FFD166", "#1D3557"), clave="#FFD166"),
+    "atardecer": dict(base="atardecer", escenas=["atardecer2", "atardecer3", "atardecer"],
+                      stickers=[("#FFF4E6", "#7B2D8E"), ("#2B2D42", "#FFF4E6"), ("#FFD6A5", "#6A0572")],
+                      titulo=("#FFF4E6", "#7B2D8E"), acento=("#2B2D42", "#FFFFFF"), clave="#FFE66D"),
+    "menta": dict(base="menta", escenas=["menta3", "menta2", "menta"],
+                  stickers=[("#FFFFFF", "#1D4E57"), ("#FF6B6B", "#FFFFFF"), ("#FFE66D", "#1D4E57")],
+                  titulo=("#FFFFFF", "#1D4E57"), acento=("#FF6B6B", "#FFFFFF"), clave="#FFE66D"),
+    "noche": dict(base="noche", escenas=["noche2", "noche3", "noche"],
+                  stickers=[("#24224A", "#F8F8FF"), ("#7CFFCB", "#14132B"), ("#FF7AC6", "#14132B")],
+                  titulo=("#24224A", "#F8F8FF"), acento=("#7CFFCB", "#14132B"), clave="#FF7AC6"),
+}
+TEMA = None
+_MAPA_COLORES = {"#FFE600": 1, "#FFFFFF": 0, "#FF3FA4": 2, "#00E5FF": 0, "#FF4A1C": 2, "#111111": 1}
 
 
-def font(px):
-    if px not in _cache_font:
-        _cache_font[px] = ImageFont.truetype(FUENTE, px)
-    return _cache_font[px]
+def usar_tema(nombre, semilla=""):
+    """Activa un tema por nombre, o elige uno automáticamente (distinto por video) con 'auto'."""
+    global TEMA
+    if not nombre:
+        TEMA = None
+        return None
+    if nombre == "auto":
+        import hashlib
+        claves = sorted(TEMAS)
+        nombre = claves[int(hashlib.md5(semilla.encode()).hexdigest(), 16) % len(claves)]
+    TEMA = dict(TEMAS[nombre], nombre=nombre)
+    return nombre
+
+
+def colores_sticker(fondo, color):
+    if not TEMA:
+        return fondo, color
+    k = _MAPA_COLORES.get(str(fondo).upper(), 0)
+    return TEMA["stickers"][k % len(TEMA["stickers"])]
+
+
+def font(px, archivo=None):
+    archivo = archivo or FUENTE
+    if (px, archivo) not in _cache_font:
+        _cache_font[(px, archivo)] = ImageFont.truetype(archivo, px)
+    return _cache_font[(px, archivo)]
 
 
 def es_emoji(s):
@@ -114,10 +158,10 @@ def emoji_pil(e):
     return _cache_emoji[e]
 
 
-def texto_pil(texto, px, fill=(255, 255, 255), stroke=(0, 0, 0), sw=None):
+def texto_pil(texto, px, fill=(255, 255, 255), stroke=(0, 0, 0), sw=None, fuente=None, sombra=False):
     """Texto mixto (palabras + emojis) en una línea. Devuelve PIL RGBA."""
     sw = max(3, px // 10) if sw is None else sw
-    f = font(px)
+    f = font(px, fuente)
     asc, desc = f.getmetrics()
     alto = asc + desc + sw * 2
     piezas, buf = [], ""
@@ -135,15 +179,21 @@ def texto_pil(texto, px, fill=(255, 255, 255), stroke=(0, 0, 0), sw=None):
     for k, v in piezas:
         if k == "t":
             w = int(f.getlength(v)) + sw * 2
-            im = Image.new("RGBA", (max(w, 1), alto), (0, 0, 0, 0))
-            ImageDraw.Draw(im).text((sw, sw), v, font=f, fill=fill + (255,), stroke_width=sw,
+            im = Image.new("RGBA", (max(w, 1) + 6, alto + 6), (0, 0, 0, 0))
+            if sombra:                                   # sombra suave debajo (no borde grueso)
+                sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+                ImageDraw.Draw(sh).text((sw + 3, sw + 5), v, font=f, fill=(0, 0, 0, 150),
+                                        stroke_width=sw, stroke_fill=(0, 0, 0, 150))
+                from PIL import ImageFilter
+                im = Image.alpha_composite(im, sh.filter(ImageFilter.GaussianBlur(4)))
+            ImageDraw.Draw(im).text((sw, sw), v, font=f, fill=fill + (255,), stroke_width=sw if stroke else 0,
                                     stroke_fill=stroke + (255,) if stroke else None)
             imgs.append(im)
         else:
             e = emoji_pil(v)
             s = int(px * 1.1)
             e = e.resize((int(e.width * s / e.height), s), Image.LANCZOS)
-            im = Image.new("RGBA", (e.width + 8, alto), (0, 0, 0, 0))
+            im = Image.new("RGBA", (e.width + 8, alto + 6), (0, 0, 0, 0))
             im.paste(e, (4, (alto - s) // 2 - sw // 2), e)
             imgs.append(im)
     tw = sum(i.width for i in imgs)
@@ -155,19 +205,19 @@ def texto_pil(texto, px, fill=(255, 255, 255), stroke=(0, 0, 0), sw=None):
     return out
 
 
-def lineas_pil(texto, px, max_w, **kw):
+def lineas_pil(texto, px, max_w, interlinea=0, **kw):
     lineas = [texto_pil(l, px, **kw) for l in texto.split("\n")]
     m = max(l.width for l in lineas)
     if m > max_w:
         px = int(px * max_w / m)
         lineas = [texto_pil(l, px, **kw) for l in texto.split("\n")]
     w = max(l.width for l in lineas)
-    h = sum(l.height for l in lineas)
+    h = sum(l.height for l in lineas) + interlinea * (len(lineas) - 1)
     out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     y = 0
     for l in lineas:
         out.paste(l, ((w - l.width) // 2, y), l)
-        y += l.height
+        y += l.height + interlinea
     return out
 
 
@@ -177,16 +227,28 @@ def hex2rgb(h):
 
 
 def sticker_pil(texto, px, fondo="#FFE600", color="#111111", rot=-5, max_w=950):
-    txt = lineas_pil(texto, px, max_w - 80, fill=hex2rgb(color), stroke=None, sw=2)
-    pad = int(px * 0.35)
-    w, h = txt.width + pad * 2, txt.height + pad * 2
-    im = Image.new("RGBA", (w + 40, h + 40), (0, 0, 0, 0))
+    from PIL import ImageFilter
+    fondo, color = colores_sticker(fondo, color)
+    px = int(px * 0.9)
+    txt = lineas_pil(texto, px, max_w - 100, interlinea=-int(px * 0.12), fill=hex2rgb(color),
+                     stroke=None, sw=0, fuente=FUENTE_STICKER)
+    padx, pady = int(px * 0.55), int(px * 0.32)
+    w, h = txt.width + padx * 2, txt.height + pady * 2
+    m = 40
+    im = Image.new("RGBA", (w + m * 2, h + m * 2), (0, 0, 0, 0))
+    sombra = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sombra).rounded_rectangle((m + 4, m + 12, m + w + 4, m + h + 12), radius=int(h * 0.32),
+                                             fill=(0, 0, 0, 90))
+    im = Image.alpha_composite(im, sombra.filter(ImageFilter.GaussianBlur(14)))
     d = ImageDraw.Draw(im)
-    d.rounded_rectangle((26, 30, w + 26, h + 30), radius=pad, fill=(0, 0, 0, 140))   # sombra
-    d.rounded_rectangle((14, 14, w + 14, h + 14), radius=pad, fill=hex2rgb(fondo) + (255,),
-                        outline=(255, 255, 255, 255), width=max(4, px // 14))
-    im.paste(txt, (14 + pad, 14 + pad), txt)
-    return im.rotate(rot, resample=Image.BICUBIC, expand=True)
+    d.rounded_rectangle((m, m, m + w, m + h), radius=int(min(h * 0.32, 60)), fill=hex2rgb(fondo) + (255,))
+    # brillo sutil arriba (acabado tipo "glass")
+    brillo = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(brillo).rounded_rectangle((m + 6, m + 5, m + w - 6, m + h * 0.45), radius=int(min(h * 0.3, 50)),
+                                             fill=(255, 255, 255, 28))
+    im = Image.alpha_composite(im, brillo)
+    im.paste(txt, (m + padx, m + pady), txt)
+    return im.rotate(rot * 0.5, resample=Image.BICUBIC, expand=True)
 
 
 def a_bgra(pil):
@@ -403,6 +465,10 @@ class Subs:
         self.claves = [c.lower() for c in claves]
         self.act = tuple(int(c) for c in color_activo[::-1])
         self.cla = hex2rgb(color_clave)
+        self.pastilla = None
+        if TEMA:
+            self.pastilla = (hex2rgb(TEMA["acento"][0]), hex2rgb(TEMA["acento"][1]))
+            self.cla = hex2rgb(TEMA["clave"])
         y = min(y, 0.75)                                   # encima del nombre de la página
         if x + ancho / 2 > ZONA["derecha"] - 0.01:          # antes de la columna de íconos
             ancho = max(0.42, 2 * (ZONA["derecha"] - 0.01 - x))
@@ -419,22 +485,32 @@ class Subs:
         if (gi, wi) in self.cache:
             return self.cache[(gi, wi)]
         g = self.grupos[gi]
-        f = font(self.px)
-        sw = self.px // 9
+        px = int(self.px * 0.92)
+        f = font(px, FUENTE_SUBS)
+        sw = max(2, px // 26)                                  # borde fino, no grueso
         palabras = [w["t"].upper() for w in g]
         imgs = []
         for i, p in enumerate(palabras):
             clave = self.es_clave(p)
-            col = self.act if i == wi else (self.cla if clave else (255, 255, 255))
-            px = int(self.px * (1.18 if clave else 1.0))
-            imgs.append(texto_pil(p, px, fill=col, sw=sw))
-        esp = int(f.getlength(" "))
+            if i == wi and self.pastilla:
+                # palabra activa: pastilla de color con texto en contraste
+                t_img = texto_pil(p, px, fill=self.pastilla[1], stroke=None, sw=0, fuente=FUENTE_SUBS)
+                pad = int(px * 0.18)
+                bg = Image.new("RGBA", (t_img.width + pad * 2, t_img.height + pad), (0, 0, 0, 0))
+                ImageDraw.Draw(bg).rounded_rectangle((0, int(pad * 0.6), bg.width - 1, bg.height - 1),
+                                                     radius=int(px * 0.28), fill=self.pastilla[0] + (255,))
+                bg.paste(t_img, (pad, int(pad * 0.5)), t_img)
+                imgs.append(bg)
+            else:
+                col = self.act if (i == wi and not self.pastilla) else (self.cla if clave else (255, 255, 255))
+                imgs.append(texto_pil(p, px, fill=col, stroke=(20, 20, 30), sw=sw, fuente=FUENTE_SUBS, sombra=True))
+        esp = int(f.getlength(" ") * 0.9)
         w = sum(i.width for i in imgs) + esp * (len(imgs) - 1)
         h = max(i.height for i in imgs)
         out = Image.new("RGBA", (w, h), (0, 0, 0, 0))
         x = 0
         for i in imgs:
-            out.paste(i, (x, h - i.height), i)
+            out.paste(i, (x, (h - i.height) // 2), i)
             x += i.width + esp
         if out.width > W * self.ancho:
             out = out.resize((int(W * self.ancho), int(out.height * W * self.ancho / out.width)), Image.LANCZOS)
@@ -490,7 +566,8 @@ def main():
     args = ap.parse_args()
 
     plan = json.load(open(args.plan)) if args.plan else {}
-    est = ESTILOS[args.estilo or plan.get("estilo", "farandula")]
+    usar_tema(plan.get("tema"), os.path.basename(args.entrada))
+    est = ESTILOS[TEMA["base"] if TEMA else (args.estilo or plan.get("estilo", "farandula"))]
     tmp = tempfile.mkdtemp(prefix="efx_")
     src = args.entrada
 
@@ -547,8 +624,11 @@ def main():
     titulo = plan.get("titulo")
     titulo_img = None
     if titulo:
-        titulo_img = a_bgra(sticker_pil(titulo, 78, plan.get("titulo_fondo", "#FFFFFF"),
-                                        plan.get("titulo_color", "#111111"), rot=0, max_w=1020))
+        tf, tc = TEMA["titulo"] if TEMA else (plan.get("titulo_fondo", "#FFFFFF"), plan.get("titulo_color", "#111111"))
+        _t = TEMA
+        globals()["TEMA"] = None                          # el título usa su color propio, sin remapear
+        titulo_img = a_bgra(sticker_pil(titulo, 78, tf, tc, rot=0, max_w=1000))
+        globals()["TEMA"] = _t
     barra_col = tuple(int(c) for c in est["palabra"])
 
     out_v = os.path.join(tmp, "v.mp4")

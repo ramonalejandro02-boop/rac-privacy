@@ -29,8 +29,9 @@ import numpy as np
 AQUI = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, AQUI)
 from transformar import ESTILOS, MODELOS, FondoAnimado, log  # noqa: E402
+import efectos  # noqa: E402
 from efectos import (H, SR, W, Eventos, Subs, a_bgra, ease_back, ease_io,  # noqa: E402
-                     seguro, sintetizar, sticker_pil, superponer, texto_pil)
+                     seguro, sintetizar, sticker_pil, superponer, texto_pil, usar_tema)
 
 VOZ = os.environ.get("STUDIO_VOZ", os.path.join(MODELOS, "piper", "es_MX-claude-high.onnx"))
 FPS = 30
@@ -311,13 +312,21 @@ def dibujar_prop(cv, p, u, d, cache):
 # --------------------------------------------------------------------------
 # Render de una escena
 # --------------------------------------------------------------------------
+_contador_escena = [0]
+
+
 def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.92):
     vo_wav = os.path.join(tmp, f"vo{idx}.wav")
     vo = voz_en_off(esc["voz"], vo_wav, esc.get("velocidad", 0.82))
     t_vo = 0.3
     d = max(esc.get("min", 2.5), t_vo + len(vo) / SR + 0.35)
     n = int(d * FPS)
-    est = ESTILOS[esc.get("estilo", "neon")]
+    if efectos.TEMA:
+        esc_list = efectos.TEMA["escenas"]
+        est = ESTILOS[esc_list[_contador_escena[0] % len(esc_list)]]
+        _contador_escena[0] += 1
+    else:
+        est = ESTILOS[esc.get("estilo", "neon")]
     fondo = FondoAnimado(W, H, est, seed=idx)
     corte = recorte_sticker(src, esc["congelar"], esc["caja"], esc.get("alto", 760))
     texto = a_bgra(sticker_pil(esc["texto"], esc.get("tam_texto", 86), esc.get("fondo", "#FFE600"),
@@ -402,6 +411,9 @@ def main():
     args = ap.parse_args()
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
+    tema = usar_tema(plan.get("tema", "auto"), os.path.basename(args.entrada))
+    plan["base"]["tema"] = tema
+    log(f"tema de diseño: {tema}")
     if args.mi_voz:
         ref = os.path.join(tmp, "ref.wav")
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.mi_voz, "-t", "30", "-ac", "1", "-ar", "24000",
@@ -463,7 +475,8 @@ def main():
     for p in partes:
         ins += ["-i", p]
     cadena = "".join(f"[{i}:v][{i}:a]" for i in range(len(partes)))
-    col = "0x{:02X}{:02X}{:02X}".format(*ESTILOS[plan["base"].get("estilo", "farandula")]["palabra"][::-1])
+    est_barra = ESTILOS[efectos.TEMA["base"]] if efectos.TEMA else ESTILOS[plan["base"].get("estilo", "farandula")]
+    col = "0x{:02X}{:02X}{:02X}".format(*est_barra["palabra"][::-1])
     if args.presentador:
         unido = os.path.join(tmp, "unido.mp4")
         subprocess.run(["ffmpeg", "-y", "-v", "error"] + ins + ["-filter_complex",

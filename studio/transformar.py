@@ -60,6 +60,36 @@ ESTILOS = {
         particulas=(255, 230, 200)),
 }
 
+def _bgr(h):
+    h = h.lstrip("#")
+    return (int(h[4:6], 16), int(h[2:4], 16), int(h[0:2], 16))
+
+
+def _estilo(c0, c1, c2, patron, glow="#FFFFFF", part="#FFFFFF", acento="#FFD166", sat=1.15, cont=0.18):
+    return dict(grad=[_bgr(c0), _bgr(c1), _bgr(c2)], rayos=(255, 255, 255), rayos_alpha=0.07,
+                glow=_bgr(glow), palabra=_bgr(acento), sat=sat, contraste=cont, calido=0.03,
+                viñeta=0.30, particulas=_bgr(part), patron=patron)
+
+
+ESTILOS.update({
+    # Caribe
+    "caribe": _estilo("#00B4D8", "#0077B6", "#023E8A", "ondas", glow="#90E0EF", acento="#FFD166"),
+    "caribe2": _estilo("#48CAE4", "#00B4D8", "#03045E", "burbujas", glow="#CAF0F8", acento="#FFD166"),
+    "caribe3": _estilo("#0096C7", "#023E8A", "#03045E", "puntos", glow="#90E0EF", acento="#EF476F"),
+    # Atardecer
+    "atardecer": _estilo("#F9A26C", "#F25F5C", "#7B2D8E", "burbujas", glow="#FFD6A5", acento="#FFE66D"),
+    "atardecer2": _estilo("#FFB347", "#FF6F61", "#6A0572", "ondas", glow="#FFE5B4", acento="#FFE66D"),
+    "atardecer3": _estilo("#F25F5C", "#B5179E", "#3A0CA3", "puntos", glow="#FFC6FF", acento="#FFE66D"),
+    # Menta
+    "menta": _estilo("#7FD8BE", "#2A9D8F", "#1D4E57", "puntos", glow="#D8F3DC", acento="#FF6B6B"),
+    "menta2": _estilo("#95D5B2", "#40916C", "#1B4332", "ondas", glow="#D8F3DC", acento="#FFE66D"),
+    "menta3": _estilo("#4ECDC4", "#1A759F", "#184E77", "burbujas", glow="#CAF0F8", acento="#FF6B6B"),
+    # Noche
+    "noche": _estilo("#2E2A5E", "#1B1B3A", "#0B0B1A", "rayos", glow="#7CFFCB", part="#7CFFCB", acento="#7CFFCB", cont=0.24),
+    "noche2": _estilo("#3A1C71", "#1B1B3A", "#0B0B1A", "puntos", glow="#FF7AC6", part="#FF7AC6", acento="#FF7AC6", cont=0.24),
+    "noche3": _estilo("#16324F", "#0B1D33", "#050D1A", "ondas", glow="#7CFFCB", part="#B8F2FF", acento="#7CFFCB", cont=0.24),
+})
+
 FORMATOS = {"9:16": (1080, 1920), "16:9": (1920, 1080), "1:1": (1080, 1080)}
 
 
@@ -235,7 +265,11 @@ class FondoAnimado:
         self.yn = yy / self.h
         self.xn = xx / self.w
         rng = np.random.default_rng(seed)
-        n = 60
+        self.patron = est.get("patron", "rayos")
+        nb = 9
+        self.burb = dict(x=rng.random(nb), y=rng.random(nb), r=0.10 + rng.random(nb) * 0.16,
+                         vx=(rng.random(nb) - 0.5) * 0.03, vy=-0.01 - rng.random(nb) * 0.025, f=rng.random(nb) * 6.28)
+        n = 45 if self.patron != "rayos" else 60
         self.p = dict(x=rng.random(n) * W, y=rng.random(n) * H, v=40 + rng.random(n) * 120,
                       r=2 + rng.random(n) * 6, f=rng.random(n) * 6.28)
 
@@ -246,11 +280,37 @@ class FondoAnimado:
         g = (self.yn * 0.7 + self.xn * 0.3 + 0.15 * np.sin(t * 0.6 + self.xn * 3))[..., None]
         g = np.clip(g, 0, 1)
         img = np.where(g < 0.5, c0 + (c1 - c0) * (g / 0.5), c1 + (c2 - c1) * ((g - 0.5) / 0.5))
-        # rayos giratorios (sunburst)
-        rayos = (np.sin(self.ang * 14 + t * 0.8) > 0.55).astype(np.float32)
-        rayos *= np.clip(1.2 - self.rad * 1.6, 0, 1)
-        a = e["rayos_alpha"] * (1 + 0.8 * energia)
-        img = img * (1 - a * rayos[..., None]) + np.array(e["rayos"], np.float32) * a * rayos[..., None]
+        blanco = np.array(e["rayos"], np.float32)
+        if self.patron == "rayos":                       # rayos giratorios (sunburst)
+            rayos = (np.sin(self.ang * 14 + t * 0.8) > 0.55).astype(np.float32)
+            rayos *= np.clip(1.2 - self.rad * 1.6, 0, 1)
+            a = e["rayos_alpha"] * 2.2 * (1 + 0.8 * energia)
+            img = img * (1 - a * rayos[..., None]) + blanco * a * rayos[..., None]
+        elif self.patron == "ondas":                     # ondas suaves que se desplazan
+            o = 0.5 + 0.5 * np.sin(self.xn * 7 + self.yn * 11 - t * 1.1)
+            o2 = 0.5 + 0.5 * np.sin(self.xn * -5 + self.yn * 6 + t * 0.7)
+            m = (o * 0.6 + o2 * 0.4) ** 3 * (0.10 + 0.06 * energia)
+            img = img * (1 - m[..., None]) + blanco * m[..., None]
+        elif self.patron == "burbujas":                  # círculos grandes desenfocados (bokeh)
+            b = self.burb
+            asp = self.h / self.w
+            acc = np.zeros_like(self.xn)
+            for i in range(len(b["x"])):
+                bx = (b["x"][i] + b["vx"][i] * t) % 1.0
+                by = (b["y"][i] + b["vy"][i] * t) % 1.0
+                r = b["r"][i] * (1 + 0.08 * math.sin(t * 1.3 + b["f"][i]))
+                d2 = (self.xn - bx) ** 2 + ((self.yn - by) * asp) ** 2
+                acc += np.exp(-d2 / (r * r * 0.5))
+            m = np.clip(acc, 0, 1.5) * (0.13 + 0.05 * energia)
+            img = img * (1 - m[..., None]) + blanco * m[..., None]
+        elif self.patron == "puntos":                    # cuadrícula de puntos que respira
+            paso = 16
+            gx = (self.xn * self.w + t * 6) % paso - paso / 2
+            gy = (self.yn * self.h + t * 10) % paso - paso / 2
+            rr = 2.2 + 1.4 * energia + 0.6 * np.sin(self.rad * 12 - t * 2)
+            dots = np.clip(rr - np.sqrt(gx * gx + gy * gy), 0, 1)
+            m = dots * 0.16
+            img = img * (1 - m[..., None]) + blanco * m[..., None]
         # anillos que pulsan con la voz (estilo neon)
         if e.get("anillos"):
             r = (self.rad * 9 - t * 1.5) % 1.0
