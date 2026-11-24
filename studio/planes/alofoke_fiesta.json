@@ -19,8 +19,8 @@
    "bailando",
    "fuerte",
    "beber",
-   "tomando",
-   "audiencia"
+   "audiencia",
+   "cena"
   ],
   "eventos": [
    {
@@ -122,7 +122,7 @@
    {
     "t": 43.3,
     "tipo": "sticker",
-    "texto": "\"NO ESTAMOS TOMANDO\" 🤔",
+    "texto": "\"UNA LEVE CENA\" 🍽️🤔",
     "fondo": "#FFFFFF",
     "dur": 2.2,
     "y": 0.29,
@@ -252,18 +252,18 @@
     0.8,
     0.76
    ],
-   "texto": "¿NO ESTÁN\nTOMANDO? 🤔👇",
+   "texto": "¿UNA LEVE\nCENA? 🍽️👇",
    "fondo": "#00E5FF",
-   "voz": "Dicen que no están tomando, y cada uno con su latita en la mano. Puede ser refresco, ¿verdad? ¿Y tú les crees? Déjalo en los comentarios.",
+   "voz": "Una leve cena, dicen. Con traje de gala, latita en la mano y bailando. Esa cena tiene hasta música, mi loco. ¿Y tú qué dices? Déjalo en los comentarios.",
    "claves": [
-    "tomando",
-    "latita",
-    "refresco",
+    "cena",
+    "gala",
+    "música",
     "comentarios"
    ],
    "props": [
     {
-     "emoji": "🥤",
+     "emoji": "🍽️",
      "anim": "crece",
      "x": 0.18,
      "y": 0.42,

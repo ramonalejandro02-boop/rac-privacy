@@ -461,8 +461,6 @@ class Eventos:
 # --------------------------------------------------------------------------
 class Subs:
     def __init__(self, palabras, claves, color_activo, color_clave="#FF3FA4", px=104, y=0.875, x=0.5, ancho=0.92):
-        # con poco espacio (al lado del presentador) van de a 2 palabras para que se lean grandes
-        self.grupos = agrupar(palabras, max_pal=2 if ancho < 0.6 else 3)
         self.claves = [c.lower() for c in claves]
         self.act = tuple(int(c) for c in color_activo[::-1])
         self.cla = hex2rgb(color_clave)
@@ -475,6 +473,8 @@ class Subs:
             ancho = max(0.42, 2 * (ZONA["derecha"] - 0.01 - x))
             x = min(x, ZONA["derecha"] - 0.01 - ancho / 2)
         self.px, self.y, self.x, self.ancho = px, y, x, ancho
+        # con poco espacio (al lado del presentador) van de a 2 palabras para que se lean grandes
+        self.grupos = agrupar(palabras, max_pal=2 if ancho < 0.6 else 3)
         self.cache = {}
         self.i = 0
 
@@ -602,6 +602,8 @@ def main():
     pw = plan.get("panel_ancho", 1000)
     ph = int(sh * pw / sw)
     ph_max = int(plan.get("panel_abajo", 0.72) * H) - int(plan.get("panel_y", 0.225 * H))
+    if plan.get("panel_alto"):                # videos horizontales: panel más alto, recorta los lados siguiendo el zoom
+        ph = int(plan["panel_alto"] * H)
     if ph > ph_max:
         ph = ph_max            # se mantiene el ancho completo: se recorta arriba/abajo siguiendo el zoom
     px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
