@@ -1,0 +1,292 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "recorte_fuente": [
+   0.089,
+   0.055,
+   0.972,
+   1.0
+  ],
+  "panel_alto": 0.47,
+  "titulo": "FIESTA EN LA CASA\nDE ALOFOKE 💃🥂",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "claves": [
+   "traposo",
+   "bailo",
+   "bailando",
+   "fuerte",
+   "beber",
+   "tomando",
+   "audiencia"
+  ],
+  "eventos": [
+   {
+    "t": 1.0,
+    "tipo": "zoom",
+    "dur": 2.4,
+    "x": 0.48,
+    "y": 0.45,
+    "s": 1.05
+   },
+   {
+    "t": 3.4,
+    "tipo": "zoom",
+    "dur": 5.4,
+    "x": 0.42,
+    "y": 0.45,
+    "s": 1.0
+   },
+   {
+    "t": 3.9,
+    "tipo": "emoji",
+    "emoji": "😂",
+    "x": 0.16,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.0
+   },
+   {
+    "t": 8.8,
+    "tipo": "zoom",
+    "dur": 1.8,
+    "x": 0.53,
+    "y": 0.35,
+    "s": 1.7,
+    "rampa": 0.12
+   },
+   {
+    "t": 9.4,
+    "tipo": "sticker",
+    "texto": "¿¿TRAPOSO?? 😂",
+    "fondo": "#FFE600",
+    "dur": 1.2,
+    "y": 0.29,
+    "rot": -4
+   },
+   {
+    "t": 13.5,
+    "tipo": "zoom",
+    "dur": 8.0,
+    "x": 0.4,
+    "y": 0.45,
+    "s": 1.0
+   },
+   {
+    "t": 14.4,
+    "tipo": "emoji",
+    "emoji": "💃",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 210,
+    "dur": 1.4
+   },
+   {
+    "t": 21.3,
+    "tipo": "zoom",
+    "dur": 5.8,
+    "x": 0.56,
+    "y": 0.42,
+    "s": 1.15
+   },
+   {
+    "t": 23.7,
+    "tipo": "sticker",
+    "texto": "¿¿ESTÁ FUERTE?? 🥤😅",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.6,
+    "y": 0.29,
+    "rot": 3,
+    "sfx": "pop",
+    "vol": 0.45
+   },
+   {
+    "t": 27.1,
+    "tipo": "zoom",
+    "dur": 1.9,
+    "x": 0.55,
+    "y": 0.42,
+    "s": 1.2
+   },
+   {
+    "t": 39.0,
+    "tipo": "zoom",
+    "dur": 6.8,
+    "x": 0.45,
+    "y": 0.45,
+    "s": 1.05
+   },
+   {
+    "t": 43.3,
+    "tipo": "sticker",
+    "texto": "\"NO ESTAMOS TOMANDO\" 🤔",
+    "fondo": "#FFFFFF",
+    "dur": 2.2,
+    "y": 0.29,
+    "rot": -3,
+    "sfx": "boom",
+    "vol": 0.35
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    1.0,
+    10.6
+   ]
+  },
+  {
+   "congelar": 9.0,
+   "caja": [
+    0.47,
+    0.15,
+    0.64,
+    0.62
+   ],
+   "texto": "¿TRAPOSO O\nROCKERO? 🎸",
+   "fondo": "#FFE600",
+   "voz": "Le dicen traposo, y el hombre vino con chaqueta de clavos y todo. Eso no es traposo, mi loco, eso es estilo.",
+   "claves": [
+    "traposo",
+    "estilo"
+   ],
+   "props": [
+    {
+     "emoji": "🎸",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 210
+    },
+    {
+     "emoji": "🤘",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.0,
+     "size": 190
+    },
+    {
+     "emoji": "😎",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 3.6,
+     "size": 190
+    }
+   ]
+  },
+  {
+   "orig": [
+    13.5,
+    21.6
+   ]
+  },
+  {
+   "congelar": 9.0,
+   "caja": [
+    0.09,
+    0.2,
+    0.29,
+    0.65
+   ],
+   "texto": "AQUÍ NADIE\nVINO A DORMIR 💃",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Aquí nadie vino a dormir. Traje de gala, latita en la mano, y a bailar se ha dicho.",
+   "claves": [
+    "gala",
+    "latita",
+    "bailar"
+   ],
+   "props": [
+    {
+     "emoji": "💃",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 210
+    },
+    {
+     "emoji": "✨",
+     "anim": "orbita",
+     "x": 0.5,
+     "y": 0.45,
+     "radio": 380,
+     "fase": 0,
+     "size": 140
+    },
+    {
+     "emoji": "🥂",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 2.6,
+     "size": 190
+    }
+   ]
+  },
+  {
+   "orig": [
+    21.3,
+    29.0
+   ]
+  },
+  {
+   "orig": [
+    39.0,
+    45.7
+   ]
+  },
+  {
+   "congelar": 27.0,
+   "caja": [
+    0.63,
+    0.31,
+    0.8,
+    0.76
+   ],
+   "texto": "¿NO ESTÁN\nTOMANDO? 🤔👇",
+   "fondo": "#00E5FF",
+   "voz": "Dicen que no están tomando, y cada uno con su latita en la mano. Puede ser refresco, ¿verdad? ¿Y tú les crees? Déjalo en los comentarios.",
+   "claves": [
+    "tomando",
+    "latita",
+    "refresco",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🥤",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🤔",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.2,
+     "size": 190
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 5.5,
+     "size": 180
+    }
+   ]
+  }
+ ]
+}

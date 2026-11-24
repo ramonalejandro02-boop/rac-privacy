@@ -602,6 +602,8 @@ def main():
     pw = plan.get("panel_ancho", 1000)
     ph = int(sh * pw / sw)
     ph_max = int(plan.get("panel_abajo", 0.72) * H) - int(plan.get("panel_y", 0.225 * H))
+    if plan.get("panel_alto"):                # videos horizontales: panel más alto, recorta los lados siguiendo el zoom
+        ph = int(plan["panel_alto"] * H)
     if ph > ph_max:
         ph = ph_max            # se mantiene el ancho completo: se recorta arriba/abajo siguiendo el zoom
     px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
