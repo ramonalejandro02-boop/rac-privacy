@@ -1,0 +1,285 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "recorte_fuente": [
+   0.089,
+   0.06,
+   0.972,
+   0.86
+  ],
+  "panel_alto": 0.47,
+  "titulo": "\"35 DÍAS EN EL REALITY\nDE MIS AMIGOS\" 😂📺",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "claves": [
+   "reality",
+   "realities",
+   "nunca",
+   "jamás",
+   "35",
+   "días",
+   "amigos",
+   "italia",
+   "famosos"
+  ],
+  "eventos": [
+   {
+    "t": 56.6,
+    "tipo": "zoom",
+    "dur": 6.3,
+    "x": 0.7,
+    "y": 0.3,
+    "s": 1.35
+   },
+   {
+    "t": 61.3,
+    "tipo": "emoji",
+    "emoji": "😤",
+    "x": 0.16,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.2
+   },
+   {
+    "t": 68.8,
+    "tipo": "zoom",
+    "dur": 3.6,
+    "x": 0.5,
+    "y": 0.35,
+    "s": 1.15
+   },
+   {
+    "t": 72.4,
+    "tipo": "zoom",
+    "dur": 6.3,
+    "x": 0.7,
+    "y": 0.3,
+    "s": 1.4
+   },
+   {
+    "t": 74.2,
+    "tipo": "sticker",
+    "texto": "¿¿NUNCA EN NINGÚN REALITY?? 🤨",
+    "fondo": "#FFE600",
+    "dur": 1.8,
+    "y": 0.29,
+    "rot": -3
+   },
+   {
+    "t": 77.0,
+    "tipo": "emoji",
+    "emoji": "👀",
+    "x": 0.16,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.4
+   },
+   {
+    "t": 79.3,
+    "tipo": "zoom",
+    "dur": 7.2,
+    "x": 0.7,
+    "y": 0.3,
+    "s": 1.5
+   },
+   {
+    "t": 80.9,
+    "tipo": "sticker",
+    "texto": "35 DÍAS 📆",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.4,
+    "y": 0.29,
+    "rot": 3,
+    "sfx": "boom",
+    "vol": 0.35
+   },
+   {
+    "t": 84.2,
+    "tipo": "emoji",
+    "emoji": "🇮🇹",
+    "x": 0.16,
+    "y": 0.42,
+    "size": 190,
+    "dur": 1.6
+   },
+   {
+    "t": 87.2,
+    "tipo": "zoom",
+    "dur": 4.1,
+    "x": 0.62,
+    "y": 0.3,
+    "s": 1.25
+   },
+   {
+    "t": 89.6,
+    "tipo": "emoji",
+    "emoji": "🤷",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 200,
+    "dur": 1.6
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    56.6,
+    62.8
+   ]
+  },
+  {
+   "orig": [
+    68.8,
+    78.6
+   ]
+  },
+  {
+   "congelar": 66.0,
+   "caja": [
+    0.4,
+    0.15,
+    0.64,
+    0.58
+   ],
+   "texto": "¿EN CUÁNTOS\nREALITIES? 🤔📺",
+   "fondo": "#FFFFFF",
+   "voz": "Atención, que aquí viene la experiencia. ¿En cuántos realities habrá estado este tíguere?",
+   "claves": [
+    "experiencia",
+    "realities"
+   ],
+   "props": [
+    {
+     "emoji": "📺",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🤔",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 1.8,
+     "size": 190
+    },
+    {
+     "emoji": "🍿",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 3.0,
+     "size": 190
+    }
+   ]
+  },
+  {
+   "orig": [
+    79.3,
+    86.5
+   ]
+  },
+  {
+   "congelar": 71.3,
+   "caja": [
+    0.4,
+    0.15,
+    0.64,
+    0.58
+   ],
+   "texto": "UNA PIJAMADA\nCON CÁMARAS 📸😂",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Treinta y cinco días en el reality de sus mejores amigos. Eso no es un reality, mi loco, eso es una pijamada con cámaras.",
+   "claves": [
+    "amigos",
+    "pijamada",
+    "cámaras"
+   ],
+   "props": [
+    {
+     "emoji": "📸",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🛏️",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.4,
+     "size": 190
+    },
+    {
+     "emoji": "😂",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 4.2,
+     "size": 190
+    }
+   ]
+  },
+  {
+   "orig": [
+    87.2,
+    91.3
+   ],
+   "silencios": false
+  },
+  {
+   "congelar": 69.0,
+   "caja": [
+    0.4,
+    0.15,
+    0.64,
+    0.58
+   ],
+   "texto": "¿Y TÚ LOS\nCONOCES? 🤷👇",
+   "fondo": "#00E5FF",
+   "voz": "Son famosos, dice, y nadie sabe quiénes son. ¿Y tú, los conoces? Déjalo en los comentarios.",
+   "claves": [
+    "famosos",
+    "conoces",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🤷",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "⭐",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 1.2,
+     "size": 180,
+     "sfx": "ding",
+     "vol": 0.4
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.64,
+     "t": 3.6,
+     "size": 180
+    }
+   ]
+  }
+ ]
+}
