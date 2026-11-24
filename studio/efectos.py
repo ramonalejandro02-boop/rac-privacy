@@ -461,7 +461,8 @@ class Eventos:
 # --------------------------------------------------------------------------
 class Subs:
     def __init__(self, palabras, claves, color_activo, color_clave="#FF3FA4", px=104, y=0.875, x=0.5, ancho=0.92):
-        self.grupos = agrupar(palabras)
+        # con poco espacio (al lado del presentador) van de a 2 palabras para que se lean grandes
+        self.grupos = agrupar(palabras, max_pal=2 if ancho < 0.6 else 3)
         self.claves = [c.lower() for c in claves]
         self.act = tuple(int(c) for c in color_activo[::-1])
         self.cla = hex2rgb(color_clave)
