@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Genera voz en off con TU voz clonada (Chatterbox Multilingual, licencia MIT, corre local).
-Se ejecuta con el entorno aparte:  /home/user/venv-voz/bin/python studio/clonar_voz.py ...
+Se ejecuta con el entorno aparte de voz (venv-voz), ver instalar.py.
 
   clonar_voz.py --ref mi_voz.wav --textos textos.json --salida carpeta/
   textos.json = ["frase 1", "frase 2", ...]  -> carpeta/vo_000.wav, vo_001.wav, ...
@@ -14,7 +14,9 @@ import argparse
 import json
 import os
 
-os.environ.setdefault("HF_HOME", "/home/user/models/hf")
+os.environ.setdefault("HF_HOME", os.path.join(os.environ.get("STUDIO_MODELS") or (
+    "/home/user/models" if os.path.isdir("/home/user/models")
+    else os.path.join(os.path.expanduser("~"), ".estudio", "models")), "hf"))
 
 
 def main():

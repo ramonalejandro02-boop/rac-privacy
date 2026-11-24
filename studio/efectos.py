@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from transformar import (ESTILOS, FUENTE, FondoAnimado, Grading, agrupar,  # noqa: E402
                          energia_por_frame, extraer_wav, log, tiene_audio, transcribir)
 
-EMOJI_FONT = "/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf"
+EMOJI_FONT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "NotoColorEmoji.ttf")
 W, H = 1080, 1920
 SR = 44100
 
@@ -76,7 +76,7 @@ CLAVES_AUTO = [
 _EF = None
 _cache_emoji = {}
 _cache_font = {}
-INTER = "/usr/share/fonts/opentype/inter/InterDisplay-{}.otf"
+INTER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "InterDisplay-{}.otf")
 FUENTE_STICKER = INTER.format("Bold")        # títulos y stickers: moderna, no tan gruesa
 FUENTE_SUBS = INTER.format("ExtraBold")      # subtítulos: legible sin ser pesada
 

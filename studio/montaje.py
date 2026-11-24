@@ -96,7 +96,17 @@ VOZ_KOKORO = os.environ.get("STUDIO_VOZ_KOKORO", "ef_dora")  # ef_dora = mujer, 
 _kokoro = None
 
 
-VENV_VOZ = os.environ.get("STUDIO_VENV_VOZ", "/home/user/venv-voz/bin/python")
+def _venv_voz():
+    if os.environ.get("STUDIO_VENV_VOZ"):
+        return os.environ["STUDIO_VENV_VOZ"]
+    for base in ("/home/user/venv-voz", os.path.join(os.path.expanduser("~"), ".estudio", "venv-voz")):
+        for exe in ("bin/python", "Scripts/python.exe"):
+            if os.path.exists(os.path.join(base, exe)):
+                return os.path.join(base, exe)
+    return os.path.join(os.path.expanduser("~"), ".estudio", "venv-voz", "bin", "python")
+
+
+VENV_VOZ = _venv_voz()
 _clon = {}   # texto -> wav pre-generado con la voz clonada
 
 
@@ -408,9 +418,18 @@ def main():
     ap.add_argument("--mi-voz", help="audio con TU voz (15-30 s): las voces en off salen con tu voz clonada")
     ap.add_argument("--presentador", help="video tuyo (fondo negro o normal) para salir en pantalla")
     ap.add_argument("--presentador-espejo", action="store_true", help="voltear el video del presentador")
+    ap.add_argument("--usar-config", action="store_true",
+                    help="tomar voz, presentador y espejo de ~/.estudio/config.json (ver instalar.py)")
     args = ap.parse_args()
+    if args.usar_config:
+        cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
+        cfg = json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}
+        args.mi_voz = args.mi_voz or cfg.get("voz")
+        args.presentador = args.presentador or cfg.get("presentador")
+        args.presentador_espejo = args.presentador_espejo or bool(cfg.get("espejo"))
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
+    log(f"carpeta temporal (partes para verificar): {tmp}")
     tema = usar_tema(plan.get("tema", "auto"), os.path.basename(args.entrada))
     plan["base"]["tema"] = tema
     log(f"tema de diseño: {tema}")

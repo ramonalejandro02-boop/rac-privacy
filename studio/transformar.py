@@ -28,10 +28,12 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-MODELOS = os.environ.get("STUDIO_MODELS", "/home/user/models")
+MODELOS = os.environ.get("STUDIO_MODELS") or (
+    "/home/user/models" if os.path.isdir("/home/user/models")
+    else os.path.join(os.path.expanduser("~"), ".estudio", "models"))
 FUENTE = os.path.join(AQUI, "fonts", "Anton-Regular.ttf")
 if not os.path.exists(FUENTE):
-    FUENTE = "/usr/share/fonts/opentype/inter/InterDisplay-Black.otf"
+    FUENTE = os.path.join(AQUI, "fonts", "InterDisplay-ExtraBold.otf")
 
 # --------------------------------------------------------------------------
 # Estilos: paleta del fondo animado, color del glow, color de palabra activa
