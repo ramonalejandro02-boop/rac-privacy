@@ -107,9 +107,17 @@ def usar_tema(nombre, semilla=""):
         TEMA = None
         return None
     if nombre == "auto":
-        import hashlib
+        # rotar los temas en orden para que dos videos seguidos nunca se repitan
+        from transformar import MODELOS
         claves = sorted(TEMAS)
-        nombre = claves[int(hashlib.md5(semilla.encode()).hexdigest(), 16) % len(claves)]
+        estado = os.path.join(MODELOS, "ultimo_tema.txt")
+        previo = open(estado).read().strip() if os.path.exists(estado) else None
+        nombre = claves[(claves.index(previo) + 1) % len(claves)] if previo in claves else claves[0]
+        try:
+            os.makedirs(MODELOS, exist_ok=True)
+            open(estado, "w").write(nombre)
+        except OSError:
+            pass
     TEMA = dict(TEMAS[nombre], nombre=nombre)
     return nombre
 
