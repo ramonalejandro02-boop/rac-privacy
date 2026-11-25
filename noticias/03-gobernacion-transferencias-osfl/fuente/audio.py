@@ -58,6 +58,24 @@ put(sfx,ev['n49'],ding(1318))
 put(sfx,ev['grupo'],pop()); put(sfx,ev['iglesia'],pop(1100))
 put(sfx,ev['n22'],boom()); put(sfx,ev['n80'],ding(880))
 put(sfx,ev['bien'],pop()); put(sfx,ev['bien']+.2,pop(1100)); put(sfx,ev['cta'],ding(1046)); put(sfx,ev['cta']+.12,ding(1568))
+
+def snip():
+    x=tt(.08); return rng.uniform(-1,1,len(x))*np.exp(-x*60)*.5
+def flutter(L=.25):
+    x=rng.uniform(-1,1,int(L*SR)); m=(np.sin(np.arange(len(x))/SR*2*np.pi*28)>0)*1.0; return np.convolve(x*m,np.ones(12)/12,'same')*np.sin(np.linspace(0,np.pi,len(x)))*.35
+S1=S[1]
+for i in range(14): put(sfx,S1+i*.32,flutter(),.7)
+put(sfx,S1+.2+.5,boom(),.8)
+for j in range(6): put(sfx,ev['bajo']-.3+j*.1,snip())
+for i in range(12): put(sfx,ev['ejec']+i*.2+.6,pop(1400),.4)
+put(sfx,S[5]+.2,whoosh(.4)); put(sfx,ev['fcm']+.3,boom(),.7)
+for i in range(30): put(sfx,ev['n20']+.9+i*.03,tick(),.5)
+for i in range(10): put(sfx,ev['siete']+i*.09,flutter(.2),.6)
+put(sfx,ev['siete']+1.2,boom(),.8)
+put(sfx,ev['orig'],boom(),.6)
+put(sfx,ev['grupo']+.6,boom(),.6); put(sfx,ev['iglesia']+.6,boom(),.6)
+put(sfx,ev['n80']+1,boom(),.7)
+for i in range(30): put(sfx,ev['cta']+i*.03,tick(),.5)
 def wav(name,x):
     x=np.clip(x,-1,1); w=wave.open(name,'wb'); w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((x*32767).astype('<i2').tobytes()); w.close()
 wav('music.wav',mus); wav('sfx.wav',sfx*.7)
