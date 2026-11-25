@@ -162,6 +162,8 @@ def separar(s):
     out, i = [], 0
     while i < len(s):
         j = i + 1
+        if 0x1F1E6 <= ord(s[i]) <= 0x1F1FF and j < len(s) and 0x1F1E6 <= ord(s[j]) <= 0x1F1FF:
+            j += 1                                  # banderas: dos letras regionales juntas (🇭🇳)
         while j < len(s) and (s[j] in "️⃣‍" or 0x1F3FB <= ord(s[j]) <= 0x1F3FF
                               or s[j - 1] == "‍"):
             j += 1

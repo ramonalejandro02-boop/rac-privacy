@@ -1,5 +1,5 @@
 {
- "tema": "auto",
+ "tema": "atardecer",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -281,8 +281,15 @@
   {
    "orig": [
     17.3,
-    24.6
+    22.3
    ]
+  },
+  {
+   "orig": [
+    22.3,
+    25.2
+   ],
+   "silencios": false
   },
   {
    "congelar": 14.6,
