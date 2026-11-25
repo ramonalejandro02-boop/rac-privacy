@@ -1,14 +1,14 @@
 # Estilo de los videos de noticias
 
-Plantilla base: `02-congreso-4-0-pnud/fuente/` (estilo /cine10, keynote tecnológica oscura).
+Plantilla base: `03-gobernacion-transferencias-osfl/fuente/` (estilo periódico / collage editorial, como el de las licencias).
 
-- Fondo casi negro, números gigantes, tarjetas de interfaz y acentos azul hielo y dorado.
+- Fondo de papel de periódico, notas con cinta, sellos de tinta, letra Anton, subtítulos con marcador amarillo.
+- Mucha animación: objetos que caen y rebotan, sellos que se estampan, billetes y monedas, temblor en cada golpe, confeti.
 - Voz es-HN-CarlosNeural, con voseo hondureño ("Comentá", "opinás").
-- Subtítulos palabra por palabra, con las cifras escritas en números.
-- Video vertical 1080×1920, volumen a -14 LUFS.
+- Cifras en números en los subtítulos. Video vertical 1080×1920, -14 LUFS.
 
 ## Lo que NO lleva
-- Fecha en pantalla (ni en el encabezado ni en chips).
+- Fecha en pantalla.
 - Línea de fuente dentro del video.
+- Nombres de organizaciones (solo montos o descripciones genéricas).
 - Muletillas en la narración: nada de "Y…", "También…", "Además…", "La meta:", "Ojo con esto".
-  Frases directas, una idea por frase.
