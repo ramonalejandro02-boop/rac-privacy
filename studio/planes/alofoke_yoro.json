@@ -1,0 +1,332 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "tapar": [
+   [
+    0.18,
+    0.555,
+    0.84,
+    0.63
+   ]
+  ],
+  "titulo": "\"EN YORO LLUEVEN PECES\"\n🐟🇭🇳",
+  "subs_x": 0.63,
+  "subs_ancho": 0.62,
+  "claves": [
+   "honduras",
+   "yoro",
+   "excursión",
+   "turístico",
+   "llueven",
+   "peces",
+   "pescado",
+   "juro",
+   "mentira"
+  ],
+  "eventos": [
+   {
+    "t": 12.6,
+    "tipo": "zoom",
+    "dur": 1.1,
+    "x": 0.45,
+    "y": 0.32,
+    "s": 1.25
+   },
+   {
+    "t": 12.8,
+    "tipo": "sticker",
+    "texto": "¿¿LLUEVEN PECES?? 🐟",
+    "fondo": "#FFE600",
+    "dur": 1.4,
+    "y": 0.29,
+    "rot": -3,
+    "sfx": "boom",
+    "vol": 0.35
+   },
+   {
+    "t": 13.7,
+    "tipo": "zoom",
+    "dur": 1.9,
+    "x": 0.55,
+    "y": 0.3,
+    "s": 1.25
+   },
+   {
+    "t": 0.0,
+    "tipo": "sticker",
+    "texto": "⏪ DESDE EL PRINCIPIO",
+    "fondo": "#FFFFFF",
+    "dur": 1.2,
+    "y": 0.29,
+    "rot": -3,
+    "size": 80,
+    "sfx": "scratch",
+    "vol": 0.45
+   },
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 2.3,
+    "x": 0.35,
+    "y": 0.33,
+    "s": 1.15
+   },
+   {
+    "t": 1.2,
+    "tipo": "emoji",
+    "emoji": "🇭🇳",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 190,
+    "dur": 1.2
+   },
+   {
+    "t": 3.7,
+    "tipo": "zoom",
+    "dur": 1.6,
+    "x": 0.55,
+    "y": 0.3,
+    "s": 1.2
+   },
+   {
+    "t": 4.3,
+    "tipo": "emoji",
+    "emoji": "🚌",
+    "x": 0.16,
+    "y": 0.42,
+    "size": 190,
+    "dur": 1.2
+   },
+   {
+    "t": 5.4,
+    "tipo": "zoom",
+    "dur": 1.0,
+    "x": 0.52,
+    "y": 0.3,
+    "s": 1.2
+   },
+   {
+    "t": 8.6,
+    "tipo": "zoom",
+    "dur": 8.6,
+    "x": 0.55,
+    "y": 0.32,
+    "s": 1.1
+   },
+   {
+    "t": 9.6,
+    "tipo": "emoji",
+    "emoji": "🏖️",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 190,
+    "dur": 1.2
+   },
+   {
+    "t": 11.2,
+    "tipo": "lluvia",
+    "emoji": "🐟🐠",
+    "dur": 1.6,
+    "n": 14
+   },
+   {
+    "t": 16.3,
+    "tipo": "sticker",
+    "texto": "LO JURO ✋",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.0,
+    "y": 0.29,
+    "rot": 3
+   },
+   {
+    "t": 17.3,
+    "tipo": "zoom",
+    "dur": 7.4,
+    "x": 0.5,
+    "y": 0.42,
+    "s": 1.0
+   },
+   {
+    "t": 19.0,
+    "tipo": "emoji",
+    "emoji": "☁️",
+    "x": 0.84,
+    "y": 0.42,
+    "size": 190,
+    "dur": 1.2
+   },
+   {
+    "t": 23.8,
+    "tipo": "lluvia",
+    "emoji": "🐟🐠🐟",
+    "dur": 1.6,
+    "n": 16
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    12.6,
+    15.6
+   ]
+  },
+  {
+   "orig": [
+    0.0,
+    8.3
+   ]
+  },
+  {
+   "congelar": 1.0,
+   "caja": [
+    0.0,
+    0.115,
+    0.42,
+    0.5
+   ],
+   "texto": "¿ROATÁN? NO:\n¡A YORO! 🇭🇳🚌",
+   "fondo": "#FFE600",
+   "voz": "Ella pensando que la iban a llevar a Roatán, a la playa, y el catracho le sale con una excursión a Yoro.",
+   "claves": [
+    "roatán",
+    "playa",
+    "catracho",
+    "yoro"
+   ],
+   "props": [
+    {
+     "emoji": "🏖️",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "❌",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 2.4,
+     "size": 150
+    },
+    {
+     "emoji": "🚌",
+     "anim": "cruza",
+     "y": 0.62,
+     "t": 3.6,
+     "size": 190,
+     "dur_cruce": 2.0
+    }
+   ]
+  },
+  {
+   "orig": [
+    8.6,
+    17.1
+   ]
+  },
+  {
+   "congelar": 11.5,
+   "caja": [
+    0.0,
+    0.07,
+    1.0,
+    0.55
+   ],
+   "texto": "DATO REAL:\nLLUVIA DE PECES 🐟🌧️",
+   "fondo": "#00E5FF",
+   "voz": "Y no es cuento, maje. En Yoro, después de las tormentas fuertes, aparecen peces vivos en el suelo. Le dicen la Lluvia de Peces, y pasa casi todos los años.",
+   "claves": [
+    "cuento",
+    "yoro",
+    "peces",
+    "lluvia",
+    "años"
+   ],
+   "props": [
+    {
+     "emoji": "🌧️",
+     "anim": "pulso",
+     "x": 0.18,
+     "y": 0.4,
+     "t": 0.3,
+     "size": 190
+    },
+    {
+     "emoji": "🇭🇳",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.62,
+     "t": 4.5,
+     "size": 180,
+     "sfx": "ding",
+     "vol": 0.4
+    }
+   ],
+   "eventos": [
+    {
+     "t": 0.6,
+     "tipo": "lluvia",
+     "emoji": "🐟🐠🐟",
+     "dur": 5.5,
+     "n": 18
+    }
+   ]
+  },
+  {
+   "orig": [
+    17.3,
+    24.6
+   ]
+  },
+  {
+   "congelar": 14.6,
+   "caja": [
+    0.05,
+    0.12,
+    0.6,
+    0.55
+   ],
+   "texto": "¿TÚ SABÍAS\nESTO? 🐟👇",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Y ella todavía con cara de que no le cree. ¿Tú sabías que en Yoro llueven peces? Déjalo en los comentarios.",
+   "claves": [
+    "yoro",
+    "peces",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🤨",
+     "anim": "crece",
+     "x": 0.18,
+     "y": 0.42,
+     "t": 0.3,
+     "size": 200
+    },
+    {
+     "emoji": "🐟",
+     "anim": "pulso",
+     "x": 0.84,
+     "y": 0.42,
+     "t": 2.0,
+     "size": 190
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "x": 0.84,
+     "y": 0.62,
+     "t": 4.6,
+     "size": 180
+    }
+   ]
+  }
+ ]
+}
