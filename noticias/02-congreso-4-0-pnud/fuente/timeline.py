@@ -18,7 +18,7 @@ ev={'S':S,
  'c40':W(3,'congreso'),'cuatro':W(3,'cuatro'),'mod':W(3,'modernizar'),'hemi':W(3,'hemiciclo'),
  'segura':W(4,'segura'),'indiv':W(4,'individual'),'n128':W(4,'ciento'),'prop':W(4,'propietarios'),
  'dig':W(5,'digitalizar'),'herr':W(5,'herramientas'),'ia':W(5,'inteligencia'),
- 'ciud':W(6,'ciudadanía'),'acc':W(6,'acceso'),'dec':W(6,'decide'),
+ 'ciud':W(6,'ciudadanía'),'acc':W(6,'conozca'),'dec':W(6,'decide'),
  'vale':W(7,'vale'),'cta':W(7,'comentá'),
 }
 MERGE=[(['ciento','treinta','y','cinco','punto','cuatro'],'135.4'),(['ciento','veintiocho'],'128'),(['cuatro','punto','cero'],'4.0')]

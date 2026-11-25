@@ -46,7 +46,6 @@ function subs(t,si){if(!CH)CH=TL.scenes.map(chunks);let cur=null;for(const c of 
     T(w,x,y,fs,900,on?'#fff':'rgba(238,242,244,.92)','left');x+=ww+sp;});g.restore();}
 function chrome(t){
   g.fillStyle=ICE;rr(60,266,330,58,29);g.fill();T('NOTICIA EXPLICADA',225,296,30,800,'#0e191e');
-  T('HONDURAS · 25 NOV 2026',1020,296,26,600,MUT,'right',MONO);
   g.fillStyle='rgba(255,255,255,.1)';g.fillRect(60,350,960,2);
   g.fillStyle='rgba(255,255,255,.08)';rr(60,1578,960,8,4);g.fill();g.fillStyle=ICE;rr(60,1578,960*clamp(t/TL.total),8,4);g.fill();}
 function sceneAt(t){let si=0;TL.scenes.forEach((s,i)=>{if(t>=s.start)si=i;});return si;}
@@ -66,7 +65,6 @@ function sc1(t){
     g.save();g.globalAlpha=k(t,EV.lps-.3,.3);T('MILLONES DE LEMPIRAS',W/2,1185,58,900,FG);g.restore();}
 }
 function sc2(t){const S=EV.S;
-  chip('MARTES 24 DE NOVIEMBRE',W/2,450,k(t,EV.martes,.35),SURF2,32,FG);
   const pl=ease(k(t,S[1]+.2,.5)),pr=ease(k(t,EV.pnud,.5));
   if(pl>0){g.save();g.globalAlpha=pl;g.translate(-(1-pl)*200,0);card(70,580,430,330);g.fillStyle=BLUE;rr(110,620,90,90,22);g.fill();
     // columns icon
@@ -112,7 +110,6 @@ function sc5(t){const S=EV.S;
 }
 function lockIcon(x,y,p){if(p<=0)return;g.save();g.translate(x,y);g.scale(back(p),back(p));g.fillStyle=GOLD;rr(-22,-6,44,36,6);g.fill();g.strokeStyle=GOLD;g.lineWidth=7;g.beginPath();g.arc(0,-8,14,Math.PI,0);g.stroke();g.restore();}
 function sc6(t){const S=EV.S;
-  T('ADEMÁS',W/2,450,38,700,ICE,'center',MONO);
   const rows=[['DIGITALIZAR','PROCESOS DEL CONGRESO',EV.dig,0],['HERRAMIENTAS','TECNOLÓGICAS',EV.herr,1],['INTELIGENCIA','ARTIFICIAL',EV.ia,2]];
   rows.forEach(([a,b,at,i])=>{const y=640+i*260;const p=ease(k(t,at-.2,.4));if(p<=0)return;g.save();g.globalAlpha=p;g.translate((1-p)*-120,0);card(70,y-110,940,220);
     g.fillStyle=[BLUE,'#5b6cff',GOLD][i];rr(110,y-70,140,140,32);g.fill();icon(i,180,y,t);
@@ -139,7 +136,6 @@ function sc8(t){const S=EV.S;
   g.save();g.globalAlpha=k(t,S[7]+.4,.4);gradT('L 135.4 MILLONES',W/2,700,84,'#ffe39a',GOLD,800,MONO);g.restore();
   const b=[['SÍ',GREEN,W/2-210],['NO',RED,W/2+210]];b.forEach(([s,c,x],i)=>{const q=back(k(t,EV.vale+i*.2,.35));if(q<=0)return;g.save();g.translate(x,930);g.scale(q,q);g.strokeStyle=c;g.lineWidth=6;g.fillStyle='rgba(255,255,255,.04)';rr(-170,-110,340,220,40);g.fill();g.stroke();T(s,0,4,120,900,c);g.restore();});
   const cp=k(t,EV.cta,.3);if(cp>0){const pul=1+Math.sin((t-EV.cta)*7)*.04;g.save();g.translate(W/2,1180);g.scale(back(cp)*pul,back(cp)*pul);g.shadowColor='rgba(159,216,255,.5)';g.shadowBlur=40;g.fillStyle=ICE;rr(-250,-68,500,136,68);g.fill();g.shadowBlur=0;T('COMENTÁ',0,4,72,900,'#0e191e');g.restore();}
-  T('Fuente: Diario La Prensa · 24 nov 2026',W/2,1360,26,600,MUT,'center',MONO);
 }
 const SC=[sc1,sc2,sc3,sc4,sc5,sc6,sc7,sc8];
 function frame(t){g.setTransform(1,0,0,1,0,0);g.globalAlpha=1;g.drawImage(BG,0,0);
