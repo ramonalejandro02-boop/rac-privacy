@@ -1,5 +1,5 @@
 {
- "tema": "auto",
+ "tema": "atardecer",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -69,10 +69,11 @@
    },
    {
     "t": 59.1,
-    "texto": "¿Corduras? Mi hermano, es Tegucigalpa. Los catrachos estamos ofendidos."
+    "texto": "¿Corduras? Mi hermano, la capital es Tegucigalpa. Te, gu, ci, gal, pa. Los catrachos estamos ofendidos.",
+    "velocidad": 0.95
    },
    {
-    "t": 64.9,
+    "t": 65.6,
     "texto": "Y dicen que ha ido a Honduras, ¿eh?"
    }
   ],
