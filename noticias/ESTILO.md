@@ -16,9 +16,13 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
 ## Audio
-- Sin música. Solo voz (es-HN-CarlosNeural, voseo) y efectos de sonido.
+- Sin música. Solo voz (es-HN-CarlosNeural, voseo).
+- Efectos de sonido: MÁXIMO 3 en todo el video, suaves, solo en momentos clave. Nada de sonidos continuos (marcador, borrador, tic-tac) ni uno por cada animación.
 - Sin silencios: pasar cada frase por `herramientas/tighten.py` (recorta pausas internas a 0.09 s y bordes), 0.06 s entre escenas, cierre de 1 s máximo.
 - -14 LUFS.
+
+## Diseño
+- No saturar: pocas cosas por escena, mucho espacio libre. Nada de relleno decorativo.
 
 ## Guion
 - Sin muletillas: nada de "Y…", "También…", "Además…", "La meta:", "Ojo con esto".
