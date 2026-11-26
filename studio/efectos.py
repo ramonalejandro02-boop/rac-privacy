@@ -78,7 +78,7 @@ _cache_emoji = {}
 # Groserías: se tapan con "piii" en el audio y con asteriscos en los subtítulos.
 GROSERIAS = re.compile(
     r"^(put[oa]s?|hijueputa|hdp|mierdas?|coño|carajos?|vergas?|pingas?|mamag[uü]e?vo|mamahuevo|"
-    r"cabr[oó]n(es|a|as)?|pendej\\w*|joder|jodid[oa]s?|culos?|ching\w*|maric[oó]n|marica|cojones|coj[oó]n|"
+    r"cabr[oó]n(es|a|as)?|pendej\w*|joder|jodid[oa]s?|culos?|ching\w*|maric[oó]n|marica|cojones|coj[oó]n|"
     r"sing[aá]\w*|singao|g[uü]evos?|fuck\w*|shit|bitch\w*|motherfucker)$")
 
 
