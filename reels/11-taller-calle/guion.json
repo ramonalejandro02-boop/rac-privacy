@@ -1,0 +1,21 @@
+{
+  "titulo": "Media calle es su taller",
+  "lead": 0.4,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "Don Memo abrió un taller mecánico en su casa. Y ahora, media calle está llena de carros desarmados.", "pause": 0.2},
+    {"scene": "problemas", "text": "Aceite en la acera, ruido desde temprano, y los vecinos pasan entre llantas y motores.", "pause": 0.25},
+    {"scene": "pleito", "who": "lupe", "voice": "ef_dora", "text": "¡Esto es una calle, no su taller! Mis nietos ya no pueden salir a jugar.", "pause": 0.2},
+    {"scene": "pleito", "who": "memo", "voice": "em_santa", "text": "De esto vivo, y le doy de comer a mi familia. No estoy haciendo nada malo.", "pause": 0.3},
+    {"scene": "tension", "text": "Él defiende su trabajo. Ella defiende la calle y la tranquilidad. Los dos tienen algo de razón.", "pause": 0.3},
+    {"scene": "saber", "text": "Trabajar en casa es válido. Pero la calle y la acera no son bodega ni taller: deben quedar libres y seguras. Y el aceite derramado contamina.", "pause": 0.3},
+    {"scene": "mito", "text": "Pero ponchar llantas, o humillarlo frente a todos, solo calienta el pleito.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo que funciona: primero, conversar y acordar horarios y espacios de trabajo.", "pause": 0.2},
+    {"scene": "pasos", "text": "Segundo, llevar el tema al patronato, para reglas claras en toda la calle.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y tercero, buscar orientación en CONAFEPH antes de que el conflicto crezca.", "say": "Y tercero, buscar orientación en Conafép antes de que el conflicto crezca.", "pause": 0.3},
+    {"scene": "final", "text": "Se puede trabajar, sin quitarle la calle a nadie.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}
