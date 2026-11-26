@@ -26,3 +26,7 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 - Fecha en pantalla.
 - Línea de fuente dentro del video.
 - Nombres de organizaciones beneficiarias (solo montos o descripciones genéricas).
+
+## Cambiar de estilo = cambiar TODO
+Un estilo nuevo no es solo otra paleta. Cada video nuevo lleva diseño, objetos, ideas de escena y tipo de animación distintos
+(ej.: periódico = sellos y notas con cinta; pop sticker = stickers con borde blanco, rayos girando, rebotes elásticos, golpe de zoom con destello).
