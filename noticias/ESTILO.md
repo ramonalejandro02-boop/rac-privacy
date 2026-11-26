@@ -43,3 +43,4 @@ Un estilo nuevo no es solo otra paleta. Cada video nuevo lleva diseño, objetos,
 
 ## Personas reales
 - No afirmar quejas, delitos ni fallas de una persona si no hay fuente. Plantearlo como pregunta y dejar que el público cuente su experiencia en los comentarios.
+- No mencionar a CONAFEPH ni sus gestiones o reclamos propios en los videos de noticias.
