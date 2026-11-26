@@ -463,7 +463,24 @@ def main():
         ref = os.path.join(tmp, "ref.wav")
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", args.mi_voz, "-t", "30", "-ac", "1", "-ar", "24000",
                         "-af", "highpass=f=70,afftdn=nf=-25,loudnorm=I=-18", ref], check=True)
-        preparar_clon([s["voz"] for s in plan["secuencia"] if "voz" in s], ref, tmp, args.mi_voz)
+        preparar_clon([s["voz"] for s in plan["secuencia"] if "voz" in s]
+                      + [v["texto"] for v in plan["base"].get("voces", [])], ref, tmp, args.mi_voz)
+
+    # Voz en off sobre el clip (formato split): comentarios cortos con la voz del creador.
+    # Mientras habla, arriba se ven cuadros suyos hablando (tipo "habla", sin su audio original).
+    if plan["base"].get("voces"):
+        palabras = json.load(open(args.palabras)) if args.palabras else []
+        for k, v in enumerate(plan["base"]["voces"]):
+            wav = os.path.join(tmp, f"vo_clip{k}.wav")
+            x = voz_en_off(v["texto"], wav, v.get("velocidad", 0.85))
+            v["wav"], v["dur"] = wav, round(len(x) / SR, 2)
+            plan["base"].setdefault("reacciones", []).append(dict(t=v["t"], tipo="habla", dur=v["dur"], mudo=True))
+            palabras = [w for w in palabras if not (v["t"] <= w["a"] < v["t"] + v["dur"])]
+            palabras += palabras_vo(v["texto"], x, v["t"])
+            log(f"voz en off {v['t']:.1f}s ({v['dur']:.1f}s): «{v['texto']}»")
+        palabras.sort(key=lambda w: w["a"])
+        args.palabras = os.path.join(tmp, "palabras_con_vo.json")
+        json.dump(palabras, open(args.palabras, "w"), ensure_ascii=False)
 
     base = args.base
     if not base:

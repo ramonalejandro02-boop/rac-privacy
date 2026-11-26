@@ -799,6 +799,18 @@ def main():
         if ventanas:
             cond = "+".join(f"between(t,{a:.3f},{b:.3f})" for a, b in ventanas)
             bajar = f"volume=volume=0.4:enable='{cond}',"
+    for v in plan.get("voces", []):                 # voz en off del creador sobre el clip
+        import soundfile as sf
+        x, sr_v = sf.read(v["wav"], dtype="float32")
+        if x.ndim > 1:
+            x = x.mean(1)
+        if sr_v != SR:
+            x = np.interp(np.arange(0, len(x), sr_v / SR), np.arange(len(x)), x).astype(np.float32)
+        i0 = int(v["t"] * SR)
+        i1 = min(len(pista), i0 + len(x))
+        pista[i0:i1] += x[:i1 - i0] * 1.1 / max(args.vol_sfx, 0.05)
+        cond = f"between(t,{v['t']:.3f},{v['t'] + v['dur']:.3f})"
+        bajar += f"volume=volume=0.18:enable='{cond}',"
     pista = np.clip(pista, -1, 1)
     sfx_wav = os.path.join(tmp, "sfx.wav")
     import wave

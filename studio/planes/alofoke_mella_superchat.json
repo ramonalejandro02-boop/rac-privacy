@@ -1,5 +1,5 @@
 {
- "tema": "menta",
+ "tema": "atardecer",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -139,13 +139,27 @@
     "t": 179.8,
     "tipo": "opinas"
    }
+  ],
+  "voces": [
+   {
+    "t": 21.7,
+    "texto": "Esa es la actitud, mi loco. Aquí no se llora, aquí se factura."
+   },
+   {
+    "t": 89.9,
+    "texto": "Y todo esto, por un superchat."
+   },
+   {
+    "t": 165.1,
+    "texto": "Pero espérate, que aquí viene la sorpresa."
+   }
   ]
  },
  "secuencia": [
   {
    "orig": [
     18.5,
-    22.9
+    25.6
    ]
   },
   {
@@ -156,13 +170,13 @@
   },
   {
    "orig": [
-    92.9,
+    89.8,
     115.7
    ]
   },
   {
    "orig": [
-    169.2,
+    165.0,
     182.3
    ]
   }

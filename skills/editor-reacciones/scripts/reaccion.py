@@ -64,11 +64,26 @@ class Reaccion:
             ev["version"] = k
         return opciones[k % len(opciones)]
 
+    def _encadenar(self, tramos, inicio, u):
+        """Recorre varios tramos seguidos (para frases más largas que un solo tramo)."""
+        total = sum(y - x for x, y in tramos)
+        c = (inicio + u) % total
+        for x, y in tramos:
+            if c < y - x:
+                return self._frame(x + c)
+            c -= y - x
+        return self._frame(tramos[0][0])
+
     def cuadro(self, t, eventos):
         for ev in eventos:
             a, b = self.tramo_de(ev)
             d = ev.get("dur", b - a)
             if ev["t"] <= t < ev["t"] + d:
+                if ev["tipo"] == "habla" and self.cat.get("habla"):
+                    tr = self.cat["habla"]
+                    k = ev["version"] % len(tr)
+                    inicio = sum(y - x for x, y in tr[:k])
+                    return self._encadenar(tr, inicio, t - ev["t"])
                 return self._frame(a + min(t - ev["t"], b - a - 0.04))
         # escuchar: avanzar en orden por los tramos tranquilos
         dt = 0 if self.ult_t is None else max(0.0, min(t - self.ult_t, 0.2))
