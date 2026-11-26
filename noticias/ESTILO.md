@@ -15,7 +15,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 06 | Amnistía ENEE | Espías de los 60 (/cine5) |
 | 07 | Reformas electorales | Art Déco (/cine6) |
 | 08 | Gabinete Social: ¿atenderá a la gente? | Maqueta blanca con proyección (/cine1) |
-| 09 | Gabinete Social: cómo funcionará | Dibujo de una sola línea (/cine3) |
+| 09 | Gabinete Social: cómo funcionará | Dibujo de una sola línea (/cine3) y tablero de nodos (/interfaz2) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
