@@ -38,6 +38,22 @@ FPS = 30
 SFX_TRANSICION = True
 
 
+def _proteger(tramos, a, b, protegidos):
+    """Rellena los huecos que coinciden con una reacción del creador (no se cortan)."""
+    if not protegidos or not tramos:
+        return tramos
+    out = [list(tramos[0])]
+    for x, y in tramos[1:]:
+        gap0, gap1 = out[-1][1], x
+        if any(p0 < gap1 and p1 > gap0 for p0, p1 in protegidos):
+            out[-1][1] = y
+        else:
+            out.append([x, y])
+    if out[-1][1] < b and any(p1 > out[-1][1] and p0 < b for p0, p1 in protegidos):
+        out[-1][1] = min(b, max(p1 for p0, p1 in protegidos if p0 < b))
+    return [tuple(t) for t in out]
+
+
 def sin_silencios_audio(a, b, audio, sr=16000, hueco=0.32, margen=0.08):
     """Quita pausas mirando la energía del audio (más preciso que los tiempos de palabras)."""
     seg = audio[int(a * sr):int(b * sr)]
@@ -437,6 +453,8 @@ def main():
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
     log(f"carpeta temporal (partes para verificar): {tmp}")
+    if plan["base"].get("formato") == "split":
+        args.presentador = None          # el creador ya sale arriba con su reacción real
     tema = usar_tema(plan.get("tema", "auto"), os.path.basename(args.entrada))
     plan["base"]["tema"] = tema
     TAPAR[:] = plan["base"].get("tapar", [])
@@ -464,12 +482,23 @@ def main():
         crudo = subprocess.run(["ffmpeg", "-v", "error", "-i", args.entrada, "-ac", "1", "-ar", "16000",
                                 "-f", "s16le", "-"], capture_output=True).stdout
         audio_orig = np.frombuffer(crudo, np.int16).astype(np.float32) / 32768
+        protegidos = []
+        if plan["base"].get("reacciones"):
+            from reaccion import Reaccion
+            cfgp = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
+            cat = plan["base"].get("catalogo_reaccion") or (json.load(open(cfgp)) if os.path.exists(cfgp) else {}).get("reaccion")
+            r = Reaccion(cat, 16, 9)
+            for ev in [dict(e) for e in plan["base"]["reacciones"]]:
+                ra, rb = r.tramo_de(ev)
+                protegidos.append((ev["t"] - 0.05, ev["t"] + ev.get("dur", rb - ra) + 0.05))
         nueva = []
         for seg in plan["secuencia"]:
             if "orig" in seg and seg.get("silencios", True) is False:
                 nueva.append({"orig": seg["orig"]})          # respetar pausas (reacciones)
             elif "orig" in seg:
-                nueva += [{"orig": [x, y]} for x, y in sin_silencios_audio(seg["orig"][0], seg["orig"][1], audio_orig)]
+                tr = sin_silencios_audio(seg["orig"][0], seg["orig"][1], audio_orig)
+                tr = _proteger(tr, seg["orig"][0], seg["orig"][1], protegidos)
+                nueva += [{"orig": [x, y]} for x, y in tr]
             else:
                 nueva.append(seg)
         log(f"silencios quitados: {sum('orig' in x for x in plan['secuencia'])} tramos -> {sum('orig' in x for x in nueva)}")
