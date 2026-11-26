@@ -1,0 +1,169 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "recorte_fuente": [
+   0,
+   0,
+   1,
+   0.615
+  ],
+  "claves": [
+   "lloran",
+   "facturan",
+   "llorando",
+   "aguaje",
+   "bulto",
+   "super",
+   "chat",
+   "tres",
+   "días",
+   "italia"
+  ],
+  "eventos": [
+   {
+    "t": 18.5,
+    "tipo": "zoom",
+    "dur": 3.0,
+    "x": 0.45,
+    "y": 0.5,
+    "s": 1.05
+   },
+   {
+    "t": 58.8,
+    "tipo": "zoom",
+    "dur": 15.0,
+    "x": 0.45,
+    "y": 0.5,
+    "s": 1.05
+   },
+   {
+    "t": 59.4,
+    "tipo": "emoji",
+    "emoji": "😭",
+    "x": 0.85,
+    "y": 0.52,
+    "size": 170,
+    "dur": 1.5
+   },
+   {
+    "t": 92.9,
+    "tipo": "zoom",
+    "dur": 23.0,
+    "x": 0.48,
+    "y": 0.5,
+    "s": 1.0
+   },
+   {
+    "t": 100.4,
+    "tipo": "sticker",
+    "texto": "¿POR UN SUPERCHAT? 😭💸",
+    "fondo": "#FFE600",
+    "dur": 1.8,
+    "y": 0.5,
+    "rot": -2,
+    "size": 64
+   },
+   {
+    "t": 105.4,
+    "tipo": "emoji",
+    "emoji": "💸",
+    "x": 0.85,
+    "y": 0.55,
+    "size": 160,
+    "dur": 1.4
+   },
+   {
+    "t": 169.2,
+    "tipo": "zoom",
+    "dur": 13.1,
+    "x": 0.45,
+    "y": 0.5,
+    "s": 1.05
+   },
+   {
+    "t": 172.6,
+    "tipo": "sticker",
+    "texto": "¡LLEGÓ EL SUPERCHAT! 🎉",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 2.4,
+    "y": 0.5,
+    "rot": 2,
+    "size": 64,
+    "sfx": "ding",
+    "vol": 0.35
+   },
+   {
+    "t": 176.6,
+    "tipo": "emoji",
+    "emoji": "🇮🇹",
+    "x": 0.15,
+    "y": 0.55,
+    "size": 160,
+    "dur": 1.6
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 21.3,
+    "tipo": "risa",
+    "dur": 1.5
+   },
+   {
+    "t": 60.1,
+    "tipo": "mira",
+    "dur": 1.2
+   },
+   {
+    "t": 72.0,
+    "tipo": "que_loco"
+   },
+   {
+    "t": 101.3,
+    "tipo": "no_puede_ser"
+   },
+   {
+    "t": 114.0,
+    "tipo": "risa",
+    "dur": 1.6
+   },
+   {
+    "t": 177.5,
+    "tipo": "viste"
+   },
+   {
+    "t": 179.8,
+    "tipo": "opinas"
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    18.5,
+    22.9
+   ]
+  },
+  {
+   "orig": [
+    58.8,
+    73.8
+   ]
+  },
+  {
+   "orig": [
+    92.9,
+    115.7
+   ]
+  },
+  {
+   "orig": [
+    169.2,
+    182.3
+   ]
+  }
+ ]
+}

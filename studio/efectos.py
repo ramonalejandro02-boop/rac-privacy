@@ -645,18 +645,20 @@ def main():
     reac = reac_eventos = None
     if split:
         from reaccion import Reaccion
+        # 9:16 sin espacios vacíos: franja animada arriba (bajo la barra de la app), creador,
+        # línea de color animada y el clip hasta el borde de abajo.
         plan.setdefault("panel_ancho", W)
-        plan.setdefault("panel_y", 0.448 * H)
-        plan.setdefault("panel_abajo", 0.79)
-        plan.setdefault("panel_alto", 0.79 - 0.448)
+        plan.setdefault("panel_y", 0.43 * H)
+        plan.setdefault("panel_abajo", 1.0)
+        plan.setdefault("panel_alto", 1.0 - 0.43)
         plan.setdefault("subs_x", 0.5)
         plan.setdefault("subs_ancho", 0.74)
-        plan.setdefault("subs_y", 0.745)
+        plan.setdefault("subs_y", 0.72)
         cat = plan.get("catalogo_reaccion")
         if not cat:
             cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
             cat = (json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}).get("reaccion")
-        reac_y0 = int(0.118 * H)
+        reac_y0 = int(0.105 * H)
         reac_h = int(W * 9 / 16)
         reac = Reaccion(cat, W, reac_h)
         reac_eventos = [dict(ev) for ev in plan.get("reacciones", [])]
@@ -684,7 +686,7 @@ def main():
     glow_col = np.array(est["glow"], np.float32)
 
     fondo = FondoAnimado(W, H, est)
-    if split:                                            # fondo oscuro liso, sin brillo
+    if split:                                            # sin brillo alrededor del clip
         glow = glow * 0
         yy = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
         fondo_liso = (np.array([18, 16, 14], np.float32) * (1 - yy) + np.array([30, 24, 22], np.float32) * yy) \
@@ -727,7 +729,7 @@ def main():
             fr = fr[ry0:ry1, rx0:rx1]
         t = i / fps
         e = float(min(energia[min(i, len(energia) - 1)], 1.0))
-        cv = fondo_liso.copy() if split else fondo.frame(t, e).astype(np.float32)
+        cv = fondo.frame(t, e).astype(np.float32)
         cv += glow * glow_col * (0.55 + 0.6 * e)
         # panel con zoom virtual
         zx, zy, zs = evs.zoom(t)
@@ -742,6 +744,14 @@ def main():
         cv[py0:py0 + ph, px0:px0 + pw] = panel * mask_f + roi * (1 - mask_f)
         if split:                                        # el creador reaccionando, arriba
             cv[reac_y0:reac_y0 + reac_h] = reac.cuadro(t, reac_eventos)
+            # línea de color con un brillo que la recorre (separa creador y clip)
+            l0, l1 = reac_y0 + reac_h, py0
+            acento = np.array(est["palabra"], np.float32)
+            cv[l0:l1] = acento * 0.85
+            bx = int((t * 0.35 % 1.0) * (W + 400)) - 200
+            xs = np.arange(W, dtype=np.float32)
+            brillo = np.exp(-((xs - bx) / 90.0) ** 2)[None, :, None]
+            cv[l0:l1] = cv[l0:l1] * (1 - brillo * 0.7) + 255 * brillo * 0.7
         cv = np.clip(cv, 0, 255).astype(np.uint8)
         if titulo_img is not None:
             sc = ease_back(t / 0.35) if t < 0.35 else 1 + 0.015 * math.sin(t * 3)
