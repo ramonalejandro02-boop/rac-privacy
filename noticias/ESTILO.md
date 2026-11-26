@@ -11,7 +11,8 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 02 | Congreso 4.0 con el PNUD | Keynote oscura (/cine10) |
 | 03 | Transferencias de Gobernación | Periódico |
 | 04 | Gabinete Social | Periódico |
-| 05 | Permiso de operación en línea | Periódico |
+| 05 | Permiso de operación en línea | Periódico → pizarra blanca (/cine4), versión final |
+| 06 | Amnistía ENEE | Espías de los 60 (/cine5) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
