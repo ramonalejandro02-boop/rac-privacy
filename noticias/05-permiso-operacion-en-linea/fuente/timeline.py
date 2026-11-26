@@ -1,11 +1,11 @@
 import json, subprocess
 scenes=[]; t=0.0; N=9
-PAD={1:.3,2:.2,3:.4,8:.4}
+PAD={}
 for i in range(1,N+1):
-    f=f's{i}.mp3'
+    f=f's{i}_t.wav'
     dur=float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','csv=p=0',f]))
-    dur=round(dur-0.15,3)+PAD.get(i,.15)
-    if i==N: dur+=2.2
+    dur=round(dur,3)+.06
+    if i==N: dur+=1.0
     w=json.load(open(f+'.json'))
     scenes.append({'start':round(t,3),'dur':round(dur,3),'words':[[round(t+a,3),round(t+a+b,3),x] for a,b,x in w]})
     t+=dur

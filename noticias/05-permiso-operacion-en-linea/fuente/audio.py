@@ -59,12 +59,12 @@ put(sfx,ev['frase'],thud()); put(sfx,ev['reinv'],ding(1046))
 put(sfx,ev['vez']+.5,pop()); put(sfx,ev['vez']+.7,pop(1100)); put(sfx,ev['cta'],ding(1046)); put(sfx,ev['cta']+.12,ding(1568))
 def wav(name,x):
     x=np.clip(x,-1,1); w=wave.open(name,'wb'); w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((x*32767).astype('<i2').tobytes()); w.close()
-wav('music.wav',mus); wav('sfx.wav',sfx*.7)
+wav('sfx.wav',sfx*.7)
 inp=[];flt=[]
 for i,s in enumerate(S):
-    inp+=['-i',f's{i+1}.mp3']; ms=int(s*1000); flt.append(f'[{i}:a]aresample=48000,adelay={ms}|{ms}[v{i}]')
-inp+=['-i','music.wav','-i','sfx.wav']; k=len(S)
+    inp+=['-i',f's{i+1}_t.wav']; ms=int(s*1000); flt.append(f'[{i}:a]aresample=48000,adelay={ms}|{ms}[v{i}]')
+inp+=['-i','sfx.wav']; k=len(S)
 flt.append(''.join(f'[v{i}]' for i in range(k))+f'amix=inputs={k}:normalize=0,apad[voice]')
-flt.append(f'[voice]asplit=2[vo][sc];[{k}:a][sc]sidechaincompress=threshold=0.05:ratio=4:attack=20:release=400[duck];[vo][duck][{k+1}:a]amix=inputs=3:normalize=0,alimiter=limit=0.95[out]')
+flt.append(f'[voice][{k}:a]amix=inputs=2:normalize=0,alimiter=limit=0.95[out]')
 subprocess.run(['ffmpeg','-y','-loglevel','error',*inp,'-filter_complex',';'.join(flt),'-map','[out]','-t',str(tl['total']),'-c:a','aac','-b:a','192k','audio.m4a'],check=True)
 print('ok')
