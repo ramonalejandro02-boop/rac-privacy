@@ -437,6 +437,8 @@ def main():
     plan = json.load(open(args.plan))
     tmp = tempfile.mkdtemp(prefix="montaje_")
     log(f"carpeta temporal (partes para verificar): {tmp}")
+    if plan["base"].get("formato") == "split":
+        args.presentador = None          # el creador ya sale arriba con su reacción real
     tema = usar_tema(plan.get("tema", "auto"), os.path.basename(args.entrada))
     plan["base"]["tema"] = tema
     TAPAR[:] = plan["base"].get("tapar", [])

@@ -640,6 +640,27 @@ def main():
     if args.auto:
         eventos += plan_auto(palabras)
 
+    # Formato "split": creador arriba (video de reacción real), clip abajo, sin decoración.
+    split = plan.get("formato") == "split"
+    reac = reac_eventos = None
+    if split:
+        from reaccion import Reaccion
+        plan.setdefault("panel_ancho", W)
+        plan.setdefault("panel_y", 0.448 * H)
+        plan.setdefault("panel_abajo", 0.79)
+        plan.setdefault("panel_alto", 0.79 - 0.448)
+        plan.setdefault("subs_x", 0.5)
+        plan.setdefault("subs_ancho", 0.74)
+        plan.setdefault("subs_y", 0.745)
+        cat = plan.get("catalogo_reaccion")
+        if not cat:
+            cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
+            cat = (json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}).get("reaccion")
+        reac_y0 = int(0.118 * H)
+        reac_h = int(W * 9 / 16)
+        reac = Reaccion(cat, W, reac_h)
+        reac_eventos = [dict(ev) for ev in plan.get("reacciones", [])]
+
     # Panel del video
     pw = plan.get("panel_ancho", 1000)
     ph = int(sh * pw / sw)
@@ -649,12 +670,13 @@ def main():
     if ph > ph_max:
         ph = ph_max            # se mantiene el ancho completo: se recorta arriba/abajo siguiendo el zoom
     px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
-    radio = 38
+    radio = 0 if split else 38
     mask = np.zeros((ph, pw), np.uint8)
     cv2.rectangle(mask, (radio, 0), (pw - radio, ph), 255, -1)
     cv2.rectangle(mask, (0, radio), (pw, ph - radio), 255, -1)
     for cx, cy in [(radio, radio), (pw - radio, radio), (radio, ph - radio), (pw - radio, ph - radio)]:
-        cv2.circle(mask, (cx, cy), radio, 255, -1, cv2.LINE_AA)
+        if radio:
+            cv2.circle(mask, (cx, cy), radio, 255, -1, cv2.LINE_AA)
     mask_f = (mask.astype(np.float32) / 255)[..., None]
     borde = np.zeros((H, W), np.float32)
     borde[py0:py0 + ph, px0:px0 + pw] = mask_f[..., 0]
@@ -662,6 +684,11 @@ def main():
     glow_col = np.array(est["glow"], np.float32)
 
     fondo = FondoAnimado(W, H, est)
+    if split:                                            # fondo oscuro liso, sin brillo
+        glow = glow * 0
+        yy = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
+        fondo_liso = (np.array([18, 16, 14], np.float32) * (1 - yy) + np.array([30, 24, 22], np.float32) * yy) \
+            * np.ones((1, W, 1), np.float32)
     grad = Grading(pw, ph, est)
     evs = Eventos(eventos, (px0, py0, pw, ph))
     subs = Subs(palabras, plan.get("claves", []), est["palabra"], y=plan.get("subs_y", 0.875),
@@ -700,7 +727,7 @@ def main():
             fr = fr[ry0:ry1, rx0:rx1]
         t = i / fps
         e = float(min(energia[min(i, len(energia) - 1)], 1.0))
-        cv = fondo.frame(t, e).astype(np.float32)
+        cv = fondo_liso.copy() if split else fondo.frame(t, e).astype(np.float32)
         cv += glow * glow_col * (0.55 + 0.6 * e)
         # panel con zoom virtual
         zx, zy, zs = evs.zoom(t)
@@ -713,6 +740,8 @@ def main():
         panel = grad.persona(panel)
         roi = cv[py0:py0 + ph, px0:px0 + pw]
         cv[py0:py0 + ph, px0:px0 + pw] = panel * mask_f + roi * (1 - mask_f)
+        if split:                                        # el creador reaccionando, arriba
+            cv[reac_y0:reac_y0 + reac_h] = reac.cuadro(t, reac_eventos)
         cv = np.clip(cv, 0, 255).astype(np.uint8)
         if titulo_img is not None:
             sc = ease_back(t / 0.35) if t < 0.35 else 1 + 0.015 * math.sin(t * 3)
@@ -752,6 +781,14 @@ def main():
         a = int(ca * SR)
         b = min(len(pista), a + n)
         pista[a:b] += (y[:b - a] * 0.45 / max(args.vol_sfx, 0.05)).astype(np.float32)
+    bajar = ""
+    if split and reac_eventos:
+        voz_r, ventanas = reac.audio(reac_eventos, dur, SR)
+        n = min(len(pista), len(voz_r))
+        pista[:n] += voz_r[:n] / max(args.vol_sfx, 0.05)
+        if ventanas:
+            cond = "+".join(f"between(t,{a:.3f},{b:.3f})" for a, b in ventanas)
+            bajar = f"volume=volume=0.4:enable='{cond}',"
     pista = np.clip(pista, -1, 1)
     sfx_wav = os.path.join(tmp, "sfx.wav")
     import wave
@@ -768,7 +805,7 @@ def main():
     cmd = ["ffmpeg", "-y", "-v", "error", "-i", out_v]
     if audio:
         cmd += ["-i", src, "-i", sfx_wav, "-filter_complex",
-                f"[1:a]aresample={SR},{silenciar}loudnorm=I=-15:TP=-2,aresample={SR}[v];[2:a]volume={args.vol_sfx}[s];"
+                f"[1:a]aresample={SR},{silenciar}{bajar}loudnorm=I=-15:TP=-2,aresample={SR}[v];[2:a]volume={args.vol_sfx}[s];"
                 "[v][s]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.95[m]",
                 "-map", "0:v", "-map", "[m]"]
     else:

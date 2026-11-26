@@ -1,0 +1,126 @@
+{
+ "tema": "noche",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "recorte_fuente": [
+   0,
+   0.14,
+   1,
+   0.895
+  ],
+  "claves": [
+   "dinero",
+   "libro",
+   "vive",
+   "vida",
+   "tuyo",
+   "importan"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 3.3,
+    "x": 0.55,
+    "y": 0.42,
+    "s": 1.0
+   },
+   {
+    "t": 3.5,
+    "tipo": "zoom",
+    "dur": 9.5,
+    "x": 0.68,
+    "y": 0.38,
+    "s": 1.25
+   },
+   {
+    "t": 13.7,
+    "tipo": "zoom",
+    "dur": 7.4,
+    "x": 0.6,
+    "y": 0.4,
+    "s": 1.05
+   },
+   {
+    "t": 21.3,
+    "tipo": "zoom",
+    "dur": 8.8,
+    "x": 0.68,
+    "y": 0.38,
+    "s": 1.25
+   },
+   {
+    "t": 30.8,
+    "tipo": "zoom",
+    "dur": 12.0,
+    "x": 0.68,
+    "y": 0.38,
+    "s": 1.25
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 2.4,
+    "tipo": "mira"
+   },
+   {
+    "t": 6.6,
+    "tipo": "no_puede_ser"
+   },
+   {
+    "t": 11.8,
+    "tipo": "risa",
+    "dur": 2.4
+   },
+   {
+    "t": 15.8,
+    "tipo": "que_loco"
+   },
+   {
+    "t": 28.6,
+    "tipo": "viste"
+   },
+   {
+    "t": 34.6,
+    "tipo": "risa",
+    "dur": 2.2
+   },
+   {
+    "t": 38.6,
+    "tipo": "se_paso"
+   },
+   {
+    "t": 40.6,
+    "tipo": "opinas"
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0.0,
+    13.0
+   ]
+  },
+  {
+   "orig": [
+    13.7,
+    17.0
+   ]
+  },
+  {
+   "orig": [
+    19.8,
+    30.1
+   ]
+  },
+  {
+   "orig": [
+    30.8,
+    42.8
+   ]
+  }
+ ]
+}
