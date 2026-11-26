@@ -1,0 +1,110 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "recorte_fuente": [
+   0.042,
+   0.106,
+   0.952,
+   0.553
+  ],
+  "tapar": [
+   [
+    0.56,
+    0.465,
+    0.955,
+    0.548
+   ]
+  ],
+  "claves": [
+   "santa",
+   "chocolate",
+   "mercedes",
+   "presidente",
+   "casa",
+   "regalos",
+   "niños"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 53.3,
+    "x": 0.5,
+    "y": 0.5,
+    "s": 1.0
+   },
+   {
+    "t": 11.0,
+    "tipo": "emoji",
+    "emoji": "🎅",
+    "x": 0.14,
+    "y": 0.52,
+    "size": 170,
+    "dur": 1.6
+   },
+   {
+    "t": 15.4,
+    "tipo": "emoji",
+    "emoji": "🚗",
+    "x": 0.86,
+    "y": 0.52,
+    "size": 170,
+    "dur": 1.5
+   },
+   {
+    "t": 17.4,
+    "tipo": "sticker",
+    "texto": "¿EL PRÓXIMO PRESIDENTE? 🤭",
+    "fondo": "#FFFFFF",
+    "dur": 1.8,
+    "y": 0.5,
+    "rot": -2,
+    "size": 64
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 12.4,
+    "tipo": "risa",
+    "dur": 2.2
+   },
+   {
+    "t": 16.3,
+    "tipo": "que_loco"
+   },
+   {
+    "t": 25.9,
+    "tipo": "risa",
+    "dur": 2.0
+   },
+   {
+    "t": 34.6,
+    "tipo": "viste"
+   },
+   {
+    "t": 38.8,
+    "tipo": "se_paso"
+   },
+   {
+    "t": 46.7,
+    "tipo": "risa",
+    "dur": 2.0
+   },
+   {
+    "t": 51.3,
+    "tipo": "opinas"
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0.0,
+    53.3
+   ]
+  }
+ ]
+}
