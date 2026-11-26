@@ -13,6 +13,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 04 | Gabinete Social | Periódico |
 | 05 | Permiso de operación en línea | Periódico → pizarra blanca (/cine4), versión final |
 | 06 | Amnistía ENEE | Espías de los 60 (/cine5) |
+| 07 | Reformas electorales | Art Déco (/cine6) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
