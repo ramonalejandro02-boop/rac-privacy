@@ -1,5 +1,5 @@
 {
- "tema": "auto",
+ "tema": "menta",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -122,8 +122,9 @@
     "tipo": "que_loco"
    },
    {
-    "t": 101.3,
-    "tipo": "no_puede_ser"
+    "t": 106.05,
+    "tipo": "no_puede_ser",
+    "dur": 1.0
    },
    {
     "t": 114.0,
