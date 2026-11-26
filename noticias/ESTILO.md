@@ -22,7 +22,8 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 - -14 LUFS.
 
 ## Diseño
-- No saturar: pocas cosas por escena, mucho espacio libre. Nada de relleno decorativo.
+- Lo visual puede ser rico: más animaciones y efectos que expliquen, siempre con coherencia (movimiento con sentido: fila impaciente, punto que recorre el tiempo, rayitas de énfasis, vibración al confirmar).
+- Lo que NO se satura es el SONIDO.
 
 ## Guion
 - Sin muletillas: nada de "Y…", "También…", "Además…", "La meta:", "Ojo con esto".

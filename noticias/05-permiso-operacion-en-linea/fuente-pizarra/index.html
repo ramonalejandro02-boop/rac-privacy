@@ -71,50 +71,68 @@ function sc1(t){
   seq([R(80,620,230,300),L(80,620,195,540),L(195,540,310,620),R(165,820,60,100),R(110,660,50,50),R(250,660,50,50),R(110,740,50,50),R(250,740,50,50)],t,.1,1.2,BK,8);
   write('ALCALDÍA',195,960,40,BK,t,.9,.4);
   // queue of people growing
-  for(let i=0;i<6;i++){const x=400+i*100;seq(person(x,860,1.1,i),t,EV.filas+i*.22,.35,i%3==0?BL:BK,8);}
+  for(let i=0;i<8;i++){const x=380+i*85;const done=t>EV.filas+i*.22+.35;g.save();g.translate(0,done?-Math.abs(Math.sin(t*5+i*1.3))*7:0);seq(person(x,860,1.1,i),t,EV.filas+i*.22,.35,i%3==0?BL:BK,8);g.restore();}
+  const zz=t-EV.enero;if(zz>0){for(let j=0;j<3;j++){const ph=(zz*.7+j/3)%1;g.save();g.globalAlpha=.9*(1-ph);g.font=`${34+j*8}px Mk`;g.fillStyle=BL;g.textAlign='center';g.fillText('z',1000+ph*30+j*14,760-ph*120-j*20);g.restore();}}
   // calendar
-  write('en enero',W/2,450,64,RD,t,EV.enero-.1,.4,'Hand');
+  seq([R(700,420,250,200),L(700,480,950,480),L(760,400,760,440,2),L(890,400,890,440,2)],t,EV.enero-.2,.6,RD,8);write('ENERO',825,555,56,RD,t,EV.enero+.3,.4);
   write('permiso de operación',W/2,1110,64,BL,t,EV.permiso,.7,'Hand');
+  seq([L(250,1150,830,1150)],t,EV.permiso+.6,.3,BL,6);
 }
 function sc2(t){const S=EV.S[1];
   // timeline arrow 8:00 -> 17:00
   seq([L(120,760,920,760),L(920,760,880,730,2),L(920,760,880,790,2)],t,S+.05,.6,BK,9);
+  seq([C(170,640,40,24),L(170,580,170,560,1),L(230,640,250,640,1),L(110,640,90,640,1),L(214,596,228,582,1),L(126,596,112,582,1)],t,S+.3,.5,'#e0a100',7);
   write('8:00',170,820,52,BK,t,S+.4,.3);
+  seq([C(880,640,40,24,-Math.PI*.2,Math.PI*1.3)],t,S+.8,.4,BL,7);
   write('17:00',880,820,52,BK,t,S+1.0,.3);
-  write('1 día',W/2,560,120,RD,t,EV.perdido-.1,.4);seq([C(W/2,560,170,40,-Math.PI/2,Math.PI*2.1,90)],t,EV.perdido+.3,.5,RD,7);
+  const dp=k(t,S+.7,EV.S[2]-S-.9);if(dp>0){const dx=lerp(130,900,dp);g.fillStyle=RD;g.beginPath();g.arc(dx,760,16,0,7);g.fill();g.strokeStyle=RD;g.lineWidth=12;g.globalAlpha=.35;g.beginPath();g.moveTo(130,760);g.lineTo(dx,760);g.stroke();g.globalAlpha=1;}
+  write('1 día',W/2,560,120,RD,t,EV.perdido-.1,.4);seq([C(W/2,560,170,40,-Math.PI/2,Math.PI*2.1,90)],t,EV.perdido+.3,.5,RD,7);emph(W/2,560,190,t,EV.perdido+.8,RD,10);
+  write('...o más',W/2+300,450,54,RD,t,EV.veces,.4,'Hand','center',-.06);
   // tramitador with $
-  seq(person(470,1100,1.2,3),t,EV.trami-.5,.5,BK,8);
-  write('$',620,1010,110,GR,t,EV.trami-.1,.25);
-  write('tramitador',470,1210,50,BK,t,EV.trami+.2,.4,'Hand');
+  seq(person(330,1100,1.2,3),t,EV.trami-.5,.5,BK,8);
+  g.save();g.translate(470,1000);g.rotate(Math.sin(t*6)*.15);g.translate(-470,-1000);write('$',470,1000,110,GR,t,EV.trami-.1,.25);g.restore();write('$',560,1060,80,GR,t,EV.trami+.1,.2);
+  write('tramitador',330,1210,50,BK,t,EV.trami+.2,.4,'Hand');
+  seq([L(600,1060,740,1060),L(740,1060,710,1040,1),L(740,1060,710,1080,1)],t,EV.trami+.25,.3,GR,8);
+  write('L L L',850,1060,70,GR,t,EV.trami+.4,.3);
 }
 function sc3(t){const S=EV.S[2];
   for(let i=0;i<6;i++){const s=person(240+i*120,820,1.1,i);s.forEach((st,j)=>ink(st,1,BK,8,i*7+j));}
-  seq([L(170,640,920,940),L(920,640,170,940)],t,S,.35,RD,16);
+  const sh=wig(t,S+.3,12,60,.4);g.save();g.translate(sh,0);seq([L(170,640,920,940),L(920,640,170,940)],t,S,.35,RD,16);g.restore();
   write('¡SE ACABA!',W/2,1150,fitFs('¡SE ACABA!',140,900),RD,t,EV.acaba-.05,.3);
+  seq([L(200,1240,880,1240),L(230,1265,850,1265)],t,EV.acaba+.2,.2,RD,7);
+  [[110,1060],[970,1060],[110,1230],[970,1230]].forEach(([x,y],i)=>seq([L(x,y,x+(x<540?-45:45),y+(y<1150?-40:40),2)],t,EV.acaba+.1+i*.04,.1,RD,7));
 }
 function sc4(t){const S=EV.S[3];
   write('Permiso 2027',W/2,330,fitFs('Permiso 2027',120,900),BK,t,S+.05,.5);
+  const vb=wig(t,EV.linea+.4,.03,70,.6);g.save();g.translate(540,840);g.rotate(vb);g.translate(-540,-840);
   seq([R(340,460,400,760),L(490,500,590,500),C(540,1170,22,20)],t,S+.3,.8,BK,9);
+  write('ALCALDÍA',540,560,40,BL,t,S+.9,.3,'Hand');
+  seq([R(400,640,280,70),R(400,740,280,70)],t,S+1.0,.4,BL,5);
   seq([R(430,860,220,110)],t,EV.linea-.3,.3,GR,8);
   write('RENOVAR',540,915,44,GR,t,EV.linea-.1,.25);
-  seq([L(470,1040,525,1095),L(525,1095,630,980)],t,EV.linea+.2,.3,GR,14);
+  seq([L(470,1040,525,1095),L(525,1095,630,980)],t,EV.linea+.2,.3,GR,14);g.restore();
+  if(t>EV.linea+.4)for(let i=0;i<3;i++){seq([L(760+i*8,700+i*60,800+i*14,690+i*60,2)],t,EV.linea+.4+i*.05,.1,GR,6);seq([L(320-i*8,700+i*60,280-i*14,690+i*60,2)],t,EV.linea+.4+i*.05,.1,GR,6);}
+  write('¡en línea!',230,800,64,RD,t,EV.linea,.4,'Mk',-.15);seq([L(300,840,390,880),L(390,880,370,850,1),L(390,880,355,885,1)],t,EV.linea+.3,.25,RD,6);
   write('desde tu celular',W/2,1300,62,BL,t,EV.cel,.5,'Hand');
 }
 function sc5(t){const S=EV.S[4];
   write('Declaraciones:',W/2,330,fitFs('Declaraciones:',110,900),BK,t,S+.02,.5);
-  write('también en línea',W/2,460,66,GR,t,EV.decl+.3,.5,'Hand');
+  write('¡también en línea!',W/2,460,76,GR,t,EV.decl+.3,.5);
   const it=[['ir al centro',EV.x1],['hacer filas',EV.x2],['pagar tramitador',EV.x3]];
-  it.forEach(([s,at],i)=>{const y=680+i*190;write(s,W/2,y,76,BK,t,at-.45,.4,'Hand');
-    g.font='76px Hand';const ww=g.measureText(s).width;seq([L(W/2-ww/2-15,y+6,W/2+ww/2+15,y-4)],t,at,.25,RD,9);});
+  it.forEach(([s,at],i)=>{const y=680+i*190;seq([R(150,y-45,90,90)],t,at-.6,.25,BK,7);write(s,290,y,72,BK,t,at-.45,.4,'Hand','left');
+    seq([L(140,y-50,250,y+55),L(250,y-50,140,y+55)],t,at,.2,RD,11);seq([L(280,y+6,280+fitW(s)+10,y-4)],t,at+.15,.25,RD,9);
+    const pf=t-at;if(pf>0&&pf<.5){for(let j=0;j<6;j++){const a=j/6*Math.PI*2;g.save();g.globalAlpha=1-pf/.5;g.strokeStyle=RD;g.lineWidth=5;g.beginPath();g.moveTo(195+Math.cos(a)*(60+pf*120),y+Math.sin(a)*(60+pf*120));g.lineTo(195+Math.cos(a)*(80+pf*150),y+Math.sin(a)*(80+pf*150));g.stroke();g.restore();}}});
 }
 function fitW(s){g.font='72px Hand';return g.measureText(s).width;}
 function sc6(t){const S=EV.S[5];
   magnetNote(W/2,380,560,150,-.03,t,EV.sar-.1,[['como con el SAR',60,BK]]);
-  write('1 firma',230,860,110,BL,t,EV.contrato-.3,.5,'Hand');
+  write('1 firma',250,860,96,BL,t,EV.contrato-.3,.5,'Hand');
   // signature
   const sg=[];for(let i=0;i<=60;i++){const u=i/60;sg.push([120+u*230,1020+Math.sin(u*28)*22-u*14+Math.cos(u*9)*10]);}ink(sg,k(t,EV.contrato+.1,.9),BL,7,5);
-  seq([L(430,800,600,800),L(600,800,565,770,1),L(600,800,565,830,1)],t,EV.todo-.7,.3,BK,10);
+  write('una sola vez',230,1130,52,RD,t,EV.sola,.5,'Hand','center',-.04);
+  const ax=t>EV.todo-.4?Math.sin(t*8)*10:0;g.save();g.translate(ax,0);seq([L(430,800,600,800),L(600,800,565,770,1),L(600,800,565,830,1)],t,EV.todo-.7,.3,BK,10);g.restore();
   seq([C(810,800,170,44)],t,EV.todo-.5,.5,GR,9);write('todo',810,760,80,GR,t,EV.todo-.1,.3);write('en línea',810,850,60,GR,t,EV.todo+.15,.3,'Hand');
+  if(t>EV.todo){const a=(t-EV.todo)*4;g.fillStyle=GR;g.beginPath();g.arc(810+Math.cos(a)*170,800+Math.sin(a)*170,16,0,7);g.fill();}
 }
 function sc7(t){const S=EV.S[6];
   seq([R(90,280,900,170)],t,S+.05,.5,BK,7);write('Alcalde',W/2,330,54,BL,t,S+.3,.3,'Hand');write('Juan Diego Zelaya',W/2,400,fitFs('Juan Diego Zelaya',80,820),BK,t,EV.alc,.5);
@@ -123,15 +141,19 @@ function sc7(t){const S=EV.S[6];
   const cx=W/2,cy=900;seq([C(cx,cy,140,40,-Math.PI/2,Math.PI*2.05,80)],t,EV.formal+.6,.5,BK,8);write('CAMPAÑA',cx,cy,56,BK,t,EV.formal+.9,.3);
   [[EV.malls,'MALLS',200,720],[EV.medios,'MEDIOS',860,720],[EV.redes,'REDES',W/2,1170]].forEach(([at,s,x,y],i)=>{
     const ex=lerp(cx,x,.55),ey=lerp(cy,y,.55);seq([L(lerp(cx,x,.3),lerp(cy,y,.3),ex,ey)],t,at-.35,.2,BK,6);
-    seq([C(x,y,120,30,-Math.PI/2,Math.PI*2.05,60)],t,at-.2,.25,[BL,RD,GR][i],7);write(s,x,y,52,[BL,RD,GR][i],t,at-.05,.2);});
+    const ps=t>at+.2?1+.05*Math.sin(t*5+i*2):1;g.save();g.translate(x,y);g.scale(ps,ps);g.translate(-x,-y);seq([C(x,y,120,30,-Math.PI/2,Math.PI*2.05,60)],t,at-.2,.25,[BL,RD,GR][i],7);write(s,x,y,52,[BL,RD,GR][i],t,at-.05,.2);g.restore();});
+  write('para enseñar cómo hacerlo',W/2,1300,54,BK,t,EV.redes+.5,.6,'Hand');
 }
 function sc8(t){const S=EV.S[7];
+  write('“',150,330,200,BL,t,S+.02,.1);
   write('No se trata de',W/2,430,78,BK,t,S+.05,.5,'Hand');
   write('digitalizar,',W/2,560,110,BK,t,EV.digit-.1,.45);
   seq([L(220,575,860,540)],t,EV.digit+.55,.25,RD,14);
   write('se trata de',W/2,720,78,BK,t,EV.digit+.6,.4,'Hand');
   write('REINVENTAR',W/2,870,fitFs('REINVENTAR',140,880),RD,t,EV.reinv-.1,.4);
   write('LA BUROCRACIA',W/2,1010,fitFs('LA BUROCRACIA',110,880),RD,t,EV.reinv+.35,.45);
+  seq([R(90,790,900,300)],t,EV.reinv+.7,.5,RD,7);
+  [[60,760,-1,-1],[1020,760,1,-1],[60,1120,-1,1],[1020,1120,1,1]].forEach(([x,y,dx,dy],i)=>{for(let j=0;j<3;j++){const a=Math.atan2(dy,dx)+(j-1)*.4;seq([L(x+Math.cos(a)*10,y+Math.sin(a)*10,x+Math.cos(a)*55,y+Math.sin(a)*55,2)],t,EV.reinv+1+i*.05,.12,RD,6);}});
   write('— Juan Diego Zelaya',W/2+120,1170,48,BL,t,EV.reinv+.8,.5,'Hand');
 }
 function sc9(t){const S=EV.S[8];
@@ -140,8 +162,12 @@ function sc9(t){const S=EV.S[8];
   seq([R(220,700,140,140)],t,EV.vez+.4,.3,BK,8);write('SÍ',460,770,100,GR,t,EV.vez+.55,.2);
   seq([R(620,700,140,140)],t,EV.vez+.5,.3,BK,8);write('NO',860,770,100,RD,t,EV.vez+.65,.2);
   seq([L(245,770,285,815),L(285,815,350,710)],t,EV.cta-.3,.25,GR,14);seq([L(645,725,735,815),L(735,725,645,815)],t,EV.cta-.05,.25,RD,14);
-  write('¡Comentá!',W/2,1060,130,RD,t,EV.cta,.4);
+  const cw=t>EV.cta+.4?Math.sin(t*6)*.04:0;g.save();g.translate(W/2,1060);g.rotate(cw);g.translate(-W/2,-1060);write('¡Comentá!',W/2,1060,130,RD,t,EV.cta,.4);g.restore();
+  const bo=t>EV.cta+.7?Math.abs(Math.sin(t*6))*25:0;g.save();g.translate(0,bo);seq([L(W/2,1150,W/2,1300),L(W/2,1300,W/2-35,1260,1),L(W/2,1300,W/2+35,1260,1)],t,EV.cta+.4,.3,RD,10);g.restore();
 }
+// emphasis marks drawn around a point
+function emph(x,y,r,t,at,col=RD,n=8){for(let i=0;i<n;i++){const a=i/n*Math.PI*2+.2;const pulse=1+.08*Math.sin((t-at)*8);seq([L(x+Math.cos(a)*r*pulse,y+Math.sin(a)*r*.75*pulse,x+Math.cos(a)*(r+50)*pulse,y+Math.sin(a)*(r+50)*.75*pulse,2)],t,at+i*.03,.12,col,6);}}
+function wig(t,at,amp=.04,f=30,d=.5){const u=t-at;return (u>0&&u<d)?Math.sin(u*f)*amp*(1-u/d):0;}
 const SC=[sc1,sc2,sc3,sc4,sc5,sc6,sc7,sc8,sc9];
 function sceneAt(t){let si=0;TL.scenes.forEach((s,i)=>{if(t>=s.start)si=i;});return si;}
 function eraser(x){g.save();g.translate(x,H/2);g.rotate(.05);g.fillStyle='rgba(0,0,0,.15)';g.fillRect(-70,-1010,150,2040);g.fillStyle='#3b3f45';g.fillRect(-80,-1000,140,2000);g.fillStyle='#d8c9a8';g.fillRect(40,-1000,22,2000);g.restore();}
