@@ -459,7 +459,7 @@ class Eventos:
                 im = self.img(("e", e["emoji"], px), lambda: a_bgra(texto_pil(e["emoji"], px, stroke=None, sw=0)))
                 sc = ease_back(u / 0.28) * (1 - fin)
                 rot = e.get("rot", 0) + 9 * math.sin(u * 6 + e["_i"])
-                ex, ey = seguro(e["x"], e["y"], ymax=0.55)
+                ex, ey = (e["x"], e["y"]) if e.get("libre") else seguro(e["x"], e["y"], ymax=0.55)
                 y = ey * H - 14 * math.sin(u * 3.2)
                 superponer(cv, im, ex * W, y, sc, rot)
             elif tipo == "sticker":
@@ -647,19 +647,28 @@ def main():
         from reaccion import Reaccion
         # 9:16 sin espacios vacíos: franja animada arriba (bajo la barra de la app), creador,
         # línea de color animada y el clip hasta el borde de abajo.
+        # Clip en el CENTRO de la pantalla; debajo, una franja de motion graphics donde van
+        # subtítulos, stickers y emojis (así nunca tapan caras). Arriba y abajo, fondo animado.
         plan.setdefault("panel_ancho", W)
-        plan.setdefault("panel_y", 0.43 * H)
-        plan.setdefault("panel_abajo", 1.0)
-        plan.setdefault("panel_alto", 1.0 - 0.43)
+        plan.setdefault("panel_y", 0.366 * H)
+        plan.setdefault("panel_abajo", 0.66)
+        plan.setdefault("panel_alto", 0.66 - 0.366)
         plan.setdefault("subs_x", 0.5)
-        plan.setdefault("subs_ancho", 0.74)
-        plan.setdefault("subs_y", 0.72)
+        plan.setdefault("subs_ancho", 0.86)
+        plan.setdefault("subs_y", 0.75)
+        for ev in plan.get("eventos", []):              # gráficos a la franja, fuera de las caras
+            if ev["tipo"] == "sticker":
+                ev["y"] = 0.693
+            elif ev["tipo"] == "emoji":
+                ev["y"], ev["libre"] = 0.70, True
+                ev["x"] = 0.09 if ev.get("x", 0.5) < 0.5 else 0.91
+                ev["size"] = min(ev.get("size", 160), 120)
         cat = plan.get("catalogo_reaccion")
         if not cat:
             cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
             cat = (json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}).get("reaccion")
         reac_y0 = int(0.105 * H)
-        reac_h = int(W * 9 / 16)
+        reac_h = int(0.255 * H)
         reac = Reaccion(cat, W, reac_h)
         reac_eventos = [dict(ev) for ev in plan.get("reacciones", [])]
 
