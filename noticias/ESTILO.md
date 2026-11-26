@@ -18,7 +18,7 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 ## Audio
 - Sin música. Solo voz (es-HN-CarlosNeural, voseo).
 - Efectos de sonido: MÁXIMO 3 en todo el video, suaves, solo en momentos clave. Nada de sonidos continuos (marcador, borrador, tic-tac) ni uno por cada animación.
-- Sin silencios: pasar cada frase por `herramientas/tighten.py` (recorta pausas internas a 0.09 s y bordes), 0.06 s entre escenas, cierre de 1 s máximo.
+- Ritmo: voz a velocidad -4% (pausada). `herramientas/tighten.py` deja pausas internas de máx. 0.22 s; 0.38 s entre escenas; cierre de 1.4 s. Sin silencios largos, pero con respiro (que no vaya muy rápido).
 - -14 LUFS.
 
 ## Diseño

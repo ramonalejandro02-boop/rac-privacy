@@ -1,6 +1,6 @@
 # Recorta silencios de cada sN.mp3 -> sN_t.wav y reajusta los tiempos de palabras -> sN_t.wav.json
 import sys, json, subprocess, wave, numpy as np
-SR=48000; MAXGAP=.09; EDGE=.03
+SR=48000; MAXGAP=.22; EDGE=.03
 def load(f):
     raw=subprocess.run(['ffmpeg','-v','error','-i',f,'-ac','1','-ar',str(SR),'-f','s16le','-'],capture_output=True,check=True).stdout
     return np.frombuffer(raw,np.int16).astype(np.float32)/32768
