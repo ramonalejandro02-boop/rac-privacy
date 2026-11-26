@@ -1,0 +1,102 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "tapar": [
+   [
+    0.16,
+    0.485,
+    0.84,
+    0.585
+   ]
+  ],
+  "claves": [
+   "santa",
+   "regalo",
+   "play",
+   "bicicleta",
+   "muñeca",
+   "vibra"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 52.7,
+    "x": 0.5,
+    "y": 0.4,
+    "s": 1.0
+   },
+   {
+    "t": 18.9,
+    "tipo": "emoji",
+    "emoji": "🎮",
+    "x": 0.14,
+    "y": 0.52,
+    "size": 160,
+    "dur": 1.3
+   },
+   {
+    "t": 20.4,
+    "tipo": "emoji",
+    "emoji": "🚲",
+    "x": 0.86,
+    "y": 0.52,
+    "size": 160,
+    "dur": 1.3
+   },
+   {
+    "t": 21.6,
+    "tipo": "sticker",
+    "texto": "¡REGALOS PA' TODO EL MUNDO! 🎁",
+    "fondo": "#FFE600",
+    "dur": 2.0,
+    "y": 0.5,
+    "rot": -2,
+    "size": 62
+   }
+  ],
+  "voces": [
+   {
+    "t": 6.0,
+    "texto": "Llegó el Bororo Claus, con más energía que un colmado un viernes."
+   },
+   {
+    "t": 30.1,
+    "texto": "Play cinco, bicicleta, muñeca. Este Santa sí vino cargado."
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 12.75,
+    "tipo": "risa",
+    "dur": 1.1
+   },
+   {
+    "t": 25.75,
+    "tipo": "que_loco",
+    "dur": 1.3
+   },
+   {
+    "t": 44.3,
+    "tipo": "risa",
+    "dur": 1.1
+   },
+   {
+    "t": 50.9,
+    "tipo": "opinas",
+    "dur": 1.7
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0.0,
+    52.7
+   ]
+  }
+ ]
+}
