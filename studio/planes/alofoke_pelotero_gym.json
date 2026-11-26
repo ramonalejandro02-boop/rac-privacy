@@ -1,11 +1,11 @@
 {
- "tema": "auto",
+ "tema": "menta",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
   "formato": "split",
   "recorte_fuente": [
-   0.02,
+   0.04,
    0.06,
    0.93,
    0.86

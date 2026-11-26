@@ -658,7 +658,7 @@ def main():
         plan.setdefault("subs_y", 0.75)
         for ev in plan.get("eventos", []):              # gráficos a la franja, fuera de las caras
             if ev["tipo"] == "sticker":
-                ev["y"] = 0.693
+                ev["y"] = 0.702
             elif ev["tipo"] == "emoji":
                 ev["y"], ev["libre"] = 0.70, True
                 ev["x"] = 0.09 if ev.get("x", 0.5) < 0.5 else 0.91
