@@ -1,0 +1,110 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "tapar": [
+   [
+    0.08,
+    0.67,
+    0.92,
+    0.8
+   ]
+  ],
+  "claves": [
+   "honduras",
+   "capital",
+   "cara",
+   "corduras",
+   "tegucigalpa",
+   "catrachos"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 76.3,
+    "x": 0.5,
+    "y": 0.4,
+    "s": 1.0
+   },
+   {
+    "t": 4.5,
+    "tipo": "emoji",
+    "emoji": "🇭🇳",
+    "x": 0.86,
+    "y": 0.52,
+    "size": 160,
+    "dur": 1.6
+   },
+   {
+    "t": 49.4,
+    "tipo": "sticker",
+    "texto": "\"YO PIENSO CON LA CARA\" 🤔",
+    "fondo": "#FFFFFF",
+    "dur": 2.4,
+    "y": 0.5,
+    "rot": -2,
+    "size": 62
+   },
+   {
+    "t": 58.4,
+    "tipo": "sticker",
+    "texto": "¿¿CORDURAS?? 😭🇭🇳",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.6,
+    "y": 0.5,
+    "rot": 2,
+    "size": 66,
+    "sfx": "boom",
+    "vol": 0.3
+   }
+  ],
+  "voces": [
+   {
+    "t": 16.2,
+    "texto": "Cargando, cargando..."
+   },
+   {
+    "t": 59.1,
+    "texto": "¿Corduras? Mi hermano, es Tegucigalpa. Los catrachos estamos ofendidos."
+   },
+   {
+    "t": 64.9,
+    "texto": "Y dicen que ha ido a Honduras, ¿eh?"
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 11.95,
+    "tipo": "risa",
+    "dur": 1.1
+   },
+   {
+    "t": 30.4,
+    "tipo": "no_puede_ser",
+    "dur": 1.0
+   },
+   {
+    "t": 47.05,
+    "tipo": "que_loco",
+    "dur": 1.3
+   },
+   {
+    "t": 74.5,
+    "tipo": "opinas",
+    "dur": 1.7
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0.0,
+    76.3
+   ]
+  }
+ ]
+}
