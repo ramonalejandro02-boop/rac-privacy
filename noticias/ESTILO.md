@@ -14,6 +14,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 05 | Permiso de operación en línea | Periódico → pizarra blanca (/cine4), versión final |
 | 06 | Amnistía ENEE | Espías de los 60 (/cine5) |
 | 07 | Reformas electorales | Art Déco (/cine6) |
+| 08 | Gabinete Social: ¿atenderá a la gente? | Maqueta blanca con proyección (/cine1) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
@@ -39,3 +40,6 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 ## Cambiar de estilo = cambiar TODO
 Un estilo nuevo no es solo otra paleta. Cada video nuevo lleva diseño, objetos, ideas de escena y tipo de animación distintos
 (ej.: periódico = sellos y notas con cinta; pop sticker = stickers con borde blanco, rayos girando, rebotes elásticos, golpe de zoom con destello).
+
+## Personas reales
+- No afirmar quejas, delitos ni fallas de una persona si no hay fuente. Plantearlo como pregunta y dejar que el público cuente su experiencia en los comentarios.
