@@ -11,7 +11,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 04 | Gabinete Social | Periódico |
 | 05 | Permiso de operación en línea | Periódico |
 
-Siguientes a usar, en orden: pizarra blanca (/cine4), plano técnico (/cine7), papel recortado (/ilustracion3), terminal retro (/cine9), pixel art (/pixel1-3), papel crema infografía (/ilustracion4), keynote oscura, periódico… sin repetir dos veces seguidas.
+Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
 ## Audio
 - Sin música. Solo voz (es-HN-CarlosNeural, voseo) y efectos de sonido.
