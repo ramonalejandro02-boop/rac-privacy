@@ -14,10 +14,10 @@
   const STYLE = 'watercolor';
   const clock = makeClock({ bpm: 72, offset: 0 }); // tierno y lento: 1 compás = 3.33 s
   const { T, BEAT } = clock;
-  const DURATION = 37.6;
+  const DURATION = 39.21;
 
   // [inicio escena, fin escena, inicio habla, fin habla] de cada frase
-  const SEG = [[0.0, 6.13, 0.15, 5.43], [6.13, 10.70, 6.43, 10.0], [10.70, 14.90, 11.0, 14.2], [14.90, 20.41, 15.2, 19.71], [20.41, 29.72, 20.71, 29.02], [29.72, 37.6, 30.02, 35.31]];
+  const SEG = [[0.0, 6.77, 0.15, 6.07], [6.77, 12.07, 7.07, 11.37], [12.07, 16.97, 12.37, 16.27], [16.97, 22.0, 17.27, 21.3], [22.0, 31.03, 22.3, 30.33], [31.03, 39.21, 31.33, 37.61]];
   const LINES = [
     'Si son las tres de la mañana, y no puedes dormir porque tu mente no se calla, esto es para ti.',
     'Piensas en las deudas, en tu familia, en lo que va a pasar mañana.',
