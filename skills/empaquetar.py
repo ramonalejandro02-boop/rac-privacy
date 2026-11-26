@@ -9,7 +9,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILL = os.path.join(RAIZ, "skills", "editor-reacciones")
 DEST = os.path.join(SKILL, "scripts")
 ARCHIVOS = ["transformar.py", "efectos.py", "montaje.py", "presentador.py", "clonar_voz.py",
-            "instalar.py", "analizar.py", "verificar.py", "revisar_zonas.py", "hablantes.py"]
+            "instalar.py", "analizar.py", "verificar.py", "revisar_zonas.py", "hablantes.py", "reaccion.py"]
 
 shutil.rmtree(DEST, ignore_errors=True)
 os.makedirs(os.path.join(DEST, "planes"))
