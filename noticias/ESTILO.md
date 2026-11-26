@@ -1,6 +1,8 @@
 # Reglas de los videos de noticias
 
-## Estilo visual: rotar siempre
+## Estilo visual: rotar siempre con la skill Fábrica de Reels
+Usar siempre un estilo distinto de `.claude/skills/fabrica-reels/estilos.md`. DESCARTAR los estilos de muchos colores que parecen circo/piñata (pop sticker, /cine15 concurso de ritmo, /pixel6 synthwave, /cartoon2d3 mascota pastel, /3d5 bloques de colores, /cine16 juguete de bloques). Preferir estilos sobrios de pocos colores.
+
 Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabrica-reels/estilos.md` en la rama de la fábrica de reels).
 
 | # | Video | Estilo |
