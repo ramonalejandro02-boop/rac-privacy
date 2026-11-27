@@ -1,5 +1,5 @@
 {
- "tema": "auto",
+ "tema": "atardecer",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -15,7 +15,6 @@
    "huevos",
    "pavo",
    "pavos",
-   "provecho",
    "horrible",
    "planeta",
    "calentamiento",
@@ -31,6 +30,15 @@
     "s": 1.0
    },
    {
+    "t": 1.0,
+    "tipo": "zoom",
+    "dur": 1.0,
+    "x": 0.45,
+    "y": 0.45,
+    "s": 1.1,
+    "rampa": 0.1
+   },
+   {
     "t": 10.9,
     "tipo": "zoom",
     "dur": 1.2,
@@ -42,16 +50,16 @@
    {
     "t": 42.3,
     "tipo": "zoom",
-    "dur": 1.2,
+    "dur": 1.0,
     "x": 0.5,
     "y": 0.45,
-    "s": 1.12,
-    "rampa": 0.12
+    "s": 1.14,
+    "rampa": 0.08
    },
    {
-    "t": 62.2,
+    "t": 59.5,
     "tipo": "zoom",
-    "dur": 1.1,
+    "dur": 1.4,
     "x": 0.5,
     "y": 0.45,
     "s": 1.1,
@@ -69,7 +77,9 @@
     "tipo": "sticker",
     "texto": "¡DESTAPEN EL PAVO! 🦃",
     "fondo": "#FFE600",
-    "dur": 2.0
+    "dur": 2.0,
+    "sfx": "pop",
+    "vol": 0.4
    },
    {
     "t": 15.4,
@@ -79,12 +89,23 @@
     "dur": 1.4
    },
    {
+    "t": 33.4,
+    "tipo": "emoji",
+    "emoji": "😳",
+    "x": 0.9,
+    "dur": 1.4,
+    "sfx": "boing",
+    "vol": 0.3
+   },
+   {
     "t": 42.4,
     "tipo": "sticker",
     "texto": "¿¿HORRIBLE?? 😬",
     "fondo": "#FF3FA4",
     "color": "#FFFFFF",
-    "dur": 1.6
+    "dur": 1.4,
+    "sfx": "boom",
+    "vol": 0.35
    },
    {
     "t": 57.1,
@@ -98,7 +119,9 @@
     "tipo": "sticker",
     "texto": "CALENTAMIENTO GLOBAL 🔥",
     "fondo": "#FFFFFF",
-    "dur": 2.0
+    "dur": 2.0,
+    "sfx": "pop",
+    "vol": 0.35
    }
   ],
   "reacciones": [
@@ -123,24 +146,26 @@
   },
   {
    "pausa": 1.95,
-   "texto": "¿CUATRO HUEVOS? 🥚😂",
+   "texto": "COMBO DESAYUNO 🍳☕",
    "fondo": "#FFE600",
-   "voz": "¿Cuatro huevos? Todo el mundo con pavo en Acción de Gracias, y a él le tocó desayuno.",
+   "voz": "Eso no es cena de Acción de Gracias, mi loco. Eso es el combo número tres del colmado, con su café incluido.",
    "claves": [
-    "huevos",
-    "pavo",
-    "desayuno"
+    "combo",
+    "colmado",
+    "café"
    ],
    "props": [
     {
-     "emoji": "🥚",
+     "emoji": "🍳",
      "anim": "rebote",
      "t": 0.3
     },
     {
-     "emoji": "🦃",
+     "emoji": "☕",
      "anim": "crece",
-     "t": 1.6
+     "t": 2.4,
+     "sfx": "ding",
+     "vol": 0.4
     }
    ]
   },
@@ -151,37 +176,64 @@
    ]
   },
   {
+   "pausa": 11.65,
+   "texto": "NIVEL DE TENSIÓN 😰",
+   "fondo": "#FFFFFF",
+   "voz": "Destapar ese pavo en vivo es más tenso que abrir las notas del colegio delante de tu mamá.",
+   "claves": [
+    "pavo",
+    "notas",
+    "mamá"
+   ],
+   "props": [
+    {
+     "emoji": "😰",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "📝",
+     "anim": "crece",
+     "t": 2.2,
+     "sfx": "pop",
+     "vol": 0.4
+    }
+   ]
+  },
+  {
    "orig": [
     14.8,
-    20.7
+    17.6
    ]
   },
   {
    "orig": [
     33.2,
-    48.4
+    43.2
    ]
   },
   {
-   "pausa": 48.35,
-   "texto": "¿QUÉ FUE LO HORRIBLE? 😬",
+   "pausa": 43.15,
+   "texto": "EL COCINERO AHORA MISMO 📱😶",
    "fondo": "#FF3FA4",
    "color": "#FFFFFF",
-   "voz": "Horrible, dice. En una cena de Acción de Gracias, esa es la palabra que nadie quiere escuchar.",
+   "voz": "Y el que cocinó, ahora mismo, haciéndose el que está contestando un mensaje importante.",
    "claves": [
-    "horrible",
-    "gracias"
+    "cocinó",
+    "mensaje"
    ],
    "props": [
     {
-     "emoji": "😬",
+     "emoji": "📱",
      "anim": "pulso",
-     "t": 0.3
+     "t": 0.4
     },
     {
-     "emoji": "🍗",
+     "emoji": "😶",
      "anim": "crece",
-     "t": 1.8
+     "t": 2.0,
+     "sfx": "boing",
+     "vol": 0.35
     }
    ]
   },
@@ -193,29 +245,31 @@
   },
   {
    "pausa": 63.25,
-   "texto": "FILOSOFÍA CON HAMBRE 🌎🍽️",
+   "texto": "EL TÍO EN NAVIDAD 🗣️🍗",
    "fondo": "#FFE600",
-   "voz": "Rony empezó con el calentamiento global y terminó con el plato de comida. Eso es filosofía con hambre. ¿Y tú, qué comiste hoy? Déjalo en los comentarios.",
+   "voz": "Ese es el tío que en Navidad te explica la política del mundo entre bocado y bocado. ¿Tú tienes un tío así? Déjalo en los comentarios.",
    "claves": [
-    "calentamiento",
-    "filosofía",
+    "tío",
+    "navidad",
     "comentarios"
    ],
    "props": [
     {
-     "emoji": "🌎",
+     "emoji": "🗣️",
      "anim": "pulso",
      "t": 0.3
     },
     {
-     "emoji": "🍽️",
+     "emoji": "🍗",
      "anim": "crece",
      "t": 2.0
     },
     {
      "emoji": "👇",
      "anim": "rebote",
-     "t": 6.0
+     "t": 5.5,
+     "sfx": "pop",
+     "vol": 0.4
     }
    ]
   }

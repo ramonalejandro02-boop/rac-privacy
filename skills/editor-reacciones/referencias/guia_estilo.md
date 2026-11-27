@@ -12,11 +12,17 @@
 - **Pícaro / doble sentido** suave está bien (🍑🪵😏), nunca explícito.
 - El chiste sale de **lo que dijeron**: la contradicción ("le preguntaron por su dinero y salió con que el dinero ajeno no te importa"), lo absurdo, la reacción.
 - **Prohibido:** afirmar hechos sobre personas reales (difamación: si alguien menciona a otra persona famosa, el chiste es sobre quien habla, nunca "confirmes" nada); burlarse del cuerpo, estatura, salud, discapacidad, raza u orientación de nadie (además Meta lo castiga como acoso). Groserías del original: en subtítulos tapalas (`p***`) editando `palabras.json`.
+- **NUNCA repetir lo que dijeron** ("dijo que no le gusta la comida... ¡no le gusta la comida!" = aburrido).
+  El comentario tiene que SUMAR: exageración absurda, comparación dominicana (colmado, motoconcho,
+  la abuela, el tío en la boda), lo que no se ve (qué piensa el otro, qué pasa detrás), o un remate
+  que termina distinto de lo esperado. Si el chiste funciona sin haber visto el clip, no sirve.
 - La voz en off **comenta**, no narra lo que ya se ve (Meta baja el alcance de "narrar lo que está en pantalla").
 
 ## Ritmo y sonido
 - Quitar silencios y muletillas (`"quitar_silencios": true`). Risas largas del original: dejá ~1 s.
-- **Máximo 2–3 efectos de sonido en todo el video**, solo en los momentos clave (`boom` 0.35–0.45, `whoosh` 0.4, `ding` 0.4, `pop` 0.5). Los emojis aparecen en silencio.
+- Efectos de sonido con intención (no en cada segundo): disco rayado al congelar en cada pausa,
+  `whoosh` al volver al clip, `pop` en stickers, `boom` suave en los remates/zooms de golpe, piii en
+  groserías. Volúmenes 0.3–0.45 para que no tapen las voces.
 - Sin texto con "..." en la voz en off (la voz se frena).
 
 ## Visual

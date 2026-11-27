@@ -427,6 +427,12 @@ def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
     pista = np.zeros(int((d + 1) * SR), np.float32)
     a = int(t_vo * SR)
     pista[a:a + len(vo)] += vo[:len(pista) - a]
+    if seg.get("sfx", True):                            # disco rayado al congelar, whoosh al volver
+        y = sintetizar("scratch") * 0.32
+        pista[:len(y)] += y[:len(pista)]
+        y = sintetizar("whoosh") * 0.28
+        b0 = max(0, int((d - 0.35) * SR))
+        pista[b0:b0 + len(y)] += y[:len(pista) - b0]
     for p in seg.get("props", []):
         if p.get("sfx"):
             y = sintetizar(p["sfx"]) * 0.35 * p.get("vol", 1.0)
