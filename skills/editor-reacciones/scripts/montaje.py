@@ -349,7 +349,19 @@ def dibujar_prop(cv, p, u, d, cache):
 _contador_escena = [0]
 
 
-def render_pausa(base, seg, salida, tmp, idx, claves, catalogo):
+def ancho_panel_split(src, base_plan):
+    """Mismo cálculo que efectos.py (anti-pixelado) para saber si hay márgenes al lado del clip."""
+    cap = cv2.VideoCapture(src)
+    sw, sh = cap.get(cv2.CAP_PROP_FRAME_WIDTH), cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    cap.release()
+    rf = base_plan.get("recorte_fuente")
+    if rf:
+        sw, sh = sw * (rf[2] - rf[0]), sh * (rf[3] - rf[1])
+    alto = int((0.66 - 0.366) * H)
+    return int(min(W, min(sw, sh * W / alto) * base_plan.get("max_escala", 1.3))) // 2 * 2
+
+
+def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
     """Formato split: congela el clip en el segundo `pausa`, el creador comenta con su voz
     (arriba se le ve hablando), emojis y sticker en la franja de abajo, zoom suave al clip."""
     from reaccion import Reaccion
@@ -368,14 +380,19 @@ def render_pausa(base, seg, salida, tmp, idx, claves, catalogo):
     reac = Reaccion(catalogo, W, reac_h)
     ev = [dict(t=0, tipo="habla", dur=d, version=idx)]
     texto = a_bgra(sticker_pil(seg["texto"], 62, seg.get("fondo", "#FFE600"), seg.get("color", "#111111"),
-                               rot=seg.get("rot", -2), max_w=1000)) if seg.get("texto") else None
+                               rot=seg.get("rot", -2), max_w=820)) if seg.get("texto") else None
     subs = Subs(palabras_vo(seg["voz"], vo, t_vo), claves + seg.get("claves", []), est["palabra"],
                 y=0.75, x=0.5, ancho=0.86)
-    lados = [(0.09, 0.70), (0.91, 0.70), (0.09, 0.77), (0.91, 0.77)]
+    if panel_w < W - 200:                               # emojis en los márgenes al lado del clip
+        lados = [(0.078, 0.43), (0.922, 0.43), (0.078, 0.57), (0.922, 0.57)]
+        tam = min(125, (W - panel_w) // 2 - 20)
+    else:                                               # clip a todo lo ancho: a los lados de la franja
+        lados = [(0.075, 0.80), (0.925, 0.80), (0.075, 0.86), (0.925, 0.86)]
+        tam = 100
     props = []
     for j, p in enumerate(seg.get("props", [])[:4]):
         x, y = lados[j]
-        props.append(dict(p, x=x, y=y, size=min(p.get("size", 150), 125), libre=True,
+        props.append(dict(p, x=x, y=y, size=min(p.get("size", 150), tam), libre=True,
                           anim=p.get("anim") if p.get("anim") in ("pulso", "crece", "rebote") else "pulso"))
     cache = {}
     enc = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}",
@@ -613,7 +630,7 @@ def main():
         elif "pausa" in seg:
             cfgp = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
             cat = plan["base"].get("catalogo_reaccion") or (json.load(open(cfgp)) if os.path.exists(cfgp) else {}).get("reaccion")
-            d = render_pausa(base, seg, out, tmp, k, claves, cat)
+            d = render_pausa(base, seg, out, tmp, k, claves, cat, ancho_panel_split(args.entrada, plan["base"]))
             total += d
         else:
             d = render_escena(args.entrada, seg, out, tmp, k, claves, sx, sa)

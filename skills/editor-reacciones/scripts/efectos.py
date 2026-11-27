@@ -665,9 +665,14 @@ def main():
             if ev["tipo"] == "sticker":
                 ev["y"] = 0.702
             elif ev["tipo"] == "emoji":
-                ev["y"], ev["libre"] = 0.70, True
-                ev["x"] = 0.09 if ev.get("x", 0.5) < 0.5 else 0.91
-                ev["size"] = min(ev.get("size", 160), 120)
+                ev["libre"] = True
+                izq = ev.get("x", 0.5) < 0.5
+                if plan["panel_ancho"] < W - 200:          # márgenes a los lados del clip
+                    ev["x"], ev["y"] = (0.078 if izq else 0.922), 0.47
+                    ev["size"] = min(ev.get("size", 160), (W - plan["panel_ancho"]) // 2 - 20, 120)
+                else:
+                    ev["x"], ev["y"] = (0.09 if izq else 0.91), 0.70
+                    ev["size"] = min(ev.get("size", 160), 110)
         cat = plan.get("catalogo_reaccion")
         if not cat:
             cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")

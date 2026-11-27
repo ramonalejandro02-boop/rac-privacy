@@ -1,5 +1,5 @@
 {
- "tema": "auto",
+ "tema": "noche",
  "quitar_silencios": true,
  "sfx_transiciones": false,
  "base": {
@@ -32,6 +32,14 @@
     "s": 1.0
    },
    {
+    "t": 11.8,
+    "tipo": "zoom",
+    "dur": 5.6,
+    "x": 0.5,
+    "y": 0.28,
+    "s": 1.0
+   },
+   {
     "t": 61.4,
     "tipo": "zoom",
     "dur": 1.5,
@@ -45,7 +53,7 @@
     "tipo": "zoom",
     "dur": 0.9,
     "x": 0.5,
-    "y": 0.36,
+    "y": 0.27,
     "s": 1.1,
     "rampa": 0.1
    },
@@ -156,12 +164,7 @@
     {
      "emoji": "🇩🇴",
      "anim": "crece",
-     "t": 1.0
-    },
-    {
-     "emoji": "3️⃣",
-     "anim": "rebote",
-     "t": 2.2,
+     "t": 1.0,
      "sfx": "pop",
      "vol": 0.5
     }
@@ -208,13 +211,19 @@
    ]
   },
   {
-   "pausa": 45.05,
+   "orig": [
+    45.1,
+    48.75
+   ]
+  },
+  {
+   "pausa": 48.7,
    "texto": "CLASE DE ESPAÑOL GRATIS 📚",
    "fondo": "#FFFFFF",
-   "voz": "Y de paso, clase de español gratis. No es asoplar, es soplar.",
+   "voz": "Vino a un concurso y salió con clase de español gratis. Eso es un dos por uno, mi loco.",
    "claves": [
     "español",
-    "soplar"
+    "gratis"
    ],
    "props": [
     {
@@ -231,7 +240,7 @@
   },
   {
    "orig": [
-    45.1,
+    48.75,
     54.1
    ]
   },
