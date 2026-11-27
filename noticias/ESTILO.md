@@ -16,6 +16,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 07 | Reformas electorales | Art Déco (/cine6) |
 | 08 | Gabinete Social: ¿atenderá a la gente? | Maqueta blanca con proyección (/cine1) |
 | 09 | Gabinete Social: cómo funcionará | Dibujo de una sola línea (/cine3) y tablero de nodos (/interfaz2) |
+| 10 | Licencias siguen en todos los departamentos | Papel recortado (/ilustracion3) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
@@ -26,6 +27,7 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 - -14 LUFS.
 
 ## Diseño
+- LEGIBILIDAD PRIMERO: tres zonas fijas que no se pisan — títulos arriba (≈230-470 px), arte al centro (≈500-1330 px), subtítulos abajo (≈1400-1580 px) sin nada encima. Todo texto sobre fondo sólido con contraste. Revisar fotogramas buscando textos tapados antes de renderizar.
 - Lo visual puede ser rico: más animaciones y efectos que expliquen, siempre con coherencia (movimiento con sentido: fila impaciente, punto que recorre el tiempo, rayitas de énfasis, vibración al confirmar).
 - Lo que NO se satura es el SONIDO.
 
