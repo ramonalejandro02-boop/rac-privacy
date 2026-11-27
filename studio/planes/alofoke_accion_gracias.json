@@ -1,0 +1,223 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "recorte_fuente": [
+   0.04,
+   0.06,
+   0.93,
+   0.86
+  ],
+  "titulo": "ACCIÓN DE GRACIAS EN LA CASA DE ALOFOKE 🦃",
+  "claves": [
+   "huevos",
+   "pavo",
+   "pavos",
+   "provecho",
+   "horrible",
+   "planeta",
+   "calentamiento",
+   "comida"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 81.0,
+    "x": 0.5,
+    "y": 0.45,
+    "s": 1.0
+   },
+   {
+    "t": 10.9,
+    "tipo": "zoom",
+    "dur": 1.2,
+    "x": 0.5,
+    "y": 0.45,
+    "s": 1.12,
+    "rampa": 0.12
+   },
+   {
+    "t": 42.3,
+    "tipo": "zoom",
+    "dur": 1.2,
+    "x": 0.5,
+    "y": 0.45,
+    "s": 1.12,
+    "rampa": 0.12
+   },
+   {
+    "t": 62.2,
+    "tipo": "zoom",
+    "dur": 1.1,
+    "x": 0.5,
+    "y": 0.45,
+    "s": 1.1,
+    "rampa": 0.12
+   },
+   {
+    "t": 4.4,
+    "tipo": "emoji",
+    "emoji": "🦃",
+    "x": 0.1,
+    "dur": 1.6
+   },
+   {
+    "t": 6.1,
+    "tipo": "sticker",
+    "texto": "¡DESTAPEN EL PAVO! 🦃",
+    "fondo": "#FFE600",
+    "dur": 2.0
+   },
+   {
+    "t": 15.4,
+    "tipo": "emoji",
+    "emoji": "🍽️",
+    "x": 0.9,
+    "dur": 1.4
+   },
+   {
+    "t": 42.4,
+    "tipo": "sticker",
+    "texto": "¿¿HORRIBLE?? 😬",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.6
+   },
+   {
+    "t": 57.1,
+    "tipo": "emoji",
+    "emoji": "🌎",
+    "x": 0.1,
+    "dur": 1.6
+   },
+   {
+    "t": 59.5,
+    "tipo": "sticker",
+    "texto": "CALENTAMIENTO GLOBAL 🔥",
+    "fondo": "#FFFFFF",
+    "dur": 2.0
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 16.4,
+    "tipo": "risa",
+    "dur": 1.0
+   },
+   {
+    "t": 36.6,
+    "tipo": "no_puede_ser",
+    "dur": 1.2
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    0.1,
+    2.0
+   ]
+  },
+  {
+   "pausa": 1.95,
+   "texto": "¿CUATRO HUEVOS? 🥚😂",
+   "fondo": "#FFE600",
+   "voz": "¿Cuatro huevos? Todo el mundo con pavo en Acción de Gracias, y a él le tocó desayuno.",
+   "claves": [
+    "huevos",
+    "pavo",
+    "desayuno"
+   ],
+   "props": [
+    {
+     "emoji": "🥚",
+     "anim": "rebote",
+     "t": 0.3
+    },
+    {
+     "emoji": "🦃",
+     "anim": "crece",
+     "t": 1.6
+    }
+   ]
+  },
+  {
+   "orig": [
+    3.8,
+    11.7
+   ]
+  },
+  {
+   "orig": [
+    14.8,
+    20.7
+   ]
+  },
+  {
+   "orig": [
+    33.2,
+    48.4
+   ]
+  },
+  {
+   "pausa": 48.35,
+   "texto": "¿QUÉ FUE LO HORRIBLE? 😬",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Horrible, dice. En una cena de Acción de Gracias, esa es la palabra que nadie quiere escuchar.",
+   "claves": [
+    "horrible",
+    "gracias"
+   ],
+   "props": [
+    {
+     "emoji": "😬",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "🍗",
+     "anim": "crece",
+     "t": 1.8
+    }
+   ]
+  },
+  {
+   "orig": [
+    53.0,
+    63.3
+   ]
+  },
+  {
+   "pausa": 63.25,
+   "texto": "FILOSOFÍA CON HAMBRE 🌎🍽️",
+   "fondo": "#FFE600",
+   "voz": "Rony empezó con el calentamiento global y terminó con el plato de comida. Eso es filosofía con hambre. ¿Y tú, qué comiste hoy? Déjalo en los comentarios.",
+   "claves": [
+    "calentamiento",
+    "filosofía",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🌎",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "🍽️",
+     "anim": "crece",
+     "t": 2.0
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "t": 6.0
+    }
+   ]
+  }
+ ]
+}
