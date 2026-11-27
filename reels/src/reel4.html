@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url(fonts/inter.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:Fraunces;src:url(fonts/fraunces.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:Fraunces;src:url(fonts/fraunces-italic.woff2) format('woff2');font-weight:100 900;font-style:italic}
+@font-face{font-family:Mono;src:url(fonts/mono.woff2) format('woff2');font-weight:100 900}
+:root{--bg:#efe9dc;--ink:#121212;--mute:#6b6760;--line:#d6cebd;--gold:#1f4fbf;--gold2:#1f4fbf;--card:#ffffff;--paper:#ffffff;--dark:#121212}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;color:var(--ink);font-family:Inter,sans-serif}
+.abs{position:absolute}
+#bg{inset:-200px;background:radial-gradient(1200px 900px at 50% 38%,#fbf8f2 0%,#efe9dc 70%)}
+#grid{inset:-240px;opacity:.55;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:120px 120px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 0%,transparent 65%)}
+#safe{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;transform:translate(47px,107px) scale(.82)}
+#cam{position:absolute;inset:0;transform-origin:50% 42%}
+#fullbg{inset:0;background:transparent}
+.shot{position:absolute;inset:0;visibility:hidden;transform-origin:50% 40%}
+#dust{inset:0;pointer-events:none}
+#dust i{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.18}
+#flash{inset:0;background:#fff;opacity:0;mix-blend-mode:overlay}
+#grain{inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#vig{inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(60,45,20,.14) 100%)}
+#hdr{left:80px;top:268px;display:flex;align-items:center;gap:18px;font:600 24px Mono;letter-spacing:.18em;color:var(--mute);z-index:5}
+#hdr i{display:block;width:56px;height:2px;background:var(--gold)}
+#prog{left:80px;top:240px;width:820px;height:3px;background:#20252c;border-radius:2px;overflow:hidden;z-index:5}
+#progf{height:100%;width:0;background:var(--gold)}
+.lbl{font:600 28px Mono;letter-spacing:.16em;color:var(--mute);text-transform:uppercase}
+.gold{color:var(--gold)}
+.serif{font-family:Fraunces,serif}
+.k{font:900 150px/0.92 Inter;letter-spacing:-.045em;text-transform:uppercase}
+.mask{overflow:hidden;display:block;padding-top:.16em;margin-top:-.16em}
+.mask>span{display:block}
+.card{background:var(--card);border:3px solid #121212;border-radius:20px;box-shadow:12px 12px 0 #121212}
+svg .d{fill:none;stroke:var(--gold);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+svg .d.w{stroke:var(--ink)}
+svg .d.dk{stroke:var(--dark)}
+.flap{display:inline-block;width:132px;height:176px;margin:0 6px;border-radius:16px;background:#fff;border:3px solid #121212;font:800 128px/176px Mono;text-align:center;color:var(--ink);position:relative;overflow:hidden}
+.flap:after{content:'';position:absolute;left:0;right:0;top:50%;height:2px;background:#e3dccd}
+#cap{left:70px;width:840px;top:1190px;height:120px;flex-wrap:nowrap;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:0 20px;text-align:center;z-index:6}
+#cap span{white-space:nowrap;font:800 58px/1.18 Inter;letter-spacing:-.01em;color:var(--ink);opacity:.3}
+#cap span.on{opacity:1;color:var(--gold2)}
+#cap span.done{opacity:1}
+body.light #cap span{color:#fff} body.light #cap span.on{color:#9cc0ff} body.light #vig{opacity:.4}
+.coin{position:absolute;width:150px;height:44px;border-radius:50%;background:#fff;border:3px solid #121212;box-shadow:0 6px 0 #121212}
+.mo{width:200px;height:120px;border-radius:14px;border:3px solid #121212;background:#fff;display:flex;align-items:center;justify-content:center;font:700 34px Mono;letter-spacing:.1em}
+.chip{display:flex;align-items:center;gap:30px;font:600 50px Inter}
+</style></head><body>
+<div id="stage">
+ <div id="bg" class="abs"></div><div id="grid" class="abs"></div>
+ <div id="prog" class="abs"><div id="progf"></div></div>
+ <div id="hdr" class="abs"><i></i>DATO LEGAL · HONDURAS</div>
+ <div id="fullbg" class="abs"></div>
+ <div id="safe"><div id="cam">
+
+ <!-- A1 hook: split-flap counter of months owed -->
+ <div id="A1" class="shot">
+  <div class="abs k" style="left:80px;top:270px;width:940px"><span class="mask"><span id="a1l1">¿Le deben</span></span><span class="mask"><span id="a1l2" class="gold">meses?</span></span></div>
+  <div class="abs" style="left:80px;top:640px"><div class="lbl">Meses adeudados</div>
+   <div style="margin-top:26px"><span class="flap" id="fl1">0</span><span class="flap" id="fl2">0</span></div></div>
+  <div id="a1mon" class="abs" style="left:430px;top:690px;display:grid;grid-template-columns:repeat(3,180px);gap:18px"></div>
+ </div>
+
+ <!-- A2 pensión alimenticia: coins stacking -->
+ <div id="A2" class="shot">
+  <div class="abs serif" style="left:80px;top:260px;width:940px;font:600 118px/1 Fraunces;letter-spacing:-.02em"><span class="mask"><span id="a2t1">Pensión</span></span><span class="mask"><span id="a2t2" class="gold" style="font-style:italic">alimenticia</span></span></div>
+  <div id="a2stack" class="abs" style="left:465px;top:640px;width:150px;height:560px"></div>
+  <div id="a2lbl" class="abs lbl" style="left:80px;top:1180px">L. por mes</div>
+ </div>
+
+ <!-- A3 "¿los perdió?" hourglass -->
+ <div id="A3" class="shot">
+  <svg id="a3hg" class="abs" style="left:330px;top:300px" width="420" height="640" viewBox="0 0 420 640">
+   <path class="d w" pathLength="1" d="M60 30 H360 M60 610 H360 M90 30 C90 220 330 240 330 320 C330 400 90 420 90 610 M330 30 C330 220 90 240 90 320 C90 400 330 420 330 610"/>
+   <path id="a3top" fill="#1f4fbf" d="M120 120 Q210 170 300 120 L300 120 Q250 260 210 300 Q170 260 120 120Z" opacity=".9"/>
+   <rect id="a3stream" x="206" y="300" width="8" height="250" fill="#1f4fbf"/>
+   <path id="a3bot" fill="#1f4fbf" d="M110 600 Q210 480 310 600Z"/>
+  </svg>
+  <div class="abs k" style="left:0;width:1080px;top:1010px;text-align:center;font-size:120px"><span class="mask"><span id="a3t">¿Los perdió?</span></span></div>
+ </div>
+
+ <!-- A4 inversion: ESO ACABA DE CAMBIAR -->
+ <div id="A4" class="shot" style="color:#fff">
+  <div class="abs lbl" style="left:80px;top:270px;color:#9a968c">Honduras · 2026</div>
+  <div class="abs k" style="left:60px;top:360px;font-size:198px;line-height:.9;color:#fff">
+   <span class="mask"><span id="a4a">Eso</span></span><span class="mask"><span id="a4b">acaba</span></span><span class="mask"><span id="a4c">de</span></span><span class="mask"><span id="a4d" style="color:#6f9bff;white-space:nowrap">cambiar.</span></span></div>
+ </div>
+
+ <!-- B1 Art. 225 rolling counter -->
+ <div id="B1" class="shot">
+  <div id="b1top" class="abs lbl" style="left:80px;top:270px">Código de Familia · Hasta 2026</div>
+  <div class="abs" style="left:60px;top:330px;font:900 150px Inter;letter-spacing:-.03em;color:var(--mute)" id="b1art">ART.</div>
+  <div class="abs" id="b1num" style="left:40px;top:470px;font:800 560px/1 Fraunces;letter-spacing:-.06em;color:var(--gold);white-space:nowrap">000</div>
+  <svg id="b1book" class="abs" style="left:660px;top:1000px" width="300" height="220" viewBox="0 0 300 220"><path class="d" pathLength="1" d="M150 40 C110 20 50 20 20 30 V190 C50 180 110 180 150 200 C190 180 250 180 280 190 V30 C250 20 190 20 150 40 V200"/></svg>
+ </div>
+
+ <!-- B2 12-month dial -->
+ <div id="B2" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Plazo para reclamar</div>
+  <svg class="abs" style="left:190px;top:350px" width="700" height="700" viewBox="0 0 700 700">
+   <circle cx="350" cy="350" r="290" fill="none" stroke="#e3dccd" stroke-width="34"/>
+   <circle id="b2ring" cx="350" cy="350" r="290" fill="none" stroke="#1f4fbf" stroke-width="34" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 350 350)"/>
+   <g id="b2ticks"></g>
+   <text id="b2mes" x="350" y="345" text-anchor="middle" style="font:800 170px Fraunces;fill:#121212">0</text>
+   <text x="350" y="420" text-anchor="middle" style="font:600 34px Mono;letter-spacing:6px;fill:#8b8f97">MESES</text>
+  </svg>
+  <div id="b2yr" class="abs k" style="left:0;width:1080px;text-align:center;top:1110px;font-size:110px;opacity:0">= <span class="gold">1 año</span></div>
+ </div>
+
+ <!-- B3 PRESCRIBÍAN stamp + coins disintegrate -->
+ <div id="B3" class="shot">
+  <div id="b3coins" class="abs" style="left:0;top:0;width:1080px;height:1300px"></div>
+  <div id="b3stamp" class="abs" style="left:110px;top:520px;padding:26px 44px;border:8px solid var(--gold);border-radius:16px;color:var(--gold);font:900 120px Inter;letter-spacing:.02em;transform:rotate(-7deg)">PRESCRIBÍAN</div>
+  <div id="b3t" class="abs serif" style="left:0;width:1080px;text-align:center;top:860px;font:italic 500 86px Fraunces;color:var(--mute)">Es decir… se perdían.</div>
+ </div>
+
+ <!-- C1 tear-off calendar -->
+ <div id="C1" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Pero el…</div>
+  <div class="abs" style="left:240px;top:380px;width:600px;height:720px;perspective:1800px">
+   <div class="abs card" style="inset:0;background:var(--paper);color:var(--dark);border:none;overflow:hidden">
+    <div style="height:150px;background:#1f4fbf;display:flex;align-items:center;justify-content:center;font:800 64px Mono;letter-spacing:.12em;color:var(--paper)">JUNIO</div>
+    <div style="font:800 330px/1 Fraunces;text-align:center;margin-top:50px;letter-spacing:-.04em">12</div>
+    <div id="c1yr" style="font:700 64px Mono;text-align:center;margin-top:20px;letter-spacing:.2em;color:#7a6a4a">2026</div>
+   </div>
+   <div id="c1page" class="abs card" style="inset:0;background:#e3dccd;color:#9a927f;border:none;transform-origin:50% 0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 300px Fraunces;backface-visibility:hidden">11</div>
+  </div>
+ </div>
+
+ <!-- C2 La Gaceta newspaper -->
+ <div id="C2" class="shot">
+  <div id="c2np" class="abs card" style="left:90px;top:330px;width:900px;height:840px;background:var(--paper);color:var(--dark);border:none;padding:56px 60px">
+   <div style="font:900 104px/1 Fraunces;text-align:center;letter-spacing:-.01em">La Gaceta</div>
+   <div style="display:flex;justify-content:space-between;font:700 24px Mono;letter-spacing:.12em;color:#5a5f66;border-top:3px solid #14181d;border-bottom:1px solid #14181d;padding:12px 0;margin-top:22px"><span>DIARIO OFICIAL</span><span>No. 37,166</span><span>12·06·2026</span></div>
+   <div id="c2head" style="font:800 128px/0.95 Fraunces;margin-top:60px;letter-spacing:-.03em;min-height:250px"></div>
+   <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:26px" id="c2cols"></div>
+  </div>
+ </div>
+
+ <!-- C3 CLIMAX: gold background, gavel, DEROGADO -->
+ <div id="C3" class="shot" style="color:#fff">
+  <div id="c3card" class="abs card" style="left:140px;top:560px;width:800px;height:300px;padding:50px 60px;background:#fff;color:#121212;border:3px solid #121212">
+   <div class="lbl">Código de Familia</div>
+   <div style="font:700 112px/1 Fraunces;margin-top:22px;white-space:nowrap">Artículo 225</div>
+  </div>
+  <div id="c3crack" class="abs" style="left:120px;top:700px;width:0;height:12px;background:#ff3b30;border-radius:6px"></div>
+  <svg id="c3gavel" class="abs" style="left:520px;top:180px;transform-origin:90% 90%" width="460" height="460" viewBox="0 0 460 460">
+   <g fill="#ffffff"><rect x="40" y="70" width="230" height="110" rx="22" transform="rotate(-35 155 125)"/><rect x="190" y="150" width="34" height="290" rx="17" transform="rotate(-35 207 295)"/></g>
+  </svg>
+  <div id="c3stamp" class="abs" style="left:90px;top:960px;width:900px;text-align:center;font:900 168px Inter;letter-spacing:-.02em;color:#fff">DEROGADO</div>
+ </div>
+
+ <!-- D1 gavel + fijadas por un juez -->
+ <div id="D1" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Ahora</div>
+  <div class="abs serif" style="left:80px;top:330px;width:940px;font:600 104px/1.02 Fraunces;letter-spacing:-.02em"><span class="mask"><span id="d1a">Pensiones</span></span><span class="mask"><span id="d1b" class="gold" style="font-style:italic">atrasadas</span></span></div>
+  <svg id="d1g" class="abs" style="left:300px;top:640px" width="480" height="420" viewBox="0 0 480 420">
+   <path class="d" pathLength="1" d="M90 120 L210 40 L280 140 L160 220 Z M185 180 L330 380 M60 400 H300 M90 400 V360 H270 V400"/>
+  </svg>
+  <div id="d1t" class="abs k" style="left:0;width:1080px;text-align:center;top:1110px;font-size:84px;letter-spacing:-.02em">Fijadas por un juez</div>
+ </div>
+
+ <!-- D2 code flip -->
+ <div id="D2" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Se rigen por</div>
+  <div class="abs" style="left:90px;top:420px;width:900px;height:520px;perspective:2400px">
+   <div id="d2flip" style="position:absolute;inset:0;transform-style:preserve-3d">
+    <div class="card" style="position:absolute;inset:0;backface-visibility:hidden;padding:70px;display:flex;flex-direction:column;justify-content:center">
+     <div class="lbl">Antes</div><div style="font:700 110px/1 Fraunces;margin-top:20px;color:var(--mute)">Código de<br>Familia</div></div>
+    <div class="card" style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);padding:70px;border-color:var(--gold);display:flex;flex-direction:column;justify-content:center">
+     <div class="lbl gold">Ahora</div><div style="font:700 120px/1 Fraunces;margin-top:20px">Código<br>Civil</div><div style="font:700 44px Mono;color:var(--gold);margin-top:26px">ART. 2289 Y SS.</div></div>
+   </div>
+  </div>
+ </div>
+
+ <!-- D3 bars race, camera pans -->
+ <div id="D3" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Plazo para cobrar</div>
+  <div id="d3pan" class="abs" style="left:80px;top:470px;width:3000px">
+   <div class="lbl" style="font-size:26px">Antes</div>
+   <div style="display:flex;align-items:center;gap:26px;margin-top:18px"><div id="d3b1" style="height:70px;width:0;background:#c9c2b3;border-radius:14px"></div><span style="font:700 52px Mono;color:var(--mute)">1 AÑO</span></div>
+   <div class="lbl gold" style="font-size:26px;margin-top:110px">Ahora</div>
+   <div style="display:flex;align-items:center;gap:26px;margin-top:18px"><div id="d3b2" style="height:70px;width:0;background:var(--gold);border-radius:14px"></div><span id="d3m" style="font:800 64px Inter;color:var(--gold);white-space:nowrap">MUCHO MÁS AMPLIO →</span></div>
+  </div>
+ </div>
+
+ <!-- E1 Congress columns -->
+ <div id="E1" class="shot">
+  <svg class="abs" style="left:140px;top:300px" width="800" height="560" viewBox="0 0 800 560">
+   <path class="d w" pathLength="1" d="M60 170 L400 30 L740 170 Z M80 200 H720 M110 220 V470 M230 220 V470 M350 220 V470 M450 220 V470 M570 220 V470 M690 220 V470 M70 490 H730 M40 530 H760"/>
+  </svg>
+  <div id="e1t" class="abs" style="left:0;width:1080px;text-align:center;top:930px;font:800 76px Inter;letter-spacing:.02em">CONGRESO NACIONAL</div>
+  <div id="e1s" class="abs lbl" style="left:0;width:1080px;text-align:center;top:1040px">Lo dijo en el decreto</div>
+ </div>
+
+ <!-- E2 scales: incompatible -->
+ <div id="E2" class="shot">
+  <div id="e2w" class="abs k" style="left:0;width:1080px;text-align:center;top:270px;font-size:128px"><span class="mask"><span id="e2t">Incompatible</span></span></div>
+  <svg class="abs" style="left:90px;top:470px" width="900" height="640" viewBox="0 0 900 640">
+   <path class="d w" pathLength="1" d="M450 90 V600 M330 600 H570"/>
+   <g id="e2beam" style="transform-origin:450px 110px"><path class="d" pathLength="1" d="M120 110 H780"/>
+    <g id="e2L"><path class="d w" pathLength="1" d="M120 110 L50 330 M120 110 L190 330 M30 330 H210 Q120 400 30 330"/><text x="120" y="450" text-anchor="middle" style="font:700 40px Mono;fill:#8b8f97">1 AÑO</text></g>
+    <g id="e2R"><path class="d" pathLength="1" d="M780 110 L710 330 M780 110 L850 330 M690 330 H870 Q780 400 690 330"/><text x="780" y="450" text-anchor="middle" style="font:700 36px Mono;fill:#1f4fbf">DERECHO DE</text><text x="780" y="495" text-anchor="middle" style="font:700 36px Mono;fill:#1f4fbf">ALIMENTOS</text></g>
+   </g>
+   <circle cx="450" cy="90" r="16" fill="#1f4fbf"/>
+  </svg>
+ </div>
+
+ <!-- F1 no se rinda -->
+ <div id="F1" class="shot">
+  <div id="f1s" class="abs serif" style="left:80px;top:290px;width:920px;font:500 74px/1.15 Fraunces;color:var(--mute)">Si un juez fijó la pensión y le deben meses…</div>
+  <div class="abs k" style="left:60px;top:620px;font-size:230px;line-height:.88"><span class="mask"><span id="f1a">No se</span></span><span class="mask"><span id="f1b" class="gold">rinda.</span></span></div>
+ </div>
+
+ <!-- F2 folder collects documents -->
+ <div id="F2" class="shot">
+  <div class="abs lbl" style="left:80px;top:270px">Reúna</div>
+  <svg id="f2folder" class="abs" style="left:290px;top:760px" width="500" height="380" viewBox="0 0 500 380"><path class="d" pathLength="1" d="M20 60 H190 L230 100 H480 V360 H20 Z M20 140 H480"/></svg>
+  <div id="f2i1" class="abs chip" style="left:80px;top:360px"><svg width="90" height="110" viewBox="0 0 90 110"><path class="d w" pathLength="1" d="M10 5 H60 L85 30 V105 H10 Z M25 45 H70 M25 65 H70 M25 85 H55"/></svg>Resolución del juez</div>
+  <div id="f2i2" class="abs chip" style="left:80px;top:500px"><svg width="90" height="110" viewBox="0 0 90 110"><path class="d w" pathLength="1" d="M10 5 H80 V105 L68 95 L56 105 L44 95 L32 105 L20 95 L10 105 Z M25 35 H65 M25 55 H65 M45 70 V90"/></svg>Comprobantes</div>
+  <div id="f2i3" class="abs chip" style="left:80px;top:640px"><svg width="90" height="110" viewBox="0 0 90 110"><path class="d w" pathLength="1" d="M5 20 H85 V105 H5 Z M5 45 H85 M25 5 V30 M65 5 V30 M20 65 H35 M45 65 H60 M20 85 H35"/></svg>Meses adeudados</div>
+ </div>
+
+ <!-- F3 consulte con un abogado -->
+ <div id="F3" class="shot">
+  <svg id="f3s" class="abs" style="left:340px;top:330px" width="400" height="420" viewBox="0 0 400 420">
+   <path class="d" pathLength="1" d="M200 30 V380 M120 390 H280 M60 90 H340 M60 90 L20 220 M60 90 L100 220 M10 220 H110 Q60 270 10 220 M340 90 L300 220 M340 90 L380 220 M290 220 H390 Q340 270 290 220"/>
+  </svg>
+  <div class="abs k" style="left:0;width:1080px;text-align:center;top:820px;font-size:118px"><span class="mask"><span id="f3a">Consulte con</span></span><span class="mask"><span id="f3b" class="gold">un abogado</span></span></div>
+ </div>
+
+ <!-- G1 share + follow -->
+ <div id="G1" class="shot">
+  <svg id="g1sh" class="abs" style="left:380px;top:300px" width="320" height="320" viewBox="0 0 320 320">
+   <path class="d" pathLength="1" d="M200 60 L270 130 L200 200 M270 130 H150 C90 130 50 170 50 240"/>
+  </svg>
+  <div class="abs k" style="left:0;width:1080px;text-align:center;top:680px;font-size:140px"><span class="mask"><span id="g1a">Compártalo</span></span></div>
+  <div id="g1btn" class="abs" style="left:290px;top:930px;width:500px;height:130px;border-radius:65px;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;gap:20px;font:800 56px Inter">+ Síganos</div>
+  <div id="g1d" class="abs" style="left:80px;top:1150px;width:920px;text-align:center;font:400 28px/1.4 Inter;color:var(--mute)">Información general. No sustituye la asesoría de un abogado.</div>
+ </div>
+
+ </div></div><!-- /cam /safe -->
+ <div id="dust" class="abs"></div>
+ <div id="vig" class="abs"></div>
+ <div id="cap" class="abs"></div>
+ <div id="flash" class="abs"></div>
+ <div id="grain" class="abs"></div>
+</div>
+<script src="gsap.min.js"></script>
+<script>
+const TL=__TIMELINE__;
+const S=Object.fromEntries(TL.scenes.map(s=>[s.id,s]));
+const clean=w=>w.toLowerCase().replace(/[¿?,.¡!:;…]/g,'');
+function wt(id,pre,n=1){const w=S[id].words.filter(x=>clean(x.w).startsWith(pre));return (w[n-1]||w[0]||{s:S[id].start}).s}
+const $=q=>document.querySelector(q), $$=q=>[...document.querySelectorAll(q)];
+const tl=gsap.timeline({paused:true}); const E='power4.out', B='back.out(1.7)';
+const HITS=[]; const UPD=[];
+// ---------- builders ----------
+const MON=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP'];
+MON.forEach(m=>{const d=document.createElement('div');d.className='mo';d.textContent=m;$('#a1mon').appendChild(d)});
+for(let i=0;i<9;i++){const c=document.createElement('div');c.className='coin';c.style.left='0px';c.style.top=(500-i*52)+'px';c.innerHTML='<div style="text-align:center;font:800 22px/40px Mono;color:#1f4fbf">L</div>';$('#a2stack').appendChild(c)}
+for(let i=0;i<14;i++){const c=document.createElement('div');c.className='coin b3c';const x=120+((i*137)%840),y=180+((i*251)%300);c.style.left=x+'px';c.style.top=y+'px';c.style.transform=`rotate(${(i*47)%60-30}deg)`;$('#b3coins').appendChild(c)}
+for(let i=0;i<12;i++){const a=i/12*Math.PI*2-Math.PI/2;const x1=350+Math.cos(a)*240,y1=350+Math.sin(a)*240,x2=350+Math.cos(a)*215,y2=350+Math.sin(a)*215;const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',x2);l.setAttribute('y2',y2);l.setAttribute('stroke','#b9b2a3');l.setAttribute('stroke-width','6');l.setAttribute('stroke-linecap','round');$('#b2ticks').appendChild(l)}
+for(let i=0;i<6;i++){const d=document.createElement('div');d.style.cssText=`height:16px;border-radius:8px;background:#cfc7b6;width:${70+((i*37)%30)}%`;$('#c2cols').appendChild(d)}
+for(let i=0;i<34;i++){const d=document.createElement('i');$('#dust').appendChild(d)}
+// ---------- primitives ----------
+const SHOTS=[];
+function cue(id,t){SHOTS.push([id,t])}
+function hit(t,s=1,shake=0){HITS.push([+t.toFixed(3),s]);
+ tl.fromTo('#cam',{scale:1+.035*s},{scale:1,duration:.45,ease:'power3.out',immediateRender:false},t);
+ tl.fromTo('#flash',{opacity:.22*s},{opacity:0,duration:.3,ease:'power2.out',immediateRender:false},t);
+ if(shake)tl.fromTo('#cam',{x:0,y:0},{keyframes:[{x:-shake,y:shake*.4},{x:shake*.8,y:-shake*.5},{x:-shake*.5,y:shake*.3},{x:shake*.25,y:0},{x:0,y:0}],duration:.38,immediateRender:false},t)}
+const draw=(sel,t,d=.8,st=.08)=>tl.to(sel,{strokeDashoffset:0,duration:d,stagger:st,ease:'power2.inOut'},t);
+const up=(sel,t,d=.55,st=.08)=>tl.from(sel,{yPercent:110,duration:d,stagger:st,ease:E},t);
+// ---------- global ----------
+tl.fromTo('#progf',{width:'0%'},{width:'100%',duration:TL.total,ease:'none'},0);
+tl.fromTo('#grid',{backgroundPosition:'0px 0px'},{backgroundPosition:'0px 360px',duration:TL.total,ease:'none'},0);
+tl.fromTo('#hdr',{opacity:0,x:-20},{opacity:1,x:0,duration:.5,ease:E},.05);
+
+// ===== S1 =====
+let t;
+t=0.12; cue('A1',t); hit(t,1);
+up('#a1l1',t,.45); up('#a1l2',wt('s1','meses')-.08,.45); hit(wt('s1','meses')-.05,.6);
+tl.from('#a1mon .mo',{scale:.6,opacity:0,duration:.25,stagger:.04,ease:B},t+.12);
+tl.to('#a1mon .mo',{borderColor:'#1f4fbf',color:'#1f4fbf',duration:.1,stagger:.05},t+.3);
+UPD.push(T=>{const a=.3,b=wt('s1','pensión')-.15;const n=Math.max(0,Math.min(9,Math.floor((T-a)/(b-a)*9)));const s=String(n).padStart(2,'0');$('#fl1').textContent=s[0];$('#fl2').textContent=s[1]});
+t=wt('s1','pensión')-.1; cue('A2',t); hit(t,.8);
+up(['#a2t1','#a2t2'],t,.5,.12);
+tl.from('#a2stack .coin',{y:-900,duration:.35,stagger:.07,ease:'bounce.out'},t+.15);
+tl.from('#a2lbl',{opacity:0,duration:.3},t+.6);
+t=wt('s1','dijeron')-.15; cue('A3',t); hit(t,.7);
+draw('#a3hg .d',t,.6);
+tl.fromTo('#a3top',{scaleY:1,transformOrigin:'50% 100%'},{scaleY:.05,duration:1.3,ease:'power1.in'},t+.2);
+tl.fromTo('#a3bot',{scaleY:.1,transformOrigin:'50% 100%'},{scaleY:1,duration:1.3,ease:'power1.out'},t+.2);
+up('#a3t',wt('s1','perdió')-.2,.45);
+t=wt('s1','eso')-.08; cue('A4',t); hit(t,1.2,10);
+tl.call(()=>{},null,t);
+up(['#a4a','#a4b','#a4c'],t,.4,.1); up('#a4d',wt('s1','cambiar')-.1,.5);
+tl.fromTo('#A4 .k',{x:0},{x:-30,duration:1.6,ease:'none'},t);
+
+// ===== S2 =====
+t=S.s2.start-.05; cue('B1',t); hit(t,1);
+tl.from('#b1art',{x:-200,opacity:0,duration:.5,ease:E},t);
+tl.from('#b1num',{x:300,opacity:0,duration:.6,ease:E},wt('s2','artículo')-.1);
+UPD.push(T=>{const a=wt('s2','doscientos')-.1,b=wt('s2','veinticinco')+.4;const k=Math.max(0,Math.min(1,(T-a)/(b-a)));const e=1-Math.pow(1-k,3);$('#b1num').textContent=String(Math.round(225*e)).padStart(3,'0')});
+hit(wt('s2','veinticinco')+.35,.7);
+draw('#b1book .d',wt('s2','código')-.1,.7);
+tl.fromTo('#b1num',{scale:1},{scale:.82,transformOrigin:'0% 50%',duration:2.2,ease:'none'},wt('s2','veinticinco')+.4);
+t=wt('s2','cuotas')-.15; cue('B2',t); hit(t,.8);
+tl.from('#B2 svg',{scale:.7,opacity:0,rotation:-30,duration:.6,ease:E},t);
+tl.to('#b2ring',{strokeDashoffset:0,duration:wt('s2','año',2)-t,ease:'power1.inOut'},t+.2);
+UPD.push(T=>{const a=wt('s2','cuotas'),b=wt('s2','año',2);const k=Math.max(0,Math.min(1,(T-a-.05)/(b-a)));$('#b2mes').textContent=Math.round(12*k)});
+tl.to('#b2yr',{opacity:1,duration:.2},wt('s2','año',2)-.05); tl.from('#b2yr',{scale:1.6,duration:.4,ease:B},wt('s2','año',2)-.05); hit(wt('s2','año',2),.7);
+t=wt('s2','prescribían')-.1; cue('B3',t);
+tl.from('#b3coins .coin',{scale:0,duration:.25,stagger:.02,ease:B},t);
+tl.fromTo('#b3stamp',{scale:2.6,opacity:0},{scale:1,opacity:1,duration:.22,ease:'power4.in',immediateRender:false},t+.15); hit(t+.37,1.2,14);
+tl.to('#b3coins .coin',{y:()=>900+Math.random()*0,rotation:'+=120',opacity:0,duration:.9,stagger:.04,ease:'power2.in'},wt('s2','perdían')-.5);
+tl.from('#b3t',{opacity:0,y:30,duration:.5,ease:E},wt('s2','es')-.1);
+
+// ===== S3 =====
+t=S.s3.start-.05; cue('C1',t); hit(t,1);
+tl.from('#C1 .card',{y:120,opacity:0,duration:.5,ease:E},t);
+tl.to('#c1page',{rotationX:-110,y:60,opacity:0,duration:.6,ease:'power2.in'},wt('s3','doce')-.15); hit(wt('s3','doce')+.35,.8);
+tl.from('#c1yr',{opacity:0,letterSpacing:'0.6em',duration:.5,ease:E},wt('s3','dos')-.1);
+t=wt('s3','publicó')-.15; cue('C2',t); hit(t,.9);
+tl.from('#c2np',{rotation:-540,scale:.1,duration:.75,ease:'power3.out'},t);
+UPD.push(T=>{const a=wt('s3','decreto')-.05,txt='Decreto 91-2026';const n=Math.max(0,Math.min(txt.length,Math.floor((T-a)/.045)));$('#c2head').innerHTML=txt.slice(0,n).replace(' ','<br>')+(n<txt.length&&T>a?'<span style="color:#1f4fbf">|</span>':'')});
+tl.from('#c2cols div',{scaleX:0,transformOrigin:'0 50%',duration:.4,stagger:.05,ease:E},t+.6);
+tl.fromTo('#c2np',{scale:1},{scale:1.06,duration:2,ease:'none',immediateRender:false},t+.75);
+t=wt('s3','que',1)-.1; cue('C3',t); hit(t,1);
+tl.call(()=>{},null,t);
+tl.from('#c3card',{y:80,opacity:0,duration:.35,ease:E},t);
+tl.fromTo('#c3gavel',{rotation:-55},{rotation:12,duration:.28,ease:'power4.in',immediateRender:false},wt('s3','derogó')-.15);
+tl.to('#c3gavel',{rotation:-15,duration:.5,ease:'power2.out'},wt('s3','derogó')+.13);
+hit(wt('s3','derogó')+.13,1.5,24);
+tl.to('#c3crack',{width:840,duration:.18,ease:'power4.out'},wt('s3','derogó')+.13);
+tl.to('#c3card',{rotation:-4,y:30,duration:.3,ease:E},wt('s3','derogó')+.13);
+tl.fromTo('#c3stamp',{scale:3,opacity:0},{scale:1,opacity:1,duration:.22,ease:'power4.in',immediateRender:false},wt('s3','derogó')+.25); hit(wt('s3','derogó')+.47,1.1,10);
+tl.to('#c3card',{opacity:.35,duration:.4},wt('s3','artículo')-.1);
+
+// ===== S4 =====
+t=S.s4.start-.05; cue('D1',t); hit(t,1);
+up(['#d1a','#d1b'],wt('s4','pensiones')-.15,.5,.15);
+draw('#d1g .d',wt('s4','fijadas')-.3,.6);
+tl.fromTo('#d1g',{rotation:-18,transformOrigin:'40% 50%'},{rotation:6,duration:.25,ease:'power4.in',immediateRender:false},wt('s4','juez')-.2); hit(wt('s4','juez')+.05,.9,8);
+tl.from('#d1t',{opacity:0,y:40,duration:.4,ease:E},wt('s4','fijadas')-.05);
+t=wt('s4','rigen')-.15; cue('D2',t); hit(t,.8);
+tl.from('#D2 .card',{y:80,opacity:0,duration:.45,ease:E},t);
+tl.to('#d2flip',{rotationY:180,duration:.7,ease:'power3.inOut'},wt('s4','código')-.25); hit(wt('s4','código')+.3,1);
+t=wt('s4','plazos')-.15; cue('D3',t); hit(t,.8);
+tl.to('#d3b1',{width:220,duration:.4,ease:E},t+.1);
+tl.to('#d3b2',{width:1900,duration:1.6,ease:'power2.inOut'},wt('s4','mucho')-.2);
+tl.to('#d3pan',{x:-1720,duration:1.6,ease:'power2.inOut'},wt('s4','mucho')-.2);
+hit(wt('s4','amplios')+.2,.6);
+
+// ===== S5 =====
+t=S.s5.start-.05; cue('E1',t); hit(t,1);
+draw('#E1 .d',t,1.1);
+tl.from('#e1t',{letterSpacing:'0.6em',opacity:0,duration:.8,ease:E},wt('s5','congreso')-.15);
+tl.from('#e1s',{opacity:0,duration:.4},wt('s5','dijo'));
+t=wt('s5','plazo')-.15; cue('E2',t); hit(t,.8);
+draw('#E2 .d',t,.7,.04);
+tl.from('#e2L text,#e2R text',{opacity:0,duration:.3,stagger:.15},t+.4);
+up('#e2t',wt('s5','incompatible')-.15,.45); hit(wt('s5','incompatible'),1.1,10);
+tl.fromTo('#e2beam',{rotation:0,svgOrigin:'450 110'},{rotation:12,svgOrigin:'450 110',duration:.9,ease:'elastic.out(1,0.45)',immediateRender:false},wt('s5','derecho')-.1);
+tl.fromTo('#e2L',{rotation:0,svgOrigin:'120 110'},{rotation:-12,svgOrigin:'120 110',duration:.9,ease:'elastic.out(1,0.45)',immediateRender:false},wt('s5','derecho')-.1);
+tl.fromTo('#e2R',{rotation:0,svgOrigin:'780 110'},{rotation:-12,svgOrigin:'780 110',duration:.9,ease:'elastic.out(1,0.45)',immediateRender:false},wt('s5','derecho')-.1);
+
+// ===== S6 =====
+t=S.s6.start-.05; cue('F1',t); hit(t,1);
+tl.from('#f1s',{opacity:0,y:30,duration:.5,ease:E},t);
+up('#f1a',wt('s6','no')-.12,.4); up('#f1b',wt('s6','rinda')-.08,.4); hit(wt('s6','rinda'),1.2,12);
+tl.to('#f1s',{opacity:.35,duration:.3},wt('s6','no')-.1);
+t=wt('s6','reúna')-.15; cue('F2',t); hit(t,.9);
+draw('#f2folder .d',t,.6);
+[['#f2i1','resolución'],['#f2i2','comprobantes'],['#f2i3','lista']].forEach(([id,w],i)=>{const tt=wt('s6',w)-.15;
+ tl.from(id,{x:-500,opacity:0,duration:.4,ease:E},tt); draw(id+' .d',tt+.1,.4); hit(tt+.05,.5);
+ tl.to(id,{x:250-i*0,y:760-[360,500,640][i]+40,scale:.35,opacity:0,duration:.45,ease:'power3.in'},tt+.95);});
+tl.to('#f2folder',{scale:1.08,transformOrigin:'50% 70%',duration:.15,yoyo:true,repeat:1},wt('s6','adeudados')+.6);
+t=wt('s6','consulte')-.15; cue('F3',t); hit(t,1);
+draw('#f3s .d',t,.8,.03); up(['#f3a','#f3b'],t+.1,.45,.15);
+tl.fromTo('#f3s',{rotation:-6,transformOrigin:'50% 10%'},{rotation:0,duration:1.4,ease:'elastic.out(1,0.3)',immediateRender:false},t+.5);
+
+// ===== S7 =====
+t=S.s7.start-.05; cue('G1',t); hit(t,1);
+draw('#g1sh .d',t,.6); up('#g1a',t+.05,.45);
+tl.from('#g1btn',{scale:0,duration:.45,ease:B},wt('s7','síganos')-.2); hit(wt('s7','síganos'),.8);
+tl.to('#g1btn',{scale:.92,duration:.08,yoyo:true,repeat:1},wt('s7','datos'));
+tl.from('#g1d',{opacity:0,duration:.5},wt('s7','nadie'));
+tl.to('#stage',{opacity:0,duration:.5},TL.total-.5);
+
+// ---------- shot visibility + continuous camera drift (2nd layer of motion) ----------
+SHOTS.sort((a,b)=>a[1]-b[1]);
+SHOTS.forEach(([id,t0],i)=>{const t1=i+1<SHOTS.length?SHOTS[i+1][1]:TL.total;
+ tl.set('#'+id,{visibility:'visible'},t0); if(i+1<SHOTS.length)tl.set('#'+id,{visibility:'hidden'},t1);
+ const dir=i%3; const from=[{scale:1,x:0,y:0},{scale:1.04,x:0,y:0},{scale:1,x:16,y:0}][dir], to=[{scale:1.06,x:0,y:-10},{scale:1,x:0,y:0},{scale:1.03,x:-16,y:-6}][dir];
+ tl.fromTo('#'+id,from,{...to,duration:t1-t0,ease:'none',immediateRender:false},t0);});
+// light-bg shots switch caption colour
+const LIGHT=['A4','C3'];
+const FBG={A4:'#121212',C3:'#1f4fbf'};
+UPD.push(T=>{let cur=null;for(const [id,t0] of SHOTS){if(T>=t0)cur=id}document.body.classList.toggle('light',LIGHT.includes(cur));$('#fullbg').style.background=FBG[cur]||'transparent'});
+// dust particles (deterministic)
+const dust=$$('#dust i');
+UPD.push(T=>dust.forEach((d,i)=>{const r=Math.sin(i*99.13)*43758.5453;const f=r-Math.floor(r);const x=(f*1080+Math.sin(T*.3+i)*40);const y=((1-((T*(18+i%7*6)+f*1920)/1920)%1))*1920;d.style.transform=`translate(${x}px,${y}px) scale(${.5+(i%4)*.3})`;d.style.opacity=.08+(i%5)*.05}));
+
+// ---------- captions ----------
+const NUM={'doscientos veinticinco':'225','doce':'12','dos mil veintiséis,':'2026,','noventa y uno,':'91,'};
+let words=[];TL.scenes.forEach(s=>s.words.forEach(w=>words.push({...w,sc:s.id})));
+for(const [k,v] of Object.entries(NUM)){const p=k.split(' ');for(let i=0;i+p.length<=words.length;i++){if(p.every((q,j)=>words[i+j].w.toLowerCase()===q)){words.splice(i,p.length,{w:v,s:words[i].s,e:words[i+p.length-1].e,sc:words[i].sc})}}}
+const chunks=[];let cur=[];
+words.forEach((w,i)=>{cur.push(w);const len=cur.map(x=>x.w).join(' ').length;const n=words[i+1];if(/[,.?:]$/.test(w.w)||len>17||!n||n.sc!==w.sc||n.s-w.e>.35){chunks.push(cur);cur=[]}});
+let shown=-1;
+function caps(T){const ci=chunks.findIndex((c,i)=>T>=c[0].s-.08&&T<(chunks[i+1]&&chunks[i+1][0].sc===c[0].sc?chunks[i+1][0].s-.08:c[c.length-1].e+.25));const cap=$('#cap');
+ if(ci!==shown){cap.innerHTML='';if(ci>=0)chunks[ci].forEach(w=>{const s=document.createElement('span');s.textContent=w.w;cap.appendChild(s)});shown=ci}
+ if(ci>=0){[...cap.children].forEach((el,j)=>{const w=chunks[ci][j];el.className=T>=w.s-.04?(T<w.e+.02?'on':'done'):''});const k=Math.min(1,(T-chunks[ci][0].s+.08)/.15);const fit=Math.min(1,880/Math.max(1,[...cap.children].reduce((a,el)=>a+el.offsetWidth+20,-20)));cap.style.opacity=k;cap.style.transform=`translateY(${(1-k)*16}px) scale(${(.96+.04*k)*fit})`}}
+window.seek=T=>{tl.seek(T,false);UPD.forEach(f=>f(T));caps(T)};
+window.TOTAL=TL.total; window.HITS=HITS;
+window.ready=document.fonts.ready.then(()=>true);
+</script></body></html>
