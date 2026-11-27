@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Inter;src:url(fonts/inter.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:Fraunces;src:url(fonts/fraunces.woff2) format('woff2');font-weight:100 900}
+@font-face{font-family:Fraunces;src:url(fonts/fraunces-italic.woff2) format('woff2');font-weight:100 900;font-style:italic}
+@font-face{font-family:Mono;src:url(fonts/mono.woff2) format('woff2');font-weight:100 900}
+:root{--bg:#0d1014;--ink:#f1ece2;--mute:#8b8f97;--line:#2a2f37;--gold:#c9a45c;--gold2:#e2c88f;--card:#151a21}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg)}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;color:var(--ink);font-family:Inter,sans-serif}
+.abs{position:absolute}
+#bg{inset:0;background:radial-gradient(1200px 900px at 50% 38%,#18202a 0%,#0d1014 60%)}
+#glow{width:900px;height:900px;left:90px;top:300px;border-radius:50%;background:radial-gradient(circle,rgba(201,164,92,.10),rgba(201,164,92,0) 65%)}
+#grid{inset:0;opacity:.35;background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:120px 120px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 0%,transparent 70%)}
+#grain{inset:0;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* header */
+#hdr{left:80px;top:150px;display:flex;align-items:center;gap:18px;font:600 26px Mono;letter-spacing:.18em;color:var(--mute)}
+#hdr i{display:block;width:56px;height:2px;background:var(--gold)}
+#prog{left:80px;top:118px;width:920px;height:3px;background:#20252c;border-radius:2px;overflow:hidden}
+#progf{height:100%;width:0;background:var(--gold)}
+/* type */
+.serif{font-family:Fraunces,serif}
+.mono{font-family:Mono,monospace}
+.h1{font:600 96px/1.04 Fraunces;letter-spacing:-.02em}
+.h2{font:500 70px/1.1 Fraunces;letter-spacing:-.01em}
+.lbl{font:600 26px Mono;letter-spacing:.16em;color:var(--mute);text-transform:uppercase}
+.gold{color:var(--gold)}
+.scene{left:0;top:0;width:1080px;height:1920px;opacity:0}
+.card{background:var(--card);border:1px solid #2c323b;border-radius:28px;box-shadow:0 40px 80px rgba(0,0,0,.45)}
+/* s1 calendar */
+.month{width:200px;height:132px;border-radius:20px;border:1px solid #2c323b;background:#141920;display:flex;flex-direction:column;justify-content:space-between;padding:20px 22px}
+.month b{font:600 30px Mono;letter-spacing:.1em;color:var(--ink)}
+.month span{font:600 19px Mono;letter-spacing:.12em;color:var(--gold);opacity:0}
+.month.debt{border-color:rgba(201,164,92,.6)}
+/* captions */
+#cap{left:70px;width:940px;top:1395px;height:200px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:0 20px;text-align:center}
+#cap span{font:700 66px/1.18 Inter;letter-spacing:-.01em;color:var(--ink);opacity:.38;transition:none}
+#cap span.on{opacity:1;color:var(--gold2)}
+#cap span.done{opacity:1}
+.chk{width:62px;height:62px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center}
+.row{display:flex;align-items:center;gap:34px;font:500 48px Inter;color:var(--ink)}
+</style></head><body>
+<div id="stage">
+ <div id="bg" class="abs"></div><div id="grid" class="abs"></div><div id="glow" class="abs"></div>
+ <div id="prog" class="abs"><div id="progf"></div></div>
+ <div id="hdr" class="abs"><i></i>DATO LEGAL · HONDURAS</div>
+
+ <!-- S1 -->
+ <div id="s1" class="scene abs">
+  <div id="s1t" class="abs h1" style="left:80px;top:260px;width:920px">¿Le deben meses<br>de <span class="gold">pensión</span>?</div>
+  <div id="cal" class="abs" style="left:80px;top:560px;width:920px;display:grid;grid-template-columns:repeat(4,200px);gap:40px 40px"></div>
+  <div id="s1b" class="abs" style="left:80px;top:560px;width:920px;opacity:0">
+   <div class="lbl">Honduras · 2026</div>
+   <div class="h1" style="margin-top:34px;font-size:120px">Eso acaba<br>de <em class="gold" style="font-style:italic">cambiar.</em></div>
+   <div id="s1line" style="margin-top:44px;height:3px;width:0;background:var(--gold)"></div>
+  </div>
+ </div>
+
+ <!-- S2 -->
+ <div id="s2" class="scene abs">
+  <div id="s2card" class="abs card" style="left:80px;top:300px;width:920px;height:440px;padding:60px 64px">
+   <div class="lbl">Código de Familia</div>
+   <div class="serif" style="font:600 132px/1 Fraunces;margin-top:28px">Art. <span class="gold">225</span></div>
+   <div style="font:400 40px/1.35 Inter;color:var(--mute);margin-top:34px">Cuotas de pensión no reclamadas</div>
+  </div>
+  <div id="s2tl" class="abs" style="left:80px;top:840px;width:920px;height:300px">
+   <div class="lbl" style="position:absolute;left:0;top:0">Plazo para reclamar</div>
+   <div style="position:absolute;left:0;top:90px;width:920px;height:2px;background:#2a2f37"></div>
+   <div id="s2bar" style="position:absolute;left:0;top:84px;width:0;height:14px;border-radius:7px;background:var(--gold)"></div>
+   <div id="s2yr" class="mono" style="position:absolute;left:0;top:124px;font:600 34px Mono;color:var(--gold);opacity:0">1 AÑO</div>
+   <div id="s2dots" style="position:absolute;left:360px;top:80px;display:flex;gap:46px"></div>
+   <div id="s2lost" style="position:absolute;left:360px;top:130px;font:600 34px Mono;letter-spacing:.06em;color:var(--mute);opacity:0">→ PRESCRIBE · SE PIERDE</div>
+  </div>
+ </div>
+
+ <!-- S3 -->
+ <div id="s3" class="scene abs">
+  <div id="s3card" class="abs card" style="left:80px;top:280px;width:920px;height:470px;padding:56px 64px;background:#f1ece2;color:#14181d;border:none">
+   <div style="display:flex;justify-content:space-between;font:700 26px Mono;letter-spacing:.14em;color:#5a5f66"><span>LA GACETA</span><span>No. 37,166</span></div>
+   <div style="height:2px;background:#14181d;margin:24px 0 34px"></div>
+   <div style="font:600 30px Mono;letter-spacing:.08em;color:#8a6a2c">12 · JUNIO · 2026</div>
+   <div style="font:600 110px/1 Fraunces;margin-top:22px;letter-spacing:-.02em">Decreto<br>91-2026</div>
+  </div>
+  <div id="s3old" class="abs card" style="left:140px;top:850px;width:800px;height:230px;padding:44px 56px">
+   <div class="lbl">Código de Familia</div>
+   <div style="font:600 84px/1 Fraunces;margin-top:22px;color:var(--mute)">Artículo 225</div>
+   <div id="s3strike" style="position:absolute;left:40px;top:150px;height:6px;width:0;background:var(--gold);border-radius:3px"></div>
+  </div>
+  <div id="s3stamp" class="abs" style="left:520px;top:800px;padding:18px 34px;border:5px solid var(--gold);border-radius:12px;color:var(--gold);font:800 54px Mono;letter-spacing:.14em;transform:rotate(-8deg);opacity:0">DEROGADO</div>
+ </div>
+
+ <!-- S4 -->
+ <div id="s4" class="scene abs">
+  <div class="abs lbl" style="left:80px;top:270px">Las pensiones atrasadas</div>
+  <div id="s4a" class="abs card" style="left:80px;top:340px;width:920px;height:190px;padding:40px 56px;opacity:.55">
+   <div class="lbl" style="font-size:22px">Antes</div>
+   <div style="font:600 56px Fraunces;margin-top:14px;color:var(--mute)">Código de Familia · Art. 225</div>
+  </div>
+  <svg id="s4arrow" class="abs" style="left:500px;top:540px" width="80" height="150" viewBox="0 0 80 150"><path id="s4ap" d="M40 5 V130 M18 108 L40 132 L62 108" fill="none" stroke="#c9a45c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div id="s4b" class="abs card" style="left:80px;top:700px;width:920px;height:210px;padding:40px 56px;border-color:var(--gold)">
+   <div class="lbl gold" style="font-size:22px">Ahora</div>
+   <div style="font:600 64px Fraunces;margin-top:14px">Código Civil · <span class="gold">Art. 2289</span></div>
+  </div>
+  <div id="s4cmp" class="abs" style="left:80px;top:990px;width:920px">
+   <div class="lbl" style="font-size:22px">Antes</div>
+   <div style="display:flex;align-items:center;gap:24px;margin-top:14px"><div id="s4b1" style="height:22px;width:0;background:#3a4049;border-radius:11px"></div><span class="mono" style="font:600 30px Mono;color:var(--mute)">1 año</span></div>
+   <div class="lbl gold" style="font-size:22px;margin-top:40px">Ahora</div>
+   <div style="display:flex;align-items:center;gap:24px;margin-top:14px"><div id="s4b2" style="height:22px;width:0;background:var(--gold);border-radius:11px"></div><span id="s4more" class="mono" style="font:600 30px Mono;color:var(--gold);opacity:0">más amplio →</span></div>
+  </div>
+ </div>
+
+ <!-- S5 -->
+ <div id="s5" class="scene abs">
+  <div id="s5q" class="abs serif gold" style="left:70px;top:230px;font:700 300px/1 Fraunces;opacity:0">“</div>
+  <div id="s5txt" class="abs" style="left:80px;top:480px;width:920px;font:italic 400 76px/1.18 Fraunces"></div>
+  <div id="s5att" class="abs" style="left:80px;top:1060px;opacity:0">
+   <div style="width:70px;height:2px;background:var(--gold)"></div>
+   <div class="lbl" style="margin-top:22px">Decreto 91-2026 · Congreso Nacional</div>
+  </div>
+ </div>
+
+ <!-- S6 -->
+ <div id="s6" class="scene abs">
+  <div class="abs lbl" style="left:80px;top:270px">Qué hacer</div>
+  <div id="s6h" class="abs h2" style="left:80px;top:320px;width:920px">Si un juez fijó la pensión, <span class="gold">no se rinda.</span></div>
+  <div id="s6list" class="abs" style="left:80px;top:610px;width:920px;display:flex;flex-direction:column;gap:56px"></div>
+ </div>
+
+ <!-- S7 -->
+ <div id="s7" class="scene abs">
+  <div id="s7a" class="abs h1" style="left:80px;top:420px;width:920px">Comparta este video con quien lo <span class="gold">necesite.</span></div>
+  <div id="s7b" class="abs" style="left:80px;top:860px;display:flex;align-items:center;gap:28px;opacity:0">
+   <div style="width:96px;height:96px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#c9a45c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></div>
+   <div style="font:500 46px/1.25 Inter">Síganos para más datos<br>legales que nadie le cuenta</div>
+  </div>
+  <div id="s7c" class="abs" style="left:80px;top:1190px;width:920px;font:400 28px/1.4 Inter;color:var(--mute);opacity:0">Información general. No sustituye la asesoría de un abogado.</div>
+ </div>
+
+ <div id="cap" class="abs"></div>
+ <div id="grain" class="abs"></div>
+</div>
+<script src="gsap.min.js"></script>
+<script>
+const TL = __TIMELINE__;
+const S = Object.fromEntries(TL.scenes.map(s=>[s.id,s]));
+// word time helper: first word in scene starting with prefix (nth occurrence)
+function wt(id,pre,n=1){const w=S[id].words.filter(x=>x.w.toLowerCase().replace(/[¿?,.¡!]/g,'').startsWith(pre));return (w[n-1]||w[0]||{s:S[id].start}).s}
+const $=q=>document.querySelector(q);
+// build calendar
+const MES=['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'], DEBT=[1,2,4,5,7,8,10];
+MES.forEach((m,i)=>{const d=document.createElement('div');d.className='month'+(DEBT.includes(i)?' debt':'');d.innerHTML=`<b>${m}</b><span>ADEUDADO</span>`;$('#cal').appendChild(d)});
+for(let i=0;i<7;i++){const d=document.createElement('div');d.style.cssText='width:26px;height:26px;border-radius:50%;background:#c9a45c';$('#s2dots').appendChild(d)}
+const ITEMS=['Resolución del juez','Comprobantes de pago','Lista de meses adeudados','Consulte con un abogado'];
+ITEMS.forEach(t=>{const r=document.createElement('div');r.className='row';r.innerHTML=`<div class="chk"><svg width="34" height="34" viewBox="0 0 24 24"><path class="ck" d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#c9a45c" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="24" stroke-dashoffset="24"/></svg></div><span>${t}</span>`;$('#s6list').appendChild(r)});
+const QUOTE='…incompatible con la naturaleza esencial del derecho de alimentos.';
+QUOTE.split(' ').forEach(w=>{const s=document.createElement('span');s.textContent=w+' ';s.style.opacity=0;s.className='qw';$('#s5txt').appendChild(s)});
+
+const tl=gsap.timeline({paused:true});
+const E='power3.out';
+function enter(id){const s=S[id];tl.fromTo('#'+id,{opacity:0,y:40,filter:'blur(8px)'},{opacity:1,y:0,filter:'blur(0px)',duration:.55,ease:E},s.start-.25)}
+function leave(id){const s=S[id];tl.to('#'+id,{opacity:0,y:-30,filter:'blur(8px)',duration:.4,ease:'power2.in'},s.end+.05)}
+// background drift
+tl.fromTo('#glow',{x:-60,y:-20,scale:1},{x:60,y:80,scale:1.15,duration:TL.total,ease:'sine.inOut'},0);
+tl.fromTo('#grid',{backgroundPosition:'0px 0px'},{backgroundPosition:'0px 240px',duration:TL.total,ease:'none'},0);
+tl.fromTo('#progf',{width:'0%'},{width:'100%',duration:TL.total,ease:'none'},0);
+tl.fromTo('#hdr',{opacity:0,x:-20},{opacity:1,x:0,duration:.6,ease:E},.1);
+
+// S1
+enter('s1');
+tl.from('#s1t',{y:50,opacity:0,duration:.7,ease:E},S.s1.start);
+tl.from('#cal .month',{y:40,opacity:0,scale:.92,duration:.5,stagger:.06,ease:E},S.s1.start+.3);
+tl.to('#cal .month.debt span',{opacity:1,duration:.3,stagger:.12},wt('s1','alimenticia'));
+tl.to('#cal .month.debt',{borderColor:'#c9a45c',duration:.3,stagger:.12},wt('s1','alimenticia'));
+tl.to('#cal .month.debt',{opacity:.25,scale:.94,duration:.4,stagger:.05,ease:'power2.in'},wt('s1','perdió'));
+tl.to(['#s1t','#cal'],{opacity:0,y:-40,duration:.4,ease:'power2.in'},wt('s1','eso')-.35);
+tl.fromTo('#s1b',{opacity:0,y:40},{opacity:1,y:0,duration:.55,ease:E},wt('s1','eso')-.05);
+tl.to('#s1line',{width:520,duration:.7,ease:'power2.inOut'},wt('s1','cambiar'));
+leave('s1');
+
+// S2
+enter('s2');
+tl.from('#s2card',{y:60,opacity:0,duration:.6,ease:E},S.s2.start);
+tl.from('#s2tl',{opacity:0,duration:.4},wt('s2','cuotas')-.3);
+tl.to('#s2bar',{width:330,duration:1.2,ease:'power2.inOut'},wt('s2','reclamaba'));
+tl.to('#s2yr',{opacity:1,duration:.3},wt('s2','año'));
+tl.from('#s2dots div',{scale:0,duration:.3,stagger:.06,ease:'back.out(2)'},wt('s2','año')+.2);
+tl.to('#s2lost',{opacity:1,duration:.4},wt('s2','prescribían'));
+tl.to('#s2dots div',{y:60,opacity:0,duration:.5,stagger:.07,ease:'power2.in'},wt('s2','perdían')-.2);
+leave('s2');
+
+// S3
+enter('s3');
+tl.from('#s3card',{y:80,rotation:-2,opacity:0,duration:.7,ease:E},S.s3.start);
+tl.from('#s3old',{y:50,opacity:0,duration:.5,ease:E},wt('s3','decreto')+.2);
+tl.to('#s3strike',{width:720,duration:.45,ease:'power2.inOut'},wt('s3','derogó'));
+tl.fromTo('#s3stamp',{opacity:0,scale:1.8},{opacity:1,scale:1,duration:.35,ease:'back.out(1.6)'},wt('s3','derogó')+.25);
+tl.to('#s3old',{opacity:.45,duration:.4},wt('s3','derogó')+.3);
+leave('s3');
+
+// S4
+enter('s4');
+tl.from('#s4a',{y:40,opacity:0,duration:.5,ease:E},S.s4.start);
+tl.fromTo('#s4ap',{strokeDasharray:200,strokeDashoffset:200},{strokeDashoffset:0,duration:.6,ease:'power2.inOut'},wt('s4','rigen')-.3);
+tl.from('#s4b',{y:40,opacity:0,duration:.55,ease:E},wt('s4','código'));
+tl.from('#s4cmp',{opacity:0,duration:.3},wt('s4','plazos')-.4);
+tl.to('#s4b1',{width:180,duration:.6,ease:'power2.out'},wt('s4','plazos')-.3);
+tl.to('#s4b2',{width:620,duration:1.3,ease:'power2.out'},wt('s4','amplios')-.4);
+tl.to('#s4more',{opacity:1,duration:.4},wt('s4','cobrar'));
+leave('s4');
+
+// S5
+enter('s5');
+tl.fromTo('#s5q',{opacity:0,y:30},{opacity:1,y:0,duration:.6,ease:E},S.s5.start);
+tl.to('#s5txt .qw',{opacity:1,duration:.25,stagger:.11},wt('s5','incompatible')-.15);
+tl.to('#s5att',{opacity:1,duration:.5},wt('s5','alimentos'));
+leave('s5');
+
+// S6
+enter('s6');
+tl.from('#s6h',{y:40,opacity:0,duration:.6,ease:E},S.s6.start);
+const r=document.querySelectorAll('#s6list .row');
+const keys=[['resolución'],['comprobantes'],['lista'],['consulte']];
+r.forEach((row,i)=>{const t=wt('s6',keys[i][0])-.15;tl.from(row,{x:-40,opacity:0,duration:.45,ease:E},t);tl.to(row.querySelector('.ck'),{strokeDashoffset:0,duration:.4,ease:'power2.out'},t+.2)});
+leave('s6');
+
+// S7
+enter('s7');
+tl.from('#s7a',{y:50,opacity:0,duration:.6,ease:E},S.s7.start);
+tl.fromTo('#s7b',{opacity:0,y:30},{opacity:1,y:0,duration:.5,ease:E},wt('s7','síganos')-.2);
+tl.to('#s7c',{opacity:1,duration:.5},wt('s7','nadie'));
+tl.to('#stage',{opacity:0,duration:.6},TL.total-.6);
+
+// captions: group words into chunks
+const NUM={'doscientos veinticinco':'225','doce':'12','dos mil veintiséis,':'2026,','noventa y uno,':'91,'};
+let words=[];TL.scenes.forEach(s=>s.words.forEach(w=>words.push({...w,sc:s.id})));
+// merge number phrases
+for(const [k,v] of Object.entries(NUM)){const parts=k.split(' ');for(let i=0;i+parts.length<=words.length;i++){if(parts.every((p,j)=>words[i+j].w.toLowerCase()===p)){words.splice(i,parts.length,{w:v,s:words[i].s,e:words[i+parts.length-1].e,sc:words[i].sc})}}}
+const chunks=[];let cur=[];
+words.forEach((w,i)=>{cur.push(w);const len=cur.map(x=>x.w).join(' ').length;const nxt=words[i+1];const brk=/[,.?]$/.test(w.w)||len>17||!nxt||nxt.sc!==w.sc||nxt.s-w.e>.35;if(brk){chunks.push(cur);cur=[]}});
+let shown=-1;
+function caps(t){let ci=chunks.findIndex((c,i)=>t>=c[0].s-.08&&t<(chunks[i+1]&&chunks[i+1][0].sc===c[0].sc?chunks[i+1][0].s-.08:c[c.length-1].e+.25));
+ const cap=$('#cap');
+ if(ci!==shown){cap.innerHTML='';if(ci>=0)chunks[ci].forEach(w=>{const s=document.createElement('span');s.textContent=w.w;cap.appendChild(s)});shown=ci}
+ if(ci>=0){[...cap.children].forEach((el,j)=>{const w=chunks[ci][j];el.className=t>=w.s-.04?(t<w.e+.02?'on':'done'):''});
+  const c0=chunks[ci][0].s;const k=Math.min(1,(t-c0+.08)/.18);cap.style.opacity=k;cap.style.transform=`translateY(${(1-k)*14}px)`}
+}
+window.seek=t=>{tl.seek(t,false);caps(t)};
+window.TOTAL=TL.total;
+window.ready=document.fonts.ready.then(()=>true);
+</script></body></html>
