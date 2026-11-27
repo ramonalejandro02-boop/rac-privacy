@@ -311,7 +311,8 @@ def dibujar_prop(cv, p, u, d, cache):
     if key not in cache:
         cache[key] = a_bgra(texto_pil(p["emoji"], px, stroke=None, sw=0))
     im = cache[key]
-    sx_, sy_ = seguro(p.get("x", 0.5), p.get("y", 0.5), ymin=0.26, ymax=0.64)
+    sx_, sy_ = (p.get("x", 0.5), p.get("y", 0.5)) if p.get("libre") else \
+        seguro(p.get("x", 0.5), p.get("y", 0.5), ymin=0.26, ymax=0.64)
     tx, ty = sx_ * W, sy_ * H
     anim = p.get("anim", "pulso")
     sal = max(0.0, 1 - (d - p.get("t", 0) - u) / 0.15)
@@ -346,6 +347,82 @@ def dibujar_prop(cv, p, u, d, cache):
 # Render de una escena
 # --------------------------------------------------------------------------
 _contador_escena = [0]
+
+
+def render_pausa(base, seg, salida, tmp, idx, claves, catalogo):
+    """Formato split: congela el clip en el segundo `pausa`, el creador comenta con su voz
+    (arriba se le ve hablando), emojis y sticker en la franja de abajo, zoom suave al clip."""
+    from reaccion import Reaccion
+    vo = voz_en_off(seg["voz"], os.path.join(tmp, f"vo{idx}.wav"), seg.get("velocidad", 0.85))
+    t_vo = 0.2
+    d = t_vo + len(vo) / SR + 0.3
+    n = int(d * FPS)
+    cap = cv2.VideoCapture(base)
+    cap.set(cv2.CAP_PROP_POS_MSEC, max(0.0, seg["pausa"] - 0.05) * 1000)
+    ok, congelado = cap.read()
+    cap.release()
+    est = ESTILOS[efectos.TEMA["base"]] if efectos.TEMA else ESTILOS["noche"]
+    fondo = FondoAnimado(W, H, est, seed=idx)
+    reac_y0, reac_h = int(0.105 * H), int(0.255 * H)
+    py0, py1, band = int(0.366 * H), int(0.66 * H), int(0.66 * H)
+    reac = Reaccion(catalogo, W, reac_h)
+    ev = [dict(t=0, tipo="habla", dur=d, version=idx)]
+    texto = a_bgra(sticker_pil(seg["texto"], 62, seg.get("fondo", "#FFE600"), seg.get("color", "#111111"),
+                               rot=seg.get("rot", -2), max_w=1000)) if seg.get("texto") else None
+    subs = Subs(palabras_vo(seg["voz"], vo, t_vo), claves + seg.get("claves", []), est["palabra"],
+                y=0.75, x=0.5, ancho=0.86)
+    lados = [(0.09, 0.70), (0.91, 0.70), (0.09, 0.77), (0.91, 0.77)]
+    props = []
+    for j, p in enumerate(seg.get("props", [])[:4]):
+        x, y = lados[j]
+        props.append(dict(p, x=x, y=y, size=min(p.get("size", 150), 125), libre=True,
+                          anim=p.get("anim") if p.get("anim") in ("pulso", "crece", "rebote") else "pulso"))
+    cache = {}
+    enc = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}",
+                            "-r", str(FPS), "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "19",
+                            "-pix_fmt", "yuv420p", os.path.join(tmp, f"pausa{idx}.mp4")], stdin=subprocess.PIPE)
+    clip = congelado[py0:py1].astype(np.float32)
+    for i in range(n):
+        u = i / FPS
+        cv = congelado.copy()
+        # clip congelado: zoom suave y un poco más oscuro (se nota que está en pausa)
+        z = 1.0 + 0.06 * ease_io(u / d)
+        h, w = clip.shape[:2]
+        M = cv2.getRotationMatrix2D((w / 2, h * 0.45), 0, z)
+        zc = cv2.warpAffine(clip, M, (w, h), borderMode=cv2.BORDER_REFLECT) * 0.82
+        cv[py0:py1] = np.clip(zc, 0, 255).astype(np.uint8)
+        cv[reac_y0:reac_y0 + reac_h] = reac.cuadro(u, ev)
+        cv[band:] = fondo.frame(u, 0.5)[band:]
+        for p in props:
+            dibujar_prop(cv, p, u, d, cache)
+        if texto is not None:
+            superponer(cv, texto, W / 2, 0.702 * H, ease_back((u - 0.05) / 0.3))
+        subs.dibujar(cv, u)
+        if u < 0.1:                                     # micro-flash al congelar
+            cv = cv2.addWeighted(cv, 0.6, np.full_like(cv, 255), 0.4, 0)
+        enc.stdin.write(cv.tobytes())
+    enc.stdin.close()
+    enc.wait()
+    pista = np.zeros(int((d + 1) * SR), np.float32)
+    a = int(t_vo * SR)
+    pista[a:a + len(vo)] += vo[:len(pista) - a]
+    for p in seg.get("props", []):
+        if p.get("sfx"):
+            y = sintetizar(p["sfx"]) * 0.35 * p.get("vol", 1.0)
+            b0 = int(p.get("t", 0) * SR)
+            pista[b0:b0 + len(y)] += y[:len(pista) - b0]
+    pista = np.clip(pista[:int(d * SR)], -1, 1)
+    aw = os.path.join(tmp, f"pausa{idx}.wav")
+    with wave.open(aw, "w") as wv:
+        wv.setnchannels(1)
+        wv.setsampwidth(2)
+        wv.setframerate(SR)
+        wv.writeframes((pista * 32767).astype(np.int16).tobytes())
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", os.path.join(tmp, f"pausa{idx}.mp4"), "-i", aw,
+                    "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-ar", str(SR), "-ac", "2", "-shortest", salida],
+                   check=True)
+    log(f"  pausa {idx} en {seg['pausa']:.1f}s: {d:.1f}s  «{seg['voz']}»")
+    return d
 
 
 def render_escena(src, esc, salida, tmp, idx, claves, subs_x=0.5, subs_ancho=0.92):
@@ -533,6 +610,11 @@ def main():
                             "-c:a", "aac", "-b:a", "192k", "-ar", str(SR), "-ac", "2", out], check=True)
             tramos.append(dict(a=total, b=total + (b - a), modo="esquina", habla=False))
             total += b - a
+        elif "pausa" in seg:
+            cfgp = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
+            cat = plan["base"].get("catalogo_reaccion") or (json.load(open(cfgp)) if os.path.exists(cfgp) else {}).get("reaccion")
+            d = render_pausa(base, seg, out, tmp, k, claves, cat)
+            total += d
         else:
             d = render_escena(args.entrada, seg, out, tmp, k, claves, sx, sa)
             modo = seg.get("presentador", "esquina")

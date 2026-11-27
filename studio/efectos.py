@@ -649,7 +649,12 @@ def main():
         # línea de color animada y el clip hasta el borde de abajo.
         # Clip en el CENTRO de la pantalla; debajo, una franja de motion graphics donde van
         # subtítulos, stickers y emojis (así nunca tapan caras). Arriba y abajo, fondo animado.
-        plan.setdefault("panel_ancho", W)
+        # Anti-pixelado: el clip se agranda como máximo ~1.3x. Si la ventana visible del clip es
+        # más angosta que la pantalla, el recuadro se angosta y los costados quedan animados.
+        alto_panel = int((0.66 - 0.366) * H)
+        ventana_w = min(sw, sh * W / alto_panel)       # ancho de fuente visible a ancho completo
+        max_esc = plan.get("max_escala", 1.3)
+        plan.setdefault("panel_ancho", int(min(W, ventana_w * max_esc)) // 2 * 2)
         plan.setdefault("panel_y", 0.366 * H)
         plan.setdefault("panel_abajo", 0.66)
         plan.setdefault("panel_alto", 0.66 - 0.366)
@@ -681,7 +686,7 @@ def main():
     if ph > ph_max:
         ph = ph_max            # se mantiene el ancho completo: se recorta arriba/abajo siguiendo el zoom
     px0, py0 = (W - pw) // 2, int(plan.get("panel_y", 0.225 * H))
-    radio = 0 if split else 38
+    radio = (0 if pw >= W else 30) if split else 38
     mask = np.zeros((ph, pw), np.uint8)
     cv2.rectangle(mask, (radio, 0), (pw - radio, ph), 255, -1)
     cv2.rectangle(mask, (0, radio), (pw, ph - radio), 255, -1)
