@@ -1,0 +1,238 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "recorte_fuente": [
+   0.095,
+   0.05,
+   0.975,
+   0.97
+  ],
+  "tapar": [
+   [
+    0.09,
+    0.77,
+    0.46,
+    0.93
+   ],
+   [
+    0.29,
+    0.76,
+    0.66,
+    0.94
+   ]
+  ],
+  "titulo": "ALONDRA SE DUERME DONDE LA PONGAN 😴",
+  "claves": [
+   "dormida",
+   "alondra",
+   "duerme",
+   "seleccionar",
+   "mentir"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 41.0,
+    "x": 0.5,
+    "y": 0.5,
+    "s": 1.0
+   },
+   {
+    "t": 31.0,
+    "tipo": "zoom",
+    "dur": 2.6,
+    "x": 0.45,
+    "y": 0.55,
+    "s": 1.15,
+    "rampa": 0.12
+   },
+   {
+    "t": 17.0,
+    "tipo": "zoom",
+    "dur": 1.6,
+    "x": 0.5,
+    "y": 0.5,
+    "s": 1.1,
+    "rampa": 0.1
+   },
+   {
+    "t": 31.6,
+    "tipo": "sticker",
+    "texto": "SE DUERME DONDE LA PONGAN 😴",
+    "fondo": "#FFE600",
+    "dur": 2.0,
+    "sfx": "pop",
+    "vol": 0.4
+   },
+   {
+    "t": 26.0,
+    "tipo": "emoji",
+    "emoji": "😴",
+    "x": 0.1,
+    "dur": 1.6
+   },
+   {
+    "t": 15.0,
+    "tipo": "emoji",
+    "emoji": "🤔",
+    "x": 0.9,
+    "dur": 1.4,
+    "sfx": "boing",
+    "vol": 0.3
+   },
+   {
+    "t": 17.0,
+    "tipo": "sticker",
+    "texto": "\"Y LUEGO TIRA PA' AHÍ\" 🔄",
+    "fondo": "#FF3FA4",
+    "color": "#FFFFFF",
+    "dur": 1.8,
+    "sfx": "pop",
+    "vol": 0.35
+   },
+   {
+    "t": 36.5,
+    "tipo": "emoji",
+    "emoji": "💤",
+    "x": 0.9,
+    "dur": 1.6,
+    "sfx": "boing",
+    "vol": 0.3
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 5.95,
+    "tipo": "risa",
+    "dur": 1.0
+   },
+   {
+    "t": 13.75,
+    "tipo": "mira",
+    "dur": 1.0
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    30.7,
+    33.8
+   ]
+  },
+  {
+   "pausa": 33.75,
+   "texto": "SUPERPODER DESBLOQUEADO 💤",
+   "fondo": "#FFE600",
+   "voz": "Ese es el superpoder que todos queremos. En el sofá, en la guagua, en una boda con perico ripiao a todo volumen. Donde la pongan.",
+   "claves": [
+    "superpoder",
+    "guagua",
+    "boda"
+   ],
+   "props": [
+    {
+     "emoji": "🛋️",
+     "anim": "rebote",
+     "t": 0.4
+    },
+    {
+     "emoji": "🚌",
+     "anim": "crece",
+     "t": 2.4
+    },
+    {
+     "emoji": "💃",
+     "anim": "pulso",
+     "t": 4.4,
+     "sfx": "ding",
+     "vol": 0.35
+    }
+   ]
+  },
+  {
+   "orig": [
+    0.0,
+    8.7
+   ]
+  },
+  {
+   "orig": [
+    9.8,
+    20.8
+   ]
+  },
+  {
+   "pausa": 20.75,
+   "texto": "NI VA NI VIENE 🔄",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Ese no sabe si va o si viene. Es como el motoconcho que te dice ya voy llegando, y todavía está en su casa poniéndose los tenis.",
+   "claves": [
+    "motoconcho",
+    "llegando",
+    "tenis"
+   ],
+   "props": [
+    {
+     "emoji": "🛵",
+     "anim": "crece",
+     "t": 0.4
+    },
+    {
+     "emoji": "👟",
+     "anim": "rebote",
+     "t": 3.6,
+     "sfx": "boing",
+     "vol": 0.35
+    }
+   ]
+  },
+  {
+   "orig": [
+    22.7,
+    30.7
+   ]
+  },
+  {
+   "orig": [
+    33.8,
+    40.8
+   ]
+  },
+  {
+   "pausa": 40.75,
+   "texto": "LA QUE VA A GANAR 🏆😴",
+   "fondo": "#FFFFFF",
+   "voz": "Mientras todos discuten, Alondra en su quinto sueño. Esa va a llegar a la final descansadita. ¿Y tú, te duermes donde sea? Déjalo en los comentarios.",
+   "claves": [
+    "alondra",
+    "final",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "😴",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "🏆",
+     "anim": "crece",
+     "t": 2.6,
+     "sfx": "ding",
+     "vol": 0.35
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "t": 6.0
+    }
+   ]
+  }
+ ]
+}
