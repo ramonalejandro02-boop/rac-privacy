@@ -39,7 +39,7 @@ W, H = 1080, 1920
 SR = 44100
 
 # Geometría del formato split (compartida con montaje.py)
-SPLIT = dict(reac_y0=0.07, reac_h=0.31, panel_y=0.395, titulo_y=0.392, sticker_y=0.705, subs_y=0.765)
+SPLIT = dict(reac_y0=0.0, reac_h=0.39, panel_y=0.39, titulo_y=0.389, sticker_y=0.705, subs_y=0.765)
 
 # Zona segura de Facebook/Instagram Reels (medida en capturas reales):
 # arriba: hora + flecha + lupa + menú; derecha: 👍 💬 ↗ 🔖 (desde ~56% de alto);
