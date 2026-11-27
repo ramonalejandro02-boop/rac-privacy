@@ -1,0 +1,312 @@
+{
+ "tema": "auto",
+ "quitar_silencios": true,
+ "sfx_transiciones": false,
+ "base": {
+  "formato": "split",
+  "tapar": [
+   [
+    0.08,
+    0.645,
+    0.92,
+    0.735
+   ]
+  ],
+  "claves": [
+   "bandera",
+   "tricolor",
+   "colores",
+   "cuatro",
+   "inteligente",
+   "soplar",
+   "verde",
+   "escudo"
+  ],
+  "eventos": [
+   {
+    "t": 0.0,
+    "tipo": "zoom",
+    "dur": 88.5,
+    "x": 0.5,
+    "y": 0.38,
+    "s": 1.0
+   },
+   {
+    "t": 61.4,
+    "tipo": "zoom",
+    "dur": 1.5,
+    "x": 0.5,
+    "y": 0.36,
+    "s": 1.12,
+    "rampa": 0.12
+   },
+   {
+    "t": 16.5,
+    "tipo": "zoom",
+    "dur": 0.9,
+    "x": 0.5,
+    "y": 0.36,
+    "s": 1.1,
+    "rampa": 0.1
+   },
+   {
+    "t": 73.5,
+    "tipo": "zoom",
+    "dur": 1.3,
+    "x": 0.5,
+    "y": 0.36,
+    "s": 1.12,
+    "rampa": 0.12
+   },
+   {
+    "t": 11.9,
+    "tipo": "sticker",
+    "texto": "⏪ DESDE EL PRINCIPIO",
+    "fondo": "#FFFFFF",
+    "dur": 1.4,
+    "sfx": "scratch",
+    "vol": 0.4,
+    "size": 60
+   },
+   {
+    "t": 19.6,
+    "tipo": "emoji",
+    "emoji": "🇩🇴",
+    "x": 0.9,
+    "size": 120,
+    "dur": 2.0
+   },
+   {
+    "t": 43.9,
+    "tipo": "sticker",
+    "texto": "¿¿ASOPLARON?? 😂",
+    "fondo": "#FFE600",
+    "dur": 1.6,
+    "size": 62
+   },
+   {
+    "t": 68.8,
+    "tipo": "emoji",
+    "emoji": "🟦",
+    "x": 0.1,
+    "dur": 1.2
+   },
+   {
+    "t": 70.6,
+    "tipo": "emoji",
+    "emoji": "🟥",
+    "x": 0.9,
+    "dur": 1.2
+   },
+   {
+    "t": 72.3,
+    "tipo": "emoji",
+    "emoji": "⬜",
+    "x": 0.1,
+    "dur": 1.2
+   },
+   {
+    "t": 73.7,
+    "tipo": "emoji",
+    "emoji": "🟩",
+    "x": 0.9,
+    "dur": 1.3
+   }
+  ],
+  "reacciones": [
+   {
+    "t": 24.4,
+    "tipo": "risa",
+    "dur": 1.0
+   },
+   {
+    "t": 50.6,
+    "tipo": "que_loco",
+    "dur": 1.2
+   },
+   {
+    "t": 83.45,
+    "tipo": "risa",
+    "dur": 1.4
+   }
+  ]
+ },
+ "secuencia": [
+  {
+   "orig": [
+    55.2,
+    62.9
+   ]
+  },
+  {
+   "pausa": 62.85,
+   "texto": "¿4 COLORES? ¿TRI-COLOR? 🤔🇩🇴",
+   "fondo": "#FFE600",
+   "voz": "¿Cuatro colores, en una bandera tricolor? Mi loco, el nombre ya te da la respuesta.",
+   "claves": [
+    "tricolor",
+    "nombre"
+   ],
+   "props": [
+    {
+     "emoji": "🤔",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "🇩🇴",
+     "anim": "crece",
+     "t": 1.0
+    },
+    {
+     "emoji": "3️⃣",
+     "anim": "rebote",
+     "t": 2.2,
+     "sfx": "pop",
+     "vol": 0.5
+    }
+   ]
+  },
+  {
+   "orig": [
+    11.8,
+    17.3
+   ]
+  },
+  {
+   "pausa": 17.25,
+   "texto": "\"OBVIO\" 😎",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "Obvio, dice. Con esa seguridad, agárrense que esto se pone bueno.",
+   "claves": [
+    "obvio",
+    "seguridad"
+   ],
+   "props": [
+    {
+     "emoji": "😎",
+     "anim": "crece",
+     "t": 0.3
+    },
+    {
+     "emoji": "🧠",
+     "anim": "pulso",
+     "t": 1.4
+    },
+    {
+     "emoji": "🍿",
+     "anim": "rebote",
+     "t": 2.4
+    }
+   ]
+  },
+  {
+   "orig": [
+    18.4,
+    45.1
+   ]
+  },
+  {
+   "pausa": 45.05,
+   "texto": "CLASE DE ESPAÑOL GRATIS 📚",
+   "fondo": "#FFFFFF",
+   "voz": "Y de paso, clase de español gratis. No es asoplar, es soplar.",
+   "claves": [
+    "español",
+    "soplar"
+   ],
+   "props": [
+    {
+     "emoji": "📚",
+     "anim": "crece",
+     "t": 0.3
+    },
+    {
+     "emoji": "✏️",
+     "anim": "pulso",
+     "t": 1.6
+    }
+   ]
+  },
+  {
+   "orig": [
+    45.1,
+    54.1
+   ]
+  },
+  {
+   "orig": [
+    63.2,
+    75.0
+   ]
+  },
+  {
+   "pausa": 74.95,
+   "texto": "¿¿VERDE?? 🟩😭",
+   "fondo": "#FF3FA4",
+   "color": "#FFFFFF",
+   "voz": "¿Verde? Mi hermano, la bandera dominicana es azul, blanco y rojo. Tres colores. Por eso se llama tricolor.",
+   "claves": [
+    "verde",
+    "azul",
+    "blanco",
+    "rojo",
+    "tricolor"
+   ],
+   "props": [
+    {
+     "emoji": "🟩",
+     "anim": "pulso",
+     "t": 0.3
+    },
+    {
+     "emoji": "❌",
+     "anim": "crece",
+     "t": 1.0,
+     "sfx": "pop",
+     "vol": 0.5
+    },
+    {
+     "emoji": "🇩🇴",
+     "anim": "rebote",
+     "t": 2.8
+    }
+   ]
+  },
+  {
+   "orig": [
+    79.4,
+    84.9
+   ]
+  },
+  {
+   "pausa": 84.85,
+   "texto": "¿LE DAS LOS PUNTOS? 👇",
+   "fondo": "#FFE600",
+   "voz": "Y la salvó con la ramita del escudo. ¿Tú le darías los puntos? Déjalo en los comentarios.",
+   "claves": [
+    "escudo",
+    "puntos",
+    "comentarios"
+   ],
+   "props": [
+    {
+     "emoji": "🌿",
+     "anim": "crece",
+     "t": 0.3
+    },
+    {
+     "emoji": "✅",
+     "anim": "pulso",
+     "t": 2.0
+    },
+    {
+     "emoji": "👇",
+     "anim": "rebote",
+     "t": 3.6
+    }
+   ]
+  }
+ ]
+}
