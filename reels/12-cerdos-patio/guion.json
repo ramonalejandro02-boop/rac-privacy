@@ -1,0 +1,21 @@
+{
+  "titulo": "Cría cerdos en pleno barrio",
+  "lead": 0.4,
+  "tail": 3.4,
+  "music": 0.09,
+  "whoosh": [],
+  "segments": [
+    {"scene": "hook", "text": "Don Tino cría cerdos en el patio. Y ahora, toda la cuadra huele a chiquero.", "pause": 0.2},
+    {"scene": "problemas", "text": "Moscas por todos lados, mal olor, y el agua sucia del corral baja directo a la calle.", "pause": 0.25},
+    {"scene": "pleito", "who": "chabela", "voice": "ef_dora", "text": "¡Ya no aguantamos ese olor! Ni las ventanas podemos abrir, y mis hijos viven enfermos.", "pause": 0.2},
+    {"scene": "pleito", "who": "tino", "voice": "em_santa", "text": "Esos cerdos son mi ahorro. Mi papá siempre crió animales aquí, y nadie se quejaba.", "pause": 0.3},
+    {"scene": "tension", "text": "Para él, es su sustento y su costumbre. Para ella, es la salud de sus hijos.", "pause": 0.3},
+    {"scene": "saber", "text": "Criar animales no es un delito. Pero el corral debe estar limpio, y las aguas sucias no pueden ir a la calle: son un riesgo de salud para todos.", "pause": 0.3},
+    {"scene": "mito", "text": "Pero amenazarlo, o exhibirlo en redes sociales, solo empeora el pleito.", "pause": 0.3},
+    {"scene": "pasos", "text": "Lo que funciona: primero, hablar con calma y proponer limpieza diaria y un corral lejos de las casas.", "pause": 0.2},
+    {"scene": "pasos", "text": "Segundo, llevar el tema al patronato, para acordar reglas de salud en el barrio.", "pause": 0.2},
+    {"scene": "pasos", "text": "Y tercero, buscar orientación en CONAFEPH antes de que el conflicto crezca.", "say": "Y tercero, buscar orientación en Conafép antes de que el conflicto crezca.", "pause": 0.3},
+    {"scene": "final", "text": "Un barrio sano se construye entre todos.", "pause": 0.35},
+    {"scene": "cierre", "text": "CONAFEPH: orientación para patronatos y comunidades.", "say": "Conafép: orientación para patronatos y comunidades."}
+  ]
+}
