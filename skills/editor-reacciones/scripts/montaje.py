@@ -357,8 +357,8 @@ def ancho_panel_split(src, base_plan):
     rf = base_plan.get("recorte_fuente")
     if rf:
         sw, sh = sw * (rf[2] - rf[0]), sh * (rf[3] - rf[1])
-    alto = int((0.66 - 0.366) * H)
-    return int(min(W, min(sw, sh * W / alto) * base_plan.get("max_escala", 1.3))) // 2 * 2
+    alto = int((1.0 - efectos.SPLIT["panel_y"]) * H)
+    return int(min(W, min(sw, sh * W / alto) * base_plan.get("max_escala", 1.5))) // 2 * 2
 
 
 def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
@@ -375,20 +375,24 @@ def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
     cap.release()
     est = ESTILOS[efectos.TEMA["base"]] if efectos.TEMA else ESTILOS["noche"]
     fondo = FondoAnimado(W, H, est, seed=idx)
-    reac_y0, reac_h = int(0.105 * H), int(0.255 * H)
-    py0, py1, band = int(0.366 * H), int(0.66 * H), int(0.66 * H)
+    G = efectos.SPLIT
+    reac_y0, reac_h = int(G["reac_y0"] * H), int(G["reac_h"] * H)
+    py0, py1 = int(G["panel_y"] * H), H
+    t0, t1 = int((G["titulo_y"] - 0.035) * H), int((G["titulo_y"] + 0.035) * H)
     reac = Reaccion(catalogo, W, reac_h)
     ev = [dict(t=0, tipo="habla", dur=d, version=idx)]
     texto = a_bgra(sticker_pil(seg["texto"], 62, seg.get("fondo", "#FFE600"), seg.get("color", "#111111"),
                                rot=seg.get("rot", -2), max_w=820)) if seg.get("texto") else None
     subs = Subs(palabras_vo(seg["voz"], vo, t_vo), claves + seg.get("claves", []), est["palabra"],
-                y=0.75, x=0.5, ancho=0.86)
-    if panel_w < W - 200:                               # emojis en los márgenes al lado del clip
-        lados = [(0.078, 0.43), (0.922, 0.43), (0.078, 0.57), (0.922, 0.57)]
-        tam = min(125, (W - panel_w) // 2 - 20)
-    else:                                               # clip a todo lo ancho: a los lados de la franja
-        lados = [(0.075, 0.80), (0.925, 0.80), (0.075, 0.86), (0.925, 0.86)]
-        tam = 100
+                px=72, y=G["subs_y"], x=0.5, ancho=0.86)
+    margen = (W - panel_w) / 2
+    if margen > 80:                                     # sobre el relleno desenfocado, al lado del clip
+        mx = (margen / 2) / W
+        lados = [(mx, 0.48), (1 - mx, 0.48), (mx, 0.60), (1 - mx, 0.60)]
+        tam = int(min(115, margen - 16))
+    else:                                               # clip a todo lo ancho: bordes, media altura
+        lados = [(0.08, 0.50), (0.92, 0.50), (0.08, 0.62), (0.92, 0.62)]
+        tam = 95
     props = []
     for j, p in enumerate(seg.get("props", [])[:4]):
         x, y = lados[j]
@@ -408,12 +412,12 @@ def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
         M = cv2.getRotationMatrix2D((w / 2, h * 0.45), 0, z)
         zc = cv2.warpAffine(clip, M, (w, h), borderMode=cv2.BORDER_REFLECT) * 0.82
         cv[py0:py1] = np.clip(zc, 0, 255).astype(np.uint8)
+        cv[t0:t1] = congelado[t0:t1]                    # la banda del título queda fija
         cv[reac_y0:reac_y0 + reac_h] = reac.cuadro(u, ev)
-        cv[band:] = fondo.frame(u, 0.5)[band:]
         for p in props:
             dibujar_prop(cv, p, u, d, cache)
         if texto is not None:
-            superponer(cv, texto, W / 2, 0.702 * H, ease_back((u - 0.05) / 0.3))
+            superponer(cv, texto, W / 2, G["sticker_y"] * H, ease_back((u - 0.05) / 0.3))
         subs.dibujar(cv, u)
         if u < 0.1:                                     # micro-flash al congelar
             cv = cv2.addWeighted(cv, 0.6, np.full_like(cv, 255), 0.4, 0)
@@ -576,6 +580,7 @@ def main():
         args.palabras = os.path.join(tmp, "palabras_con_vo.json")
         json.dump(palabras, open(args.palabras, "w"), ensure_ascii=False)
 
+    plan["base"]["pausas"] = [sg["pausa"] for sg in plan["secuencia"] if "pausa" in sg]
     base = args.base
     if not base:
         base = os.path.join(tmp, "base.mp4")

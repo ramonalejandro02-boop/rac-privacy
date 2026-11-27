@@ -38,6 +38,9 @@ EMOJI_FONT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "
 W, H = 1080, 1920
 SR = 44100
 
+# Geometría del formato split (compartida con montaje.py)
+SPLIT = dict(reac_y0=0.07, reac_h=0.31, panel_y=0.395, titulo_y=0.392, sticker_y=0.705, subs_y=0.765)
+
 # Zona segura de Facebook/Instagram Reels (medida en capturas reales):
 # arriba: hora + flecha + lupa + menú; derecha: 👍 💬 ↗ 🔖 (desde ~56% de alto);
 # abajo: nombre de la página, fecha y descripción (desde ~80%).
@@ -651,34 +654,41 @@ def main():
         # subtítulos, stickers y emojis (así nunca tapan caras). Arriba y abajo, fondo animado.
         # Anti-pixelado: el clip se agranda como máximo ~1.3x. Si la ventana visible del clip es
         # más angosta que la pantalla, el recuadro se angosta y los costados quedan animados.
-        alto_panel = int((0.66 - 0.366) * H)
-        ventana_w = min(sw, sh * W / alto_panel)       # ancho de fuente visible a ancho completo
-        max_esc = plan.get("max_escala", 1.3)
+        # Diseño tipo "reacción": creador grande arriba, banda con el título en la unión,
+        # clip grande hasta abajo. Si el clip es angosto, los costados llevan el mismo clip
+        # desenfocado (sin espacio muerto). Anti-pixelado: máximo ~1.5x.
+        alto_panel = int((1.0 - SPLIT["panel_y"]) * H)
+        ventana_w = min(sw, sh * W / alto_panel)
+        max_esc = plan.get("max_escala", 1.5)
         plan.setdefault("panel_ancho", int(min(W, ventana_w * max_esc)) // 2 * 2)
-        plan.setdefault("panel_y", 0.366 * H)
-        plan.setdefault("panel_abajo", 0.66)
-        plan.setdefault("panel_alto", 0.66 - 0.366)
+        plan.setdefault("panel_y", SPLIT["panel_y"] * H)
+        plan.setdefault("panel_abajo", 1.0)
+        plan.setdefault("panel_alto", 1.0 - SPLIT["panel_y"])
         plan.setdefault("subs_x", 0.5)
         plan.setdefault("subs_ancho", 0.86)
-        plan.setdefault("subs_y", 0.75)
+        plan.setdefault("subs_y", SPLIT["subs_y"])
+        plan.setdefault("subs_px", 72)
+        plan.setdefault("titulo_y", SPLIT["titulo_y"])
         for ev in plan.get("eventos", []):              # gráficos a la franja, fuera de las caras
             if ev["tipo"] == "sticker":
-                ev["y"] = 0.702
+                ev["y"] = SPLIT["sticker_y"]
+                ev["size"] = min(ev.get("size", 62), 58)
             elif ev["tipo"] == "emoji":
                 ev["libre"] = True
                 izq = ev.get("x", 0.5) < 0.5
-                if plan["panel_ancho"] < W - 200:          # márgenes a los lados del clip
-                    ev["x"], ev["y"] = (0.078 if izq else 0.922), 0.47
-                    ev["size"] = min(ev.get("size", 160), (W - plan["panel_ancho"]) // 2 - 20, 120)
-                else:
-                    ev["x"], ev["y"] = (0.09 if izq else 0.91), 0.70
-                    ev["size"] = min(ev.get("size", 160), 110)
+                margen = (W - plan["panel_ancho"]) / 2
+                if margen > 80:                              # sobre el relleno desenfocado
+                    ev["x"], ev["y"] = ((margen / 2) / W if izq else 1 - (margen / 2) / W), 0.52
+                    ev["size"] = int(min(ev.get("size", 160), margen - 16, 110))
+                else:                                        # a los lados, a media altura
+                    ev["x"], ev["y"] = (0.08 if izq else 0.92), 0.50
+                    ev["size"] = min(ev.get("size", 160), 100)
         cat = plan.get("catalogo_reaccion")
         if not cat:
             cfg_path = os.path.join(os.path.expanduser("~"), ".estudio", "config.json")
             cat = (json.load(open(cfg_path)) if os.path.exists(cfg_path) else {}).get("reaccion")
-        reac_y0 = int(0.105 * H)
-        reac_h = int(0.255 * H)
+        reac_y0 = int(SPLIT["reac_y0"] * H)
+        reac_h = int(SPLIT["reac_h"] * H)
         reac = Reaccion(cat, W, reac_h)
         reac_eventos = [dict(ev) for ev in plan.get("reacciones", [])]
 
@@ -713,7 +723,8 @@ def main():
     grad = Grading(pw, ph, est)
     evs = Eventos(eventos, (px0, py0, pw, ph))
     subs = Subs(palabras, plan.get("claves", []), est["palabra"], y=plan.get("subs_y", 0.875),
-                x=plan.get("subs_x", 0.5), ancho=plan.get("subs_ancho", 0.92)) if palabras else None
+                x=plan.get("subs_x", 0.5), ancho=plan.get("subs_ancho", 0.92),
+                px=plan.get("subs_px", 104)) if palabras else None
     titulo = plan.get("titulo")
     titulo_img = None
     if titulo:
@@ -759,6 +770,14 @@ def main():
         M = np.float32([[pw / cw, 0, -x0 * pw / cw], [0, ph / chh, -y0 * ph / chh]])
         panel = cv2.warpAffine(fr, M, (pw, ph), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REFLECT)
         panel = grad.persona(panel)
+        if split and pw < W:                              # relleno: el mismo clip desenfocado
+            fx = max(W / fr.shape[1], ph / fr.shape[0])
+            chico = cv2.resize(fr, (max(1, int(fr.shape[1] * fx / 10)), max(1, int(fr.shape[0] * fx / 10))),
+                               interpolation=cv2.INTER_AREA)
+            chico = cv2.GaussianBlur(chico, (0, 0), 3)
+            grande = cv2.resize(chico, (int(fr.shape[1] * fx) + 2, int(fr.shape[0] * fx) + 2))
+            gx, gy = (grande.shape[1] - W) // 2, (grande.shape[0] - ph) // 2
+            cv[py0:py0 + ph, :] = grande[gy:gy + ph, gx:gx + W].astype(np.float32) * 0.5
         roi = cv[py0:py0 + ph, px0:px0 + pw]
         cv[py0:py0 + ph, px0:px0 + pw] = panel * mask_f + roi * (1 - mask_f)
         if split:                                        # el creador reaccionando, arriba
@@ -776,7 +795,7 @@ def main():
             sc = ease_back(t / 0.35) if t < 0.35 else 1 + 0.015 * math.sin(t * 3)
             superponer(cv, titulo_img, W / 2, plan.get("titulo_y", 0.163) * H, sc)
         evs.dibujar(cv, t)
-        if subs:
+        if subs and not any(p - 0.4 <= t <= p + 0.1 for p in plan.get("pausas", [])):
             subs.dibujar(cv, t)
         if not args.sin_barra:
             cv2.rectangle(cv, (0, H - 14), (int(W * t / dur), H), barra_col, -1)
