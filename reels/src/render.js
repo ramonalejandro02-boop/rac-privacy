@@ -4,6 +4,7 @@ const {chromium}=require('playwright');const {spawn}=require('child_process');co
  p.on('pageerror',e=>console.error('PAGEERR',e.message));
  await p.goto('file://'+path.resolve('build.html')); await p.evaluate(()=>window.ready);
  const total=await p.evaluate(()=>window.TOTAL);
+ require('fs').writeFileSync('hits.json',JSON.stringify(await p.evaluate(()=>window.HITS||[])));
  if(mode==='preview'){ const ts=process.argv[3].split(',').map(Number);
    for(const t of ts){await p.evaluate(t=>window.seek(t),t);await p.screenshot({path:`prev/f_${t.toFixed(1)}.jpg`,type:'jpeg',quality:80})}
  } else { const fps=30,n=Math.ceil(total*fps);

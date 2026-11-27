@@ -102,7 +102,7 @@ def timeline(guion):
     return {'scenes': scenes, 'total': round(t0 + 0.6, 3)}, clips
 
 
-def mix(tl, clips, path):
+def mix(tl, clips, path, hits=()):
     T = tl['total']; N = int(T * SR); t = np.arange(N) / SR
     voice = np.zeros(N)
     for s in tl['scenes']:
@@ -134,6 +134,13 @@ def mix(tl, clips, path):
         yy = lfilter([0.08], [1, -0.92], rng.standard_normal(L2))
         fx[st:st + L2] += yy * np.sin(np.linspace(0, np.pi, L2)) ** 2
     fx = fx / np.abs(fx).max() * 0.10
+    for th, s in hits:  # impact on every cut: soft sub thump + short click, scaled by strength
+        st = int(th * SR); L3 = int(.35 * SR)
+        if st + L3 >= N: continue
+        tt = np.arange(L3) / SR
+        thump = np.sin(2 * np.pi * (48 + 40 * np.exp(-tt * 30)) * tt) * np.exp(-tt * 11)
+        click = rng.standard_normal(L3) * np.exp(-tt * 160) * 0.35
+        fx[st:st + L3] += (thump * 0.22 + click * 0.10) * min(s, 1.5)
     out = voice + music + fx; out /= max(1, np.abs(out).max() / 0.97)
     w = wave.open(path, 'wb'); w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
     w.writeframes((out * 32767).astype(np.int16).tobytes()); w.close()
@@ -143,10 +150,10 @@ if __name__ == '__main__':
     guion = json.load(open('guion.json'))
     tl, clips = timeline(guion)
     json.dump(tl, open('timeline.json', 'w'), ensure_ascii=False, indent=1)
-    open('build.html', 'w').write(open('reel.html').read().replace('__TIMELINE__', json.dumps(tl, ensure_ascii=False)))
-    mix(tl, clips, 'mix.wav')
-    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', 'mix.wav', '-af', 'loudnorm=I=-15:TP=-1.5:LRA=9', '-ar', '44100', '-ac', '2', 'mix_norm.wav'], check=True)
+    open('build.html', 'w').write(open(os.environ.get('REEL_HTML','reel2.html')).read().replace('__TIMELINE__', json.dumps(tl, ensure_ascii=False)))
     env = dict(os.environ, NODE_PATH=subprocess.run(['npm', 'root', '-g'], capture_output=True, text=True).stdout.strip())
     subprocess.run(['node', 'render.js', 'full'], check=True, env=env)
+    mix(tl, clips, 'mix.wav', json.load(open('hits.json')))
+    subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', 'mix.wav', '-af', 'loudnorm=I=-15:TP=-1.5:LRA=9', '-ar', '44100', '-ac', '2', 'mix_norm.wav'], check=True)
     subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-i', 'video_mute.mp4', '-i', 'mix_norm.wav', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', OUT], check=True)
     print('LISTO', OUT, tl['total'])
