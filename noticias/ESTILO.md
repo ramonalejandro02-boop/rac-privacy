@@ -48,3 +48,11 @@ Un estilo nuevo no es solo otra paleta. Cada video nuevo lleva diseño, objetos,
 ## Personas reales
 - No afirmar quejas, delitos ni fallas de una persona si no hay fuente. Plantearlo como pregunta y dejar que el público cuente su experiencia en los comentarios.
 - No mencionar a CONAFEPH ni sus gestiones o reclamos propios en los videos de noticias.
+
+## Estilos PROHIBIDOS (ya usados en otros chats — no repetir)
+Pop sticker · isométrico/maqueta amarillo-negro (y /3d4) · caricatura 2D con diálogos (y familia /cartoon2d*) · pro negro/rojo F1 · negro con formas curvas · silueta que camina · plano técnico/blueprint (/cine7) · negro + naranja neón · dibujado a mano animation-studio · cuento 2D ilustrado · mecánica con insertos 3D · bloques naranja/navy · terminal retro (/cine9) · pixel art (familia /pixel*, /cine13, /cine14) · chat que se escribe solo (/interfaz4) · maniquíes 3D (/3d1) · neón radiografía · oscuro corporativo · fondos con casitas · libreta dibujada · 3D primera persona · imágenes IA con paralaje.
+Tampoco los de muchos colores tipo circo (/pixel6, /cine15, /3d5, /cine16).
+
+## Estilos DISPONIBLES (Fábrica de Reels, sin usar)
+/ilustracion1 rayos X · /ilustracion2 épica oscura · /ilustracion4 papel crema infografía · /cine2 producto desmontado · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /cine17 libro desplegable · /cine18 miniatura tilt-shift · /3d2 cuarto de noche + interfaz · /3d3 objetos realistas · /3d6 vóxel · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
+Ya usados en estos videos de noticias (se pueden repetir más adelante, sin seguidos): periódico, keynote oscura, pizarra blanca, espías 60s, Art Déco, maqueta blanca con proyección, una sola línea, tablero de nodos, papel recortado.
