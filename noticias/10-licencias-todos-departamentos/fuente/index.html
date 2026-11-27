@@ -75,10 +75,14 @@ function sc7(t){const S=EV.S[6];title(['AL CONGRESO','NACIONAL'],t,S+.05,TER);
   const dp=k(t,EV.prop-.1,1.6);if(dp>0){const y=lerp(1180,640,eio(dp)),x=lerp(850,W/2,eio(dp)),s=lerp(.9,.6,eio(dp));g.save();g.translate(x,y);g.scale(s,s);g.rotate(lerp(.2,0,eio(dp)));
     paper(()=>rr(-170,-210,340,420,12),CRM,1.5);T('PROPUESTA',0,-150,40,DK,'Fr',900);paper(()=>rr(-140,-100,280,90,10),MUS,.6);T('REFORMAS',0,-70,30,DK,'Nu',800);T('LEY DE TRÁNSITO',0,-32,30,DK,'Nu',800);
     [0,1,2].forEach(j=>{g.fillStyle='rgba(43,37,34,.25)';rr(-120,30+j*44,240-(j%2)*70,14,7);g.fill();});g.restore();}}
-function sc8(t){const S=EV.S[7];title(['¿CÓMO TE FUE','SACANDO LA LICENCIA?'],t,S+.05,TEAL);
-  pop(t,EV.exp-.2,330,830,()=>{paper(()=>{rr(-230,-130,460,260,40);g.moveTo(-120,120);g.lineTo(-170,210);g.lineTo(-40,128);},TEAL,1.2);T('BIEN',0,4,80,CRM,'Fr',900);},.45,-.2);
-  pop(t,EV.exp+.1,760,930,()=>{paper(()=>{rr(-230,-130,460,260,40);g.moveTo(120,120);g.lineTo(170,210);g.lineTo(40,128);},TER,1.2);T('MAL',0,4,80,CRM,'Fr',900);},.45,.2);
-  pop(t,EV.cta-.1,W/2,1210,()=>{const pul=1+.03*Math.sin((t-EV.cta)*6);g.scale(pul,pul);paper(()=>rr(-280,-75,560,150,75),MUS,1.4);T('COMENTÁ',0,4,84,DK,'Fr',900);},.45);}
+function sc8(t){const S=EV.S[7];title(['TODOS TENEMOS','UNA HISTORIA'],t,S+.05,TEAL);
+  // service window
+  pop(t,S+.2,860,1000,()=>{paper(()=>rr(-150,-230,300,460,10),TEAL,1.2);paper(()=>rr(-110,-170,220,150,8),CRM);T('LICENCIAS',0,-95,34,DK,'Fr',900);paper(()=>rr(-130,40,260,24,6),MUS);},.5);
+  // queue of paper people, each with a typing bubble
+  [0,1,2,3].forEach(i=>{const x=600-i*150;pop(t,S+.35+i*.15,x,1120,()=>{g.scale(.75,.75);paper(()=>bust(DK,false),[DK,TER,TEAL,DK][i],1);},.4);
+    const bp=k(t,EV.exp-.3+i*.25,.35);if(bp>0){g.save();g.translate(x,880-(i%2)*40);g.scale(back(bp),back(bp));paper(()=>{rr(-80,-50,160,100,40);g.moveTo(-20,48);g.lineTo(-40,80);g.lineTo(10,48);},CRM,1);
+      for(let d=0;d<3;d++){const a=.35+.65*Math.max(0,Math.sin((t*4)-d*.8));g.fillStyle=`rgba(43,37,34,${a})`;g.beginPath();g.arc(-30+d*30,0,9,0,7);g.fill();}g.restore();}});
+}
 const SC=[sc1,sc2,sc3,sc4,sc5,sc6,sc7,sc8];
 // subtitles in their own reserved card (never covered)
 function chunks(sc){const out=[];let cur=[];sc.sub.forEach(w=>{cur.push(w);if(cur.length>=4){out.push(cur);cur=[];}});if(cur.length)out.push(cur);return out;}

@@ -33,7 +33,8 @@ Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza p
 
 ## Guion
 - Sin muletillas: nada de "Y…", "También…", "Además…", "La meta:", "Ojo con esto".
-- Arrancar con algo que la gente vive o siente (gancho emocional), cerrar con una pregunta que invite a comentar.
+- Arrancar con algo que la gente vive o siente (gancho emocional).
+- NUNCA pedir interacción explícita (Meta lo castiga como cebo): nada de "Comentá", "Compartí", "Etiquetá", botones SÍ/NO para votar ni "👇" en el pie de post. Cerrar con una frase que invite sola a contar la experiencia, p. ej. "Todos tenemos alguna historia de cuando sacamos la licencia."
 
 ## Lo que NO lleva
 - Fecha en pantalla.

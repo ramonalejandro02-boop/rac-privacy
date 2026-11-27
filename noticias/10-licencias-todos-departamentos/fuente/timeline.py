@@ -18,6 +18,6 @@ ev={'S':S,'lic':W(0,'licencia'),'buenas':W(0,'buenas'),
  'obj':W(4,'objetivo'),'err':W(4,'erradicar'),'corr':W(4,'corrupción'),'hist':W(4,'históricamente'),
  'modelo':W(5,'modelo'),'prac':W(5,'prácticas'),'acc':W(5,'acceso'),'aten':W(5,'atención'),'susp':W(5,'suspensiones'),
  'prop':W(6,'propuesta'),'ley':W(6,'ley'),'cong':W(6,'congreso'),
- 'exp':W(7,'experiencia'),'cta':W(7,'comentá')}
+ 'exp':W(7,'historia'),'cta':W(7,'licencia')}
 json.dump({'total':round(t,3),'scenes':scenes,'ev':ev},open('timeline.json','w'),ensure_ascii=False)
 print(round(t,2)); print({k:(round(v,2) if not isinstance(v,list) else [round(x,2) for x in v]) for k,v in ev.items()})
