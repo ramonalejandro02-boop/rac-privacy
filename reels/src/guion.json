@@ -1,9 +1,37 @@
 [
- {"id":"s1","text":"¿Le deben meses de pensión alimenticia, y le dijeron que ya los perdió? Eso acaba de cambiar en Honduras."},
- {"id":"s2","text":"Hasta este año, el artículo doscientos veinticinco del Código de Familia decía que las cuotas que usted no reclamaba en un año, prescribían. Es decir, se perdían."},
- {"id":"s3","text":"Pero el doce de junio de dos mil veintiséis, se publicó en La Gaceta el Decreto noventa y uno, que derogó ese artículo."},
- {"id":"s4","text":"Ahora, las pensiones atrasadas fijadas por un juez se rigen por el Código Civil, que da plazos mucho más amplios para cobrar."},
- {"id":"s5","text":"El mismo Congreso lo dijo: un plazo de un año es incompatible con el derecho de alimentos de los niños."},
- {"id":"s6","text":"Entonces, si un juez fijó la pensión y le deben meses, no se rinda. Reúna la resolución, sus comprobantes, y la lista de meses adeudados. Y consulte con un abogado."},
- {"id":"s7","text":"Comparta este video con quien lo necesite, y síganos para más datos legales que nadie le cuenta."}
+ {
+  "id": "s1",
+  "text": "¿Le deben meses de pensión alimenticia, y le dijeron que ya los perdió? Eso acaba de cambiar en Honduras.",
+  "caption": "¿Le deben meses de pensión alimenticia, y le dijeron que ya los perdió? Eso acaba de cambiar en Honduras."
+ },
+ {
+  "id": "s2",
+  "text": "Hasta este año, el artículo doscientos veinticinco del Código de Familia decía que las cuotas que usted no reclamaba en un año, prescribían. Es decir, se perdían.",
+  "caption": "Hasta este año, el artículo doscientos veinticinco del Código de Familia decía que las cuotas que usted no reclamaba en un año, prescribían. Es decir, se perdían."
+ },
+ {
+  "id": "s3",
+  "text": "Pero el doce de junio de dos mil veintiséis, se publicó en La Gaceta el Decreto noventa y uno, que derogó ese artículo.",
+  "caption": "Pero el doce de junio de dos mil veintiséis, se publicó en La Gaceta el Decreto noventa y uno, que derogó ese artículo."
+ },
+ {
+  "id": "s4",
+  "text": "Ahora, las pensiones atrasadas fijadas por un juez se rigen por el Código Civil, que da plazos mucho más amplios para cobrar.",
+  "caption": "Ahora, las pensiones atrasadas fijadas por un juez se rigen por el Código Civil, que da plazos mucho más amplios para cobrar."
+ },
+ {
+  "id": "s5",
+  "text": "El mismo Congreso lo dijo: un plazo de un año es incompatible con el derecho de alimentos de los niños.",
+  "caption": "El mismo Congreso lo dijo: un plazo de un año es incompatible con el derecho de alimentos de los niños."
+ },
+ {
+  "id": "s6",
+  "text": "Entonces, si un juez fijó la pensión y le deben meses, no se rinda. Reúna la resolución, sus comprobantes, y la lista de meses adeudados. Y consulte con un abogado.",
+  "caption": "Entonces, si un juez fijó la pensión y le deben meses, no se rinda. Reúna la resolución, sus comprobantes, y la lista de meses adeudados. Y consulte con un abogado."
+ },
+ {
+  "id": "s7",
+  "text": "Comparta este video con quien lo necesite, y síganos para más datos legales que nadie le cuenta.",
+  "caption": "Comparta este video con quien lo necesite, y síganos para más datos legales que nadie le cuenta."
+ }
 ]
