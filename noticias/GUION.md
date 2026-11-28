@@ -16,6 +16,15 @@ Objetivo: cuestionar sin que se sienta ataque ni inclinación partidaria. Atacar
 - Todo atribuido y verificable. Lo no confirmado se pregunta, no se afirma.
 - Sin pedir interacción explícita. Cerrar con una frase de identificación.
 
+## Más filo (a partir del video 15)
+Pedido: más agresivo en lo EMOCIONAL, no en lo político. Que el hondureño se sienta afectado y sienta que el apoyo no le llega, sin que el video se lea como ataque al gobierno.
+- **Arrancar en la casa de la persona**: el recibo, la mesa, el bus, el foco que se apaga. Imagen concreta, en voseo, primera frase.
+- **Poner el daño en primer plano con datos**: quién se queda fuera, a quién no le llega el alivio, cuánto cuesta y quién lo paga después.
+- **"El apoyo no llega parejo"** en vez de "el gobierno no apoya": la brecha la muestran los números, no un adjetivo.
+- **Preguntas que duelen**: "¿lo vas a pagar después, con intereses?", "¿a quién van a proteger?", "¿cuántos más?". Siempre preguntas, nunca acusaciones.
+- **Cierre de identificación fuerte**: una escena de la casa que el espectador reconozca como propia (sin pedir comentarios).
+- Siguen prohibidos: adjetivos de juicio, nombres de funcionarios como culpables, afirmaciones sin fuente, partidismo.
+
 ## Frases puente
 "Ya lo anunciaron. Ahora falta verlo." · "El papel aguanta todo." · "Habrá que ver si llega." · "No es la primera vez que se promete." · "¿Cuántos y para cuándo? Eso todavía no se ha dicho."
 
