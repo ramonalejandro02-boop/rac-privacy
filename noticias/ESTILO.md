@@ -23,6 +23,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 14 | Reserva estratégica de granos ante El Niño | Miniatura tilt-shift: maqueta vista desde arriba, cámara que viaja (/cine18) |
 | 15 | Fin del congelamiento de la tarifa eléctrica | Cuarto de noche con paneles holográficos y foco que se apaga (/3d2) |
 | 16 | Poder de compra: el lempira vale menos | Mundo vóxel de bloques 3D con números en píxeles extruidos (/3d6) |
+| 17 | Basura en el mercado El Rápido (SPS) | Libro desplegable de papel sobre mesa de madera, piezas pop-up y páginas que pasan (/cine17) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
@@ -60,7 +61,7 @@ Pop sticker · isométrico/maqueta amarillo-negro (y /3d4) · caricatura 2D con 
 Tampoco los de muchos colores tipo circo (/pixel6, /cine15, /3d5, /cine16).
 
 ## Estilos DISPONIBLES (Fábrica de Reels, sin usar)
-/ilustracion1 rayos X · /ilustracion2 épica oscura · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /cine17 libro desplegable · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
+/ilustracion1 rayos X · /ilustracion2 épica oscura · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
 Ya usados en estos videos de noticias (se pueden repetir más adelante, sin seguidos): periódico, keynote oscura, pizarra blanca, espías 60s, Art Déco, maqueta blanca con proyección, una sola línea, tablero de nodos, papel recortado, infografía papel crema, objetos realistas de estudio.
 
 ## Zona segura de Facebook Reels (1080×1920, medida en captura real)
