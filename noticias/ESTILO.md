@@ -57,3 +57,10 @@ Tampoco los de muchos colores tipo circo (/pixel6, /cine15, /3d5, /cine16).
 ## Estilos DISPONIBLES (Fábrica de Reels, sin usar)
 /ilustracion1 rayos X · /ilustracion2 épica oscura · /cine2 producto desmontado · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /cine17 libro desplegable · /cine18 miniatura tilt-shift · /3d2 cuarto de noche + interfaz · /3d3 objetos realistas · /3d6 vóxel · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
 Ya usados en estos videos de noticias (se pueden repetir más adelante, sin seguidos): periódico, keynote oscura, pizarra blanca, espías 60s, Art Déco, maqueta blanca con proyección, una sola línea, tablero de nodos, papel recortado, infografía papel crema.
+
+## Zona segura de Facebook Reels (1080×1920, medida en captura real)
+- Arriba 0–250 px: lo tapa la barra del celular / perfil. Títulos desde y ≥ 280.
+- Abajo desde y = 1680: nombre de la cuenta y texto. Nada importante debajo de 1670.
+- Derecha x > 900 entre y = 1240 y 1680: botones de me gusta, comentar, compartir y guardar.
+- Lados: Facebook recorta ~60–70 px por lado. Todo lo importante dentro de x 80–1000.
+- Subtítulos a y ≈ 1420, dentro de x 80–900 (centro ≈ 490, ancho máx. ≈ 800) para no chocar con los botones.
