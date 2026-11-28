@@ -20,6 +20,7 @@ Cada video usa un estilo distinto al anterior (catálogo: `.claude/skills/fabric
 | 11 | Desempleo +37.6% | Infografía papel crema con figuritas (/ilustracion4) |
 | 12 | Inflación 6.98%, la más alta de Centroamérica | Objetos realistas de estudio (/3d3) |
 | 13 | Bajan los combustibles: ¿llega la rebaja a la comida? | Producto desmontado, estudio negro con despiece y líneas guía (/cine2) |
+| 14 | Reserva estratégica de granos ante El Niño | Miniatura tilt-shift: maqueta vista desde arriba, cámara que viaja (/cine18) |
 
 Siguientes a usar: ver el orden de rotación en `CATALOGO_ESTILOS.md` (empieza por pop sticker e isométrico amarillo/negro).
 
@@ -57,7 +58,7 @@ Pop sticker · isométrico/maqueta amarillo-negro (y /3d4) · caricatura 2D con 
 Tampoco los de muchos colores tipo circo (/pixel6, /cine15, /3d5, /cine16).
 
 ## Estilos DISPONIBLES (Fábrica de Reels, sin usar)
-/ilustracion1 rayos X · /ilustracion2 épica oscura · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /cine17 libro desplegable · /cine18 miniatura tilt-shift · /3d2 cuarto de noche + interfaz · /3d6 vóxel · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
+/ilustracion1 rayos X · /ilustracion2 épica oscura · /cine8 vidriera · /cine11 dibujos de los años 30 · /cine12 comedia de ciencia ficción · /cine17 libro desplegable · /3d2 cuarto de noche + interfaz · /3d6 vóxel · /3d7 vóxel de cine · /interfaz3 neón paso a paso.
 Ya usados en estos videos de noticias (se pueden repetir más adelante, sin seguidos): periódico, keynote oscura, pizarra blanca, espías 60s, Art Déco, maqueta blanca con proyección, una sola línea, tablero de nodos, papel recortado, infografía papel crema, objetos realistas de estudio.
 
 ## Zona segura de Facebook Reels (1080×1920, medida en captura real)
