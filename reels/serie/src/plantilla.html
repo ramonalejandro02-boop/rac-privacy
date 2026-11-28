@@ -35,7 +35,7 @@ svg .d.i{stroke:#121212}
 .row b{font:800 50px Inter;color:var(--acc)}
 .chk{display:flex;align-items:center;gap:30px;font:600 50px Inter;margin-bottom:46px}
 .chk .c{width:72px;height:72px;border:3px solid #121212;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;flex:none}
-#cap{left:70px;width:840px;top:1190px;height:120px;display:flex;flex-wrap:nowrap;justify-content:center;align-content:center;gap:0 20px;text-align:center;z-index:6}
+#cap{left:80px;width:820px;top:1360px;height:120px;display:flex;flex-wrap:nowrap;justify-content:center;align-content:center;gap:0 20px;text-align:center;z-index:6}
 #cap span{white-space:nowrap;font:800 58px/1.18 Inter;letter-spacing:-.01em;color:var(--ink);opacity:.3}
 #cap span.on{opacity:1;color:var(--acc)}#cap span.done{opacity:1}
 body.dark #cap span{color:#fff}body.dark #cap span.on{color:#9cc0ff}body.dark #vig{opacity:.4}body.dark #hdr{color:#bbb}
@@ -165,6 +165,6 @@ words.forEach((w,i)=>{cur.push(w);const len=cur.map(x=>x.w).join(' ').length;con
 let shown=-1;
 function caps(T){const ci=chunks.findIndex((c,i)=>T>=c[0].s-.08&&T<(chunks[i+1]&&chunks[i+1][0].sc===c[0].sc?chunks[i+1][0].s-.08:c[c.length-1].e+.25));const cap=$('#cap');
  if(ci!==shown){cap.innerHTML='';if(ci>=0)chunks[ci].forEach(w=>{const s=document.createElement('span');s.textContent=w.w;cap.appendChild(s)});shown=ci}
- if(ci>=0){[...cap.children].forEach((el,j)=>{const w=chunks[ci][j];el.className=T>=w.s-.04?(T<w.e+.02?'on':'done'):''});const k=Math.min(1,(T-chunks[ci][0].s+.08)/.15);const fit=Math.min(1,830/Math.max(1,[...cap.children].reduce((a,e)=>a+e.offsetWidth+20,-20)));cap.style.opacity=k;cap.style.transform=`translateY(${(1-k)*16}px) scale(${(.96+.04*k)*fit})`}}
+ if(ci>=0){[...cap.children].forEach((el,j)=>{const w=chunks[ci][j];el.className=T>=w.s-.04?(T<w.e+.02?'on':'done'):''});const k=Math.min(1,(T-chunks[ci][0].s+.08)/.15);const fit=Math.min(1,810/Math.max(1,[...cap.children].reduce((a,e)=>a+e.offsetWidth+20,-20)));cap.style.opacity=k;cap.style.transform=`translateY(${(1-k)*16}px) scale(${(.96+.04*k)*fit})`}}
 window.seek=T=>{tl.seek(T,false);UPD.forEach(f=>f(T));caps(T)};window.TOTAL=TL.total;window.HITS=HITS;window.ready=Promise.all(['900 140px Inter','800 58px Inter','600 50px Inter','700 100px Fraunces','800 100px Fraunces','italic 500 60px Fraunces','600 28px Mono','800 40px Mono'].map(f=>document.fonts.load(f))).then(()=>{main();return true});
 </script></body></html>
