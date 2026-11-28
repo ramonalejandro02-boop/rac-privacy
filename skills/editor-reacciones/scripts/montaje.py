@@ -382,16 +382,17 @@ def render_pausa(base, seg, salida, tmp, idx, claves, catalogo, panel_w=W):
     reac = Reaccion(catalogo, W, reac_h)
     ev = [dict(t=0, tipo="habla", dur=d, version=idx)]
     texto = a_bgra(sticker_pil(seg["texto"], 62, seg.get("fondo", "#FFE600"), seg.get("color", "#111111"),
-                               rot=seg.get("rot", -2), max_w=820)) if seg.get("texto") else None
+                               rot=seg.get("rot", -2), max_w=G["sticker_max_w"])) if seg.get("texto") else None
     subs = Subs(palabras_vo(seg["voz"], vo, t_vo), claves + seg.get("claves", []), est["palabra"],
-                px=72, y=G["subs_y"], x=0.5, ancho=0.86)
+                px=72, y=G["subs_y"], x=0.5, ancho=G["subs_ancho"])
     margen = (W - panel_w) / 2
     if margen > 80:                                     # sobre el relleno desenfocado, al lado del clip
         mx = (margen / 2) / W
+        mx = max(mx, efectos.ZONA["lados"] + 0.04)
         lados = [(mx, 0.48), (1 - mx, 0.48), (mx, 0.60), (1 - mx, 0.60)]
         tam = int(min(115, margen - 16))
     else:                                               # clip a todo lo ancho: bordes, media altura
-        lados = [(0.08, 0.50), (0.92, 0.50), (0.08, 0.62), (0.92, 0.62)]
+        lados = [(0.12, 0.50), (0.88, 0.50), (0.12, 0.60), (0.88, 0.60)]
         tam = 95
     props = []
     for j, p in enumerate(seg.get("props", [])[:4]):

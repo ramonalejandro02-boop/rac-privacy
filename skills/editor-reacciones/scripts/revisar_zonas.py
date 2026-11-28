@@ -25,6 +25,9 @@ def marcar(fr):
     cv2.rectangle(capa, (int(ZONA["derecha"] * w), int(ZONA["iconos_desde"] * h)),
                   (w, int(ZONA["abajo"] * h)), rojo, -1)
     cv2.rectangle(capa, (0, int(ZONA["abajo"] * h)), (w, h), rojo, -1)
+    lx = int(ZONA.get("lados", 0) * w)                  # orillas que Facebook recorta
+    cv2.rectangle(capa, (0, 0), (lx, h), rojo, -1)
+    cv2.rectangle(capa, (w - lx, 0), (w, h), rojo, -1)
     return cv2.addWeighted(capa, 0.45, fr, 0.55, 0)
 
 

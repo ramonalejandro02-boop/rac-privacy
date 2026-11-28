@@ -39,12 +39,16 @@ W, H = 1080, 1920
 SR = 44100
 
 # Geometría del formato split (compartida con montaje.py)
-SPLIT = dict(reac_y0=0.0, reac_h=0.39, panel_y=0.39, titulo_y=0.389, sticker_y=0.705, subs_y=0.765)
+SPLIT = dict(reac_y0=0.0, reac_h=0.39, panel_y=0.39, titulo_y=0.389, sticker_y=0.69, subs_y=0.74,
+             subs_ancho=0.64, sticker_max_w=700)
 
 # Zona segura de Facebook/Instagram Reels (medida en capturas reales):
 # arriba: hora + flecha + lupa + menú; derecha: 👍 💬 ↗ 🔖 (desde ~56% de alto);
 # abajo: nombre de la página, fecha y descripción (desde ~80%).
-ZONA = dict(arriba=0.115, abajo=0.79, derecha=0.87, iconos_desde=0.56)
+# Medida en un Reel publicado (1080x1920): arriba 0-250 px, abajo desde y=1680, botones x>900 entre
+# y=1240 y 1680, y Facebook recorta ~60-70 px por lado al ajustar al alto de pantalla.
+ZONA = dict(arriba=250 / 1920, abajo=1680 / 1920, derecha=900 / 1080, iconos_desde=1240 / 1920,
+            lados=80 / 1080)
 
 
 def seguro(x, y, ymin=0.27, ymax=0.62):
@@ -468,7 +472,8 @@ class Eventos:
             elif tipo == "sticker":
                 px = e.get("size", 80)
                 im = self.img(("s", e["_i"]), lambda: a_bgra(sticker_pil(
-                    e["texto"], px, e.get("fondo", "#FFE600"), e.get("color", "#111111"), e.get("rot", -4))))
+                    e["texto"], px, e.get("fondo", "#FFE600"), e.get("color", "#111111"), e.get("rot", -4),
+                    max_w=e.get("max_w", 950))))
                 sc = ease_back(u / 0.3) * (1 - fin) * (1 + 0.025 * math.sin(u * 5))
                 superponer(cv, im, e.get("x", 0.5) * W, max(e.get("y", 0.28), 0.275) * H, sc)
             elif tipo == "lluvia":
@@ -665,7 +670,7 @@ def main():
         plan.setdefault("panel_abajo", 1.0)
         plan.setdefault("panel_alto", 1.0 - SPLIT["panel_y"])
         plan.setdefault("subs_x", 0.5)
-        plan.setdefault("subs_ancho", 0.86)
+        plan.setdefault("subs_ancho", SPLIT["subs_ancho"])
         plan.setdefault("subs_y", SPLIT["subs_y"])
         plan.setdefault("subs_px", 72)
         plan.setdefault("titulo_y", SPLIT["titulo_y"])
@@ -673,6 +678,7 @@ def main():
             if ev["tipo"] == "sticker":
                 ev["y"] = SPLIT["sticker_y"]
                 ev["size"] = min(ev.get("size", 62), 58)
+                ev["max_w"] = SPLIT["sticker_max_w"]          # no llegar a los botones de la derecha
             elif ev["tipo"] == "emoji":
                 ev["libre"] = True
                 izq = ev.get("x", 0.5) < 0.5

@@ -30,7 +30,7 @@
 - Emojis a los lados de las caras, nunca encima de una cara.
 - Stickers cortos (2–5 palabras + emoji), en `y` ≈ 0.29.
 - Recortar textos pegados de otras páginas (`recorte_fuente`) — Meta pide no mostrar marcas de terceros.
-- El motor ya respeta las **zonas seguras de Reels** (arriba 11 %, columna de íconos a la derecha, abajo desde 80 %) y cambia el **tema de colores** en cada video.
+- El motor ya respeta las **zonas seguras de Facebook Reels** medidas en un video publicado (1080×1920): arriba 0–250 px, abajo desde y=1680, botones a la derecha x>900 entre y=1240 y 1680, y ~80 px de orilla por lado. Subtítulos en y≈1420 sin pasar de x=900. También cambia el **tema de colores** en cada video.
 
 ## Políticas de Meta (resumen, marzo 2026)
 - Es original cuando el foco es **la presencia en pantalla del creador presentando algo nuevo** (comentario, análisis, chiste). Por eso el creador sale todo el video en la esquina y con su voz.
